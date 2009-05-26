@@ -24,7 +24,7 @@ package programming5.net;
 /**
  *This is a special message wrapper for transmission in a reliable protocol. It allows the distinction of acknowledge messages 
  *from actual content messages.
- *@see programming.net.Message
+ *@see programming5.net.Message
  *@author Andres Quiroz Hernandez
  *@version 6.0
  */

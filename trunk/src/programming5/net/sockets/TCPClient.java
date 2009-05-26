@@ -231,7 +231,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
 
     /**
      *Implementation of the MessagingClient interface
-     *@param message the message string to send to the hosts for which sockets have been opened
+     *@param msg the message string to send to the hosts for which sockets have been opened
      */
     public void send(String msg) throws NetworkException {
         this.send(msg.getBytes());
@@ -239,7 +239,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
     
     /**
      *Implementation of the MessagingClient interface
-     *@param message the message to send to the given host
+     *@param bytesMessage the message to send to the given host
      *@param url the address the message will be sent to; if a socket hasn't been opened to this address, it will be created and started 
      */
     public void send(byte[] bytesMessage, String url) throws NetworkException {

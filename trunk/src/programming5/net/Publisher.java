@@ -61,7 +61,7 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
     
     /**
      *Announces to termination aware subscribers that no more events are available from this source
-     *@see java.net.TerminationAwareSubscriber
+     *@see programming5.net.TerminationAwareSubscriber
      */
     public void announceNoMoreEvents() {
         for (Subscriber<E> listener : listeners) {
@@ -73,7 +73,7 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
     
     /**
      *Unilaterally terminates all subscriptions and notifies termination aware subscribers
-     *@see java.net.TerminationAwareSubscriber
+     *@see programming5.net.TerminationAwareSubscriber
      */
     public void terminateAllSubscriptions() {
         for (Subscriber<E> listener : listeners) {

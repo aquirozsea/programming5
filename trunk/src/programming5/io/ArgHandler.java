@@ -110,7 +110,7 @@ public class ArgHandler {
     /**
      *@return the string argument preceded by tag or the given default value, if tag is not found or the value given is
      *not valid; when the default is used, will output a warning to the user if this behavior has been set
-     *@see #setWarningForDafaults(boolean)
+     *@see #setWarningForDefaults(boolean)
      */
     public String getStringArg(String tag, String defVal) {
         String ret = defVal;
@@ -238,7 +238,7 @@ public class ArgHandler {
     /**
      *@return the int argument preceded by tag or the given default value, if tag is not found or the value given is
      *not valid; when the default is used, will output a warning to the user if this behavior has been set
-     *@see #setWarningForDafaults(boolean)
+     *@see #setWarningForDefaults(boolean)
      */
     public int getIntArg(String tag, int defVal) {
         int ret = defVal;
@@ -262,7 +262,7 @@ public class ArgHandler {
      *@return the int argument preceded by tag, which must be in the given range, or the given default value if tag is 
      *not found or the value given is not valid; when the default is used, will output a warning to the user if this 
      *behavior has been set
-     *@see #setWarningForDafaults(boolean)
+     *@see #setWarningForDefaults(boolean)
      */
     public int getIntArg(String tag, int defVal, NumberRange range) {
         int ret = defVal;
@@ -420,7 +420,7 @@ public class ArgHandler {
     /**
      *@return the float argument preceded by tag or the given default value, if tag is not found or the value given is
      *not valid; when the default is used, will output a warning to the user if this behavior has been set
-     *@see #setWarningForDafaults(boolean)
+     *@see #setWarningForDefaults(boolean)
      */
     public float getFloatArg(String tag, float defVal) {
         float ret = defVal;
@@ -444,7 +444,7 @@ public class ArgHandler {
      *@return the float argument preceded by tag, which must be in the given range, or the given default value if tag is 
      *not found or the value given is not valid; when the default is used, will output a warning to the user if this 
      *behavior has been set
-     *@see #setWarningForDafaults(boolean)
+     *@see #setWarningForDefaults(boolean)
      */
     public float getFloatArg(String tag, float defVal, NumberRange range) {
         float ret = defVal;
@@ -603,7 +603,7 @@ public class ArgHandler {
     /**
      *@return the double argument preceded by tag or the given default value, if tag is not found or the value given is
      *not valid; when the default is used, will output a warning to the user if this behavior has been set
-     *@see #setWarningForDafaults(boolean)
+     *@see #setWarningForDefaults(boolean)
      */
     public double getDoubleArg(String tag, double defVal) {
         double ret = defVal;
@@ -627,7 +627,7 @@ public class ArgHandler {
      *@return the double argument preceded by tag, which must be in the given range, or the given default value if tag is 
      *not found or the value given is not valid; when the default is used, will output a warning to the user if this 
      *behavior has been set
-     *@see #setWarningForDafaults(boolean)
+     *@see #setWarningForDefaults(boolean)
      */
     public double getDoubleArg(String tag, double defVal, NumberRange range) {
         double ret = defVal;
