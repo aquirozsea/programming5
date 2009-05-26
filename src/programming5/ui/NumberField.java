@@ -27,7 +27,7 @@ import programming5.math.NumberRangeException;
 /**
  *This class is an awt text field which incorporates methods to parse, limit, and return its numeric content. There is 
  *also a swing counterpart.
- *@see JTextField
+ *@see java.awt.TextField
  *@author Andres Quiroz Hernandez
  *@version 6.0
  */

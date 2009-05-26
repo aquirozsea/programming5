@@ -26,7 +26,7 @@ package programming5.net;
  *are meant to be blocking; to receive messages asynchronously, use an extension of ReceiverThread to complement the client 
  *object.
  *@see PluggableClient
- *@see ReceiverThread
+ *@see ReceivingThread
  *@author Andres Quiroz Hernandez
  *@version 6.0
  */

@@ -198,7 +198,7 @@ public class KeyboardEventGenerator extends Publisher<KeyboardEvent> implements 
      *not implement the subscriber interface for KeyboardEvents. The getPressedKeys method can also be used for 
      *the same purpose.
      *@return a keyboard event that encapsulates the set of currently pressed keys
-     *@see programming5.net.ISubscriber
+     *@see programming5.net.Subscriber
      *@see #getPressedKeys
      */
     public KeyboardEvent getKeyboardEvent() {
@@ -210,7 +210,7 @@ public class KeyboardEventGenerator extends Publisher<KeyboardEvent> implements 
      *not implement the subscriber interface for KeyboardEvents. It can be faster than using the getKeyboardEvent 
      *method because of the overhead for encoding the event.
      *@return a set of currently pressed keys
-     *@see programming5.net.ISubscriber
+     *@see programming5.net.Subscriber
      *@see #getKeyboardEvent
      */
     public Set<Integer> getPressedKeys() {

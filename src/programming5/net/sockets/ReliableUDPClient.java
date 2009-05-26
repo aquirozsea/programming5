@@ -120,7 +120,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     
     /**
      *Implementation of the MessagingClient interface
-     *@param message the message string to send to the host
+     *@param msg the message string to send to the host
      */
     public void send(String msg) throws NetworkException {
         try {

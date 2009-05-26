@@ -36,7 +36,7 @@ package programming5.net;
  *
  *@see MessagingClient
  *@see RPCClient
- *@see ReceiverThread          
+ *@see ReceivingThread
  *@author Andres Quiroz Hernandez
  *@version 6.0
  */

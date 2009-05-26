@@ -620,7 +620,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, Map<E, D> {
 
     /**
      *Implementation of the Map method, equivalent to containsFirst.
-     *@see #constainsFirst
+     *@see #containsFirst
      */
     public boolean containsKey(Object key) {
         return containsFirst((E) key);
@@ -628,7 +628,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, Map<E, D> {
 
     /**
      *Implementation of the Map method, equivalent to containsSecond.
-     *@see #constainsSecond
+     *@see #containsSecond
      */
     public boolean containsValue(Object value) {
         return containsSecond((D) value);

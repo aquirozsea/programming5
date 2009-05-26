@@ -25,7 +25,7 @@ package programming5.net;
  *This interface defines methods for a PluggableClient to invoke methods of a server over the network. If permitted by the 
  *implementation, the server can use the callback method to send messages asynchronously to the client.
  *@see PluggableClient
- *@see ReceiverThread
+ *@see ReceivingThread
  *@author Andres Quiroz Hernandez
  *@version 6.0
  */

@@ -27,7 +27,7 @@ package programming5.net;
  * clients, to create the client objects according to the specific protocol, and to pass these clients to the new service object 
  * obtained from the service object factory.
  * @see ServiceObject
- * @see ServiveObjectFactory
+ * @see ServiceObjectFactory
  * @author Andres Quiroz Hernandez
  * @version 6.0
  */
