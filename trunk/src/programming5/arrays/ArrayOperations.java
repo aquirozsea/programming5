@@ -2079,7 +2079,7 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return el arreglo dado con todos sus valores iguales al valor dado
+     *@return the given array with all values set to the given initValue
      */
     public static final int[] initialize(int[] array, int initValue) {
         for (int i = 0; i < array.length; i++) {
@@ -2089,7 +2089,7 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return el arreglo dado con todos sus valores iguales al valor dado
+     *@return the given array with all values set to the given initValue
      */
     public static final float[] initialize(float[] array, float initValue) {
         for (int i = 0; i < array.length; i++) {
@@ -2099,7 +2099,7 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return el arreglo dado con todos sus valores iguales al valor dado
+     *@return the given array with all values set to the given initValue
      */
     public static final double[] initialize(double[] array, double initValue) {
         for (int i = 0; i < array.length; i++) {
@@ -2109,7 +2109,7 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return el arreglo dado con todos sus valores iguales al valor dado
+     *@return the given array with all values set to the given initValue
      */
     public static final char[] initialize(char[] array, char initValue) {
         for (int i = 0; i < array.length; i++) {
@@ -2119,7 +2119,7 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return el arreglo dado con todos sus valores iguales al valor dado
+     *@return the given array with all values set to the given initValue
      */
     public static final boolean[] initialize(boolean[] array, boolean initValue) {
         for (int i = 0; i < array.length; i++) {
@@ -2153,4 +2153,140 @@ public abstract class ArrayOperations {
             throw new IllegalArgumentException("ArrayOperations: arrayCast: Arrays must be of the same length");
         }
     }
+
+    /**
+     * Turns an integer array into a string array using the Integer toString method.
+     * @param array the array to transform
+     * @return an array of String representing each of the elements of the given array
+     */
+    public static final String[] toString(int[] array) {
+        String[] ret = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Integer.toString(array[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * Turns an array of double into a string array using the Double toString method.
+     * @param array the array to transform
+     * @return an array of String representing each of the elements of the given array
+     */
+    public static final String[] toString(double[] array) {
+        String[] ret = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Double.toString(array[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * Turns an array of long into a string array using the Long toString method.
+     * @param array the array to transform
+     * @return an array of String representing each of the elements of the given array
+     */
+    public static final String[] toString(long[] array) {
+        String[] ret = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Long.toString(array[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * Turns an array of float into a string array using the Float toString method.
+     * @param array the array to transform
+     * @return an array of String representing each of the elements of the given array
+     */
+    public static final String[] toString(float[] array) {
+        String[] ret = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Float.toString(array[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * Turns a boolean array into a string array using the Boolean toString method.
+     * @param array the array to transform
+     * @return an array of String representing each of the elements of the given array
+     */
+    public static final String[] toString(boolean[] array) {
+        String[] ret = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Boolean.toString(array[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * Parses each of the elements of the string array as integers and returns a new array of ints with the
+     * corresponding values.
+     * @param array the array to transform
+     * @return an array of int with the value that each of the elements of the given array represents
+     */
+    public static final int[] toIntArray(String[] array) {
+        int[] ret = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Integer.parseInt(array[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * Parses each of the elements of the string array as double and returns a new array of double with the
+     * corresponding values.
+     * @param array the array to transform
+     * @return an array of double with the value that each of the elements of the given array represents
+     */
+    public static final double[] toDoubleArray(String[] array) {
+        double[] ret = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Double.parseDouble(array[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * Parses each of the elements of the string array as long and returns a new array of long with the
+     * corresponding values.
+     * @param array the array to transform
+     * @return an array of long with the value that each of the elements of the given array represents
+     */
+    public static final long[] toLongArray(String[] array) {
+        long[] ret = new long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Long.parseLong(array[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * Parses each of the elements of the string array as float and returns a new array of float with the
+     * corresponding values.
+     * @param array the array to transform
+     * @return an array of float with the value that each of the elements of the given array represents
+     */
+    public static final float[] toFloatArray(String[] array) {
+        float[] ret = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Float.parseFloat(array[i]);
+        }
+        return ret;
+    }
+
+    /**
+     * Parses each of the elements of the string array as boolean and returns a new array of boolean with the
+     * corresponding values.
+     * @param array the array to transform
+     * @return an array of boolean with the value that each of the elements of the given array represents
+     */
+    public static final boolean[] toBooleanArray(String[] array) {
+        boolean[] ret = new boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = Boolean.parseBoolean(array[i]);
+        }
+        return ret;
+    }
+
 }
