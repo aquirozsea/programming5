@@ -31,7 +31,7 @@ import programming5.net.Message;
  *This event is meant to encapsulate a set of key codes that represent the currently pressed keys of a keyboard. It uses
  *the key codes defined in AWT and complements the AWT KeyEvent which only holds information about a single key.
  *@see java.awt.event.KeyEvent
- *@author Andrés Quiroz Hernández
+ *@author Andres Quiroz Hernandez
  *@version 6.0
  */
 public class KeyboardEvent extends Event {

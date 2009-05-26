@@ -31,7 +31,7 @@ import java.util.Comparator;
  *- Lexicographical comparison, which uses the String class' compareTo method. 
  *- Comparison by length, where shorter strings precede longer ones (compare method returns the difference in length).
  *
- *@author Andrés Quiroz Hernández
+ *@author Andres Quiroz Hernandez
  *@version 6.0
  */
 public class StringComparator implements Comparator<String> {
