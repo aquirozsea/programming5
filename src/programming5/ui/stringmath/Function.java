@@ -24,7 +24,7 @@ package programming5.ui.stringmath;
 /**
  *The classes in the stringmath package allow defining and operating on mathematical expressions according to operator rules and precedence, 
  *providing the string representations that reflect all of the operations performed, using the toString method. This class defines a 
- *functional expressión f(x), where x is an expression.
+ *functional expression f(x), where x is an expression.
  *@author Andres Quiroz Hernandez
  *@version 6.0
  */

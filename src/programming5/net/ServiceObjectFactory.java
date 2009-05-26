@@ -25,8 +25,8 @@ package programming5.net;
  *A class that implements this interface is expected to return instances of ServiceObjects, which in turn are expected 
  *to provide a specific service to a client in a client/server system. ServiceObject implementations and protocols are 
  *application specific.
- *@author Andrés Quiroz Hernández
- *@version 5.0
+ *@author Andres Quiroz Hernandez
+ *@version 6.0
  */
 public interface ServiceObjectFactory {
     
