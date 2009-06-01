@@ -322,42 +322,42 @@ public class Prompt {
     /**
      * Static version of ask
      */
-    public static String staticAsk(String prompt) {
+    public static String askStatic(String prompt) {
         return (new Prompt()).ask(prompt);
     }
 
     /**
      * Static version of askInt
      */
-    public static int staticAskInt(String prompt) {
+    public static int askIntStatic(String prompt) {
         return (new Prompt()).askInt(prompt);
     }
 
     /**
      * Static version of askLong
      */
-    public static long staticAskLong(String prompt) {
+    public static long askLongStatic(String prompt) {
         return (new Prompt()).askLong(prompt);
     }
 
     /**
      * Static version of askFloat
      */
-    public static float staticAskFloat(String prompt) {
+    public static float askFloatStatic(String prompt) {
         return (new Prompt()).askFloat(prompt);
     }
 
     /**
      * Static version of askDouble
      */
-    public static double staticAskDouble(String prompt) {
+    public static double askDoubleStatic(String prompt) {
         return (new Prompt()).askDouble(prompt);
     }
 
     /**
      * Static version of pause
      */
-    public static void staticPause() {
+    public static void pauseStatic() {
         (new Prompt()).pause();
     }
 
