@@ -23,6 +23,7 @@ package programming5.net.sockets;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import programming5.net.NetworkException;
 import programming5.net.ServerDaemon;
 import programming5.net.ServiceObjectFactory;
@@ -77,16 +78,24 @@ public class TCPServerDaemon extends ServerDaemon {
     /**
      *Accepts new clients until the thread is stopped
      */
+    @Override
     public void run() {
         while (listening) {
             try {
-                serverFactory.getServiceObject().newClient(new TCPClient(accepter.accept()));
+                final Socket socket = accepter.accept();
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            serverFactory.getServiceObject().newClient(new TCPClient(socket));
+                        }
+                        catch (NetworkException ne) {
+                            System.err.println("TCPServerDaemon: Couldn't create TCPClient: " + ne.getMessage());
+                        }
+                    }
+                }).start();
             }
             catch (IOException ioe) {
                 System.err.println("TCPServerDaemon: Couldn't accept connection: " + ioe.getMessage());
-            }
-            catch (NetworkException ne) {
-                System.err.println("TCPServerDaemon: Couldn't create TCPClient: " + ne.getMessage());
             }
         }
     }
