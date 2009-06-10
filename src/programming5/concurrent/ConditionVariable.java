@@ -82,21 +82,33 @@ public class ConditionVariable implements Condition {
      *@return true if the condition is true and false otherwise
      */
     public synchronized boolean await(long timeout, TimeUnit timeUnit) throws InterruptedException {
-        long timeoutTime;
-        switch (timeUnit) {
-            case MICROSECONDS: timeoutTime = timeout/1000;
-                break;
-            case MILLISECONDS: timeoutTime = timeout;
-                break;
-            case NANOSECONDS: timeoutTime = timeout/1000000;
-                break;
-            case SECONDS: timeoutTime = timeout*1000;
-                break;
-            default: timeoutTime = 0;
-        }
-        long time = System.currentTimeMillis();
         if (!condition) {
-            wait(timeoutTime);
+            wait(toMilliseconds(timeout, timeUnit));
+        }
+        return condition;
+    }
+
+    /**
+     *Waits on the condition until signaled or a timeout of the given length in the given time unit occurs.
+     *If interrupted, will resume waiting for the remaining amount of time, or unitl signaled.
+     *@return true if the condition is true and false otherwise
+     */
+    public synchronized boolean awaitUninterruptibly(long timeout, TimeUnit timeUnit) {
+        long timeoutMillis = toMilliseconds(timeout, timeUnit);
+        boolean waiting = !condition;
+        while (waiting) {
+            long startTime = System.currentTimeMillis();
+            try {
+                wait(timeoutMillis);
+                waiting = false;
+            }
+            catch (InterruptedException ie) {
+                long stopTime = System.currentTimeMillis();
+                timeoutMillis -= (stopTime - startTime);
+                if (timeoutMillis <= 0) {
+                    waiting = false;
+                }
+            }
         }
         return condition;
     }
@@ -155,6 +167,28 @@ public class ConditionVariable implements Condition {
         if (condition) {
             condition = false;
         }
+    }
+
+    private long toMilliseconds(long time, TimeUnit timeUnit) {
+        long ret;
+        switch (timeUnit) {
+            case MICROSECONDS: ret = time / 1000;
+                break;
+            case MILLISECONDS: ret = time;
+                break;
+            case NANOSECONDS: ret = time / 1000000;
+                break;
+            case SECONDS: ret = time * 1000;
+                break;
+            case MINUTES: ret = time * 60000;
+                break;
+            case HOURS: ret = time * 3600000;
+                break;
+            case DAYS: ret = time * 86400000;
+                break;
+            default: ret = 0;
+        }
+        return ret;
     }
     
 }
