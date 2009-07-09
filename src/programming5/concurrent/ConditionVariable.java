@@ -34,6 +34,7 @@ import java.util.concurrent.locks.Condition;
 public class ConditionVariable implements Condition {
     
     boolean condition = false;
+    long waitTime = 0;
     
     public ConditionVariable() {
     }
@@ -42,8 +43,11 @@ public class ConditionVariable implements Condition {
      *Waits on this condition until signaled or interrupted
      */
     public synchronized void await() throws InterruptedException {
+        waitTime = 0;
         if (!condition) {
+            long startTime = System.currentTimeMillis();
             wait();
+            waitTime = System.currentTimeMillis() - startTime;
         }
     }
 
@@ -51,14 +55,17 @@ public class ConditionVariable implements Condition {
      *Waits on the conditioned until signaled, even if interrupted
      */
     public synchronized void awaitUninterruptibly() {
+        waitTime = 0;
         boolean waiting = !condition;
         while (waiting) {
+            long startTime = System.currentTimeMillis();
             try {
                 wait();
             }
             catch (InterruptedException ie) {
             }
             finally {
+                waitTime += (System.currentTimeMillis() - startTime);
                 waiting = !condition;
             }
         }
@@ -71,8 +78,10 @@ public class ConditionVariable implements Condition {
     public synchronized long awaitNanos(long timeout) throws InterruptedException {
         long timeoutTime = timeout/1000000;
         long time = System.currentTimeMillis();
+        waitTime = 0;
         if (!condition) {
             wait(timeoutTime);
+            waitTime = System.currentTimeMillis() - time;
         }
         return 1000000 * (timeoutTime - System.currentTimeMillis() + time);
     }
@@ -82,8 +91,11 @@ public class ConditionVariable implements Condition {
      *@return true if the condition is true and false otherwise
      */
     public synchronized boolean await(long timeout, TimeUnit timeUnit) throws InterruptedException {
+        waitTime = 0;
         if (!condition) {
+            long startTime = System.currentTimeMillis();
             wait(toMilliseconds(timeout, timeUnit));
+            waitTime = System.currentTimeMillis() - startTime;
         }
         return condition;
     }
@@ -96,10 +108,12 @@ public class ConditionVariable implements Condition {
     public synchronized boolean awaitUninterruptibly(long timeout, TimeUnit timeUnit) {
         long timeoutMillis = toMilliseconds(timeout, timeUnit);
         boolean waiting = !condition;
+        waitTime = 0;
         while (waiting) {
             long startTime = System.currentTimeMillis();
             try {
                 wait(timeoutMillis);
+                waitTime += (System.currentTimeMillis() - startTime);
                 waiting = false;
             }
             catch (InterruptedException ie) {
@@ -120,8 +134,10 @@ public class ConditionVariable implements Condition {
     public synchronized boolean awaitUntil(Date date) throws InterruptedException {
         long time = System.currentTimeMillis();
         long timeoutTime = date.getTime() - time;
+        waitTime = 0;
         if (!condition) {
             wait(timeoutTime);
+            waitTime = System.currentTimeMillis() - time;
         }
         return condition;
     }
@@ -167,6 +183,13 @@ public class ConditionVariable implements Condition {
         if (condition) {
             condition = false;
         }
+    }
+
+    /**
+     * @return the time in milliseconds spent waiting during the last await method call
+     */
+    public long getTimeWaited() {
+        return waitTime;
     }
 
     private long toMilliseconds(long time, TimeUnit timeUnit) {
