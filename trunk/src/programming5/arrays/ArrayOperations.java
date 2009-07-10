@@ -26,7 +26,7 @@ import java.util.Comparator;
 /**
  *This class provides additional array manipulation operations to those in java.util.Arrays.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.0.1
  */
 public abstract class ArrayOperations {
     
@@ -143,6 +143,39 @@ public abstract class ArrayOperations {
             sum += elem;
         }
         return sum;
+    }
+
+    /**
+     * @return the product of the elements of the given array
+     */
+    public static final long product(int[] array) {
+        long product = 1;
+        for (int elem : array) {
+            product *= elem;
+        }
+        return product;
+    }
+
+    /**
+     * @return the product of the elements of the given array
+     */
+    public static final double product(float[] array) {
+        double product = 1;
+        for (float elem : array) {
+            product *= elem;
+        }
+        return product;
+    }
+
+    /**
+     * @return the product of the elements of the given array
+     */
+    public static final double product(double[] array) {
+        double product = 1;
+        for (double elem : array) {
+            product *= elem;
+        }
+        return product;
     }
     
     /**
