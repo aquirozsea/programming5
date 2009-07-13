@@ -50,7 +50,28 @@ public class NDArray<E> {
             step[i-1] = step[i] * sizes[i];
         }
         array = new Object[step[0] * sizes[0]];
-        System.out.println(array.length);
+    }
+
+    public NDArray(E initializer, int... dimSizes) {
+        dimensions = dimSizes.length;
+        sizes = dimSizes;
+        step = new int[dimensions];
+        step[dimensions-1] = 1;
+        for (int i = dimensions-1; i > 0; i--) {
+            step[i-1] = step[i] * sizes[i];
+        }
+        array = new Object[step[0] * sizes[0]];
+        initialize(initializer);
+    }
+
+    /**
+     * Initializes the array with the value given
+     * @param initializer the value that will fill the array
+     */
+    public void initialize(E initializer) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = initializer;
+        }
     }
 
     /**
