@@ -2322,4 +2322,123 @@ public abstract class ArrayOperations {
         return ret;
     }
 
+    /**
+     * Element by element comparison of two arrays
+     * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
+     */
+    public static final boolean areEqual(int[] array1, int[] array2) {
+        boolean ret = (array1.length == array2.length);
+        if (ret) {
+            for (int i = 0; i < array1.length; i++) {
+                if (array1[i] != array2[i]) {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Element by element comparison of two arrays
+     * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
+     */
+    public static final boolean areEqual(long[] array1, long[] array2) {
+        boolean ret = (array1.length == array2.length);
+        if (ret) {
+            for (int i = 0; i < array1.length; i++) {
+                if (array1[i] != array2[i]) {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Element by element comparison of two arrays
+     * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
+     */
+    public static final boolean areEqual(float[] array1, float[] array2) {
+        boolean ret = (array1.length == array2.length);
+        if (ret) {
+            for (int i = 0; i < array1.length; i++) {
+                if (array1[i] != array2[i]) {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Element by element comparison of two arrays
+     * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
+     */
+    public static final boolean areEqual(double[] array1, double[] array2) {
+        boolean ret = (array1.length == array2.length);
+        if (ret) {
+            for (int i = 0; i < array1.length; i++) {
+                if (array1[i] != array2[i]) {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Element by element comparison of two arrays
+     * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
+     */
+    public static final boolean areEqual(byte[] array1, byte[] array2) {
+        boolean ret = (array1.length == array2.length);
+        if (ret) {
+            for (int i = 0; i < array1.length; i++) {
+                if (array1[i] != array2[i]) {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Element by element comparison of two arrays
+     * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
+     */
+    public static final boolean areEqual(char[] array1, char[] array2) {
+        boolean ret = (array1.length == array2.length);
+        if (ret) {
+            for (int i = 0; i < array1.length; i++) {
+                if (array1[i] != array2[i]) {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Element by element comparison of two arrays
+     * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
+     */
+    public static final boolean areEqual(Object[] array1, Object[] array2) {
+        boolean ret = (array1.length == array2.length);
+        if (ret) {
+            for (int i = 0; i < array1.length; i++) {
+                if (!array1[i].equals(array2[i])) {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
 }
