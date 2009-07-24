@@ -56,4 +56,37 @@ public abstract class CollectionUtils {
         return ret;
     }
 
+    public static final <T, U extends T> Vector<T> vectorFromElement(U element, Class<T> type) {
+        Vector<T> ret = new Vector<T>();
+        ret.add(element);
+        return ret;
+    }
+
+    /**
+     * Downcasts the given vector of an derived class to a vector of a base class
+     * @param vector the vector to downcast
+     * @return a new vector of the base type with all the elements of the input vector
+     */
+    public static final <T, U extends T> Vector<T> downcastVector(Vector<U> vector, Class<T> type) {
+        Vector<T> ret = new Vector<T>();
+        for (U element : vector) {
+            ret.add(element);
+        }
+        return ret;
+    }
+
+    /**
+     * Upcasts the given vector of a base class, if possible, to a vector of an derived class.
+     * @param vector the vector to upcast, which must be composed of elements of the derived class
+     * @return a new vector of the derived class with all the elements of the input vector
+     * @throws ClassCastException if the elements of the input vector are not of the derived class
+     */
+    public static final <T, U extends T> Vector<U> upcastVector(Vector<T> vector) {
+        Vector<U> ret = new Vector<U>();
+        for (T element : vector) {
+            ret.add((U) element);
+        }
+        return ret;
+    }
+
 }
