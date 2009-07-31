@@ -23,7 +23,7 @@ package programming5.io;
 
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * An instrumented thread is a derived thread object that provides methods to keep timing information during
@@ -34,8 +34,8 @@ import java.util.Vector;
  */
 public class InstrumentedThread extends Thread {
 
-    static final Vector<InstrumentedThread> threadList = new Vector<InstrumentedThread>();
-    static final Hashtable<String, Vector<InstrumentedThread>> groupThreadLists = new Hashtable<String, Vector<InstrumentedThread>>();
+    static final ArrayList<InstrumentedThread> threadList = new ArrayList<InstrumentedThread>();
+    static final Hashtable<String, ArrayList<InstrumentedThread>> groupThreadLists = new Hashtable<String, ArrayList<InstrumentedThread>>();
 
     Hashtable<String, Long> callLog = new Hashtable<String, Long>();
     Runnable runnableClass = null;
@@ -46,7 +46,9 @@ public class InstrumentedThread extends Thread {
      */
     public InstrumentedThread(String name) {
         super(name);
-        threadList.add(this);
+        synchronized (threadList) {
+            threadList.add(this);
+        }
     }
 
     /**
@@ -58,7 +60,9 @@ public class InstrumentedThread extends Thread {
     public InstrumentedThread(Runnable target, String name) {
         super(name);
         runnableClass = target;
-        threadList.add(this);
+        synchronized (threadList) {
+            threadList.add(this);
+        }
     }
 
     /**
@@ -68,12 +72,14 @@ public class InstrumentedThread extends Thread {
      */
     public InstrumentedThread(ThreadGroup group, String name) {
         super(group, name);
-        Vector<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
+        ArrayList<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
         if (groupThreadList == null) {
-            groupThreadList = new Vector<InstrumentedThread>();
+            groupThreadList = new ArrayList<InstrumentedThread>();
             groupThreadLists.put(group.getName(), groupThreadList);
         }
-        groupThreadList.add(this);
+        synchronized (groupThreadList) {
+            groupThreadList.add(this);
+        }
     }
 
     /**
@@ -86,12 +92,14 @@ public class InstrumentedThread extends Thread {
     public InstrumentedThread(ThreadGroup group, Runnable target, String name) {
         super(group, name);
         runnableClass = target;
-        Vector<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
+        ArrayList<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
         if (groupThreadList == null) {
-            groupThreadList = new Vector<InstrumentedThread>();
+            groupThreadList = new ArrayList<InstrumentedThread>();
             groupThreadLists.put(group.getName(), groupThreadList);
         }
-        groupThreadList.add(this);
+        synchronized (groupThreadList) {
+            groupThreadList.add(this);
+        }
     }
 
     @Override
@@ -109,8 +117,10 @@ public class InstrumentedThread extends Thread {
      * to use directly.
      */
     public void printLog() {
-        System.out.println("Thread " + this.getName() + ": ");
-        System.out.println(callLog);
+        if (callLog.size() > 0) {
+            System.out.println("Thread " + this.getName() + ": ");
+            System.out.println(callLog);
+        }
     }
 
     /**
@@ -120,7 +130,10 @@ public class InstrumentedThread extends Thread {
      * a block of code
      */
     public static void startInvocation(String methodName) {
-        ((InstrumentedThread) Thread.currentThread()).callLog.put(methodName, System.currentTimeMillis());
+        Thread currentThread = Thread.currentThread();
+        if (currentThread instanceof InstrumentedThread) {
+            ((InstrumentedThread) currentThread).callLog.put(methodName, System.currentTimeMillis());
+        }
     }
 
     /**
@@ -131,9 +144,12 @@ public class InstrumentedThread extends Thread {
      */
     public static void endInvocation(String methodName) {
         long endTime = System.currentTimeMillis();
-        Long startTime = ((InstrumentedThread) Thread.currentThread()).callLog.get(methodName);
-        if (startTime != null) {
-            ((InstrumentedThread) Thread.currentThread()).callLog.put(methodName, endTime - startTime);
+        Thread currentThread = Thread.currentThread();
+        if (currentThread instanceof InstrumentedThread) {
+            Long startTime = ((InstrumentedThread) currentThread).callLog.get(methodName);
+            if (startTime != null) {
+                ((InstrumentedThread) Thread.currentThread()).callLog.put(methodName, endTime - startTime);
+            }
         }
     }
     
@@ -143,13 +159,15 @@ public class InstrumentedThread extends Thread {
      * @param threadName the name of the thread to print
      */
     public static void printLog(String threadName) {
-        for (InstrumentedThread t : threadList) {
-            if (t.getName().equals(threadName)) {
-                try {
-                    t.join();
+        synchronized (threadList) {
+            for (InstrumentedThread t : threadList) {
+                if (t.getName().equals(threadName)) {
+                    try {
+                        t.join();
+                    }
+                    catch (InterruptedException ie) {}
+                    t.printLog();
                 }
-                catch (InterruptedException ie) {}
-                t.printLog();
             }
         }
     }
@@ -161,15 +179,17 @@ public class InstrumentedThread extends Thread {
      * @param threadName the name of the thread to print
      */
     public static void printLog(ThreadGroup group, String threadName) {
-        Vector<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
+        ArrayList<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
         if (groupThreadList != null) {
-            for (InstrumentedThread t : groupThreadList) {
-                if (t.getName().equals(threadName)) {
-                    try {
-                        t.join();
+            synchronized (groupThreadList) {
+                for (InstrumentedThread t : groupThreadList) {
+                    if (t.getName().equals(threadName)) {
+                        try {
+                            t.join();
+                        }
+                        catch (InterruptedException ie) {}
+                        t.printLog();
                     }
-                    catch (InterruptedException ie) {}
-                    t.printLog();
                 }
             }
         }
@@ -182,10 +202,49 @@ public class InstrumentedThread extends Thread {
      * @param threadName the name of the thread to print
      */
     public static void printLog(String groupName, String threadName) {
-        Vector<InstrumentedThread> groupThreadList = groupThreadLists.get(groupName);
+        ArrayList<InstrumentedThread> groupThreadList = groupThreadLists.get(groupName);
         if (groupThreadList != null) {
-            for (InstrumentedThread t : groupThreadList) {
-                if (t.getName().equals(threadName)) {
+            synchronized (groupThreadList) {
+                for (InstrumentedThread t : groupThreadList) {
+                    if (t.getName().equals(threadName)) {
+                        try {
+                            t.join();
+                        }
+                        catch (InterruptedException ie) {}
+                        t.printLog();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Waits until all ungrouped instrumented threads exit and then prints the timing
+     * information for their methods recorded to System.out. Does nothing if no threads were started.
+     */
+    public static void printLogs() {
+        synchronized (threadList) {
+            for (InstrumentedThread t : threadList) {
+                try {
+                    t.join();
+                }
+                catch (InterruptedException ie) {
+                }
+                t.printLog();
+            }
+        }
+    }
+
+    /**
+     * Waits until all instrumented threads from the given group exit and then prints the timing
+     * information for their methods recorded to System.out. Does nothing if no threads were started.
+     * @param group the group for which the thread logs will be printed
+     */
+    public static void printLogs(ThreadGroup group) {
+        ArrayList<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
+        if (groupThreadList != null) {
+            synchronized (groupThreadList) {
+                for (InstrumentedThread t : groupThreadList) {
                     try {
                         t.join();
                     }
@@ -197,52 +256,21 @@ public class InstrumentedThread extends Thread {
     }
 
     /**
-     * Waits until all ungrouped instrumented threads exit and then prints the timing
-     * information for their methods recorded to System.out. Does nothing if no threads were started.
-     */
-    public static void printLogs() {
-        for (InstrumentedThread t : threadList) {
-            try {
-                t.join();
-            }
-            catch (InterruptedException ie) {
-            }
-            t.printLog();
-        }
-    }
-
-    /**
-     * Waits until all instrumented threads from the given group exit and then prints the timing
-     * information for their methods recorded to System.out. Does nothing if no threads were started.
-     * @param group the group for which the thread logs will be printed
-     */
-    public static void printLogs(ThreadGroup group) {
-        Vector<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
-        if (groupThreadList != null) {
-            for (InstrumentedThread t : groupThreadList) {
-                try {
-                    t.join();
-                }
-                catch (InterruptedException ie) {}
-                t.printLog();
-            }
-        }
-    }
-
-    /**
      * Waits until all instrumented threads from the given group exit and then prints the timing
      * information for their methods recorded to System.out. Does nothing if no threads were started.
      * @param groupName the name of the group for which the thread logs will be printed
      */
     public static void printLogs(String groupName) {
-        Vector<InstrumentedThread> groupThreadList = groupThreadLists.get(groupName);
+        ArrayList<InstrumentedThread> groupThreadList = groupThreadLists.get(groupName);
         if (groupThreadList != null) {
-            for (InstrumentedThread t : groupThreadList) {
-                try {
-                    t.join();
+            synchronized (groupThreadList) {
+                for (InstrumentedThread t : groupThreadList) {
+                    try {
+                        t.join();
+                    }
+                    catch (InterruptedException ie) {}
+                    t.printLog();
                 }
-                catch (InterruptedException ie) {}
-                t.printLog();
             }
         }
     }
@@ -255,14 +283,18 @@ public class InstrumentedThread extends Thread {
      */
     public static void saveLogs(String filename) throws IOException {
         FileHandler logFile = new FileHandler(filename, FileHandler.HandleMode.OVERWRITE);
-        for (InstrumentedThread t : threadList) {
-            try {
-                t.join();
+        synchronized (threadList) {
+            for (InstrumentedThread t : threadList) {
+                try {
+                    t.join();
+                }
+                catch (InterruptedException ie) {
+                }
+                if (t.callLog.size() > 0) {
+                    logFile.writeln("Thread " + t.getName());
+                    logFile.writeln(t.callLog.toString());
+                }
             }
-            catch (InterruptedException ie) {
-            }
-            logFile.writeln("Thread " + t.getName() + ": ");
-            logFile.writeln(t.callLog.toString());
         }
         logFile.close();
     }
@@ -276,16 +308,20 @@ public class InstrumentedThread extends Thread {
      */
     public static void saveLogs(String filename, ThreadGroup group) throws IOException {
         FileHandler logFile = new FileHandler(filename, FileHandler.HandleMode.OVERWRITE);
-        Vector<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
+        ArrayList<InstrumentedThread> groupThreadList = groupThreadLists.get(group.getName());
         if (groupThreadList != null) {
-            for (InstrumentedThread t : groupThreadList) {
-                try {
-                    t.join();
+            synchronized (groupThreadList) {
+                for (InstrumentedThread t : groupThreadList) {
+                    try {
+                        t.join();
+                    }
+                    catch (InterruptedException ie) {
+                    }
+                    if (t.callLog.size() > 0) {
+                        logFile.writeln("Thread " + t.getName());
+                        logFile.writeln(t.callLog.toString());
+                    }
                 }
-                catch (InterruptedException ie) {
-                }
-                logFile.writeln("Thread " + t.getName() + ": ");
-                logFile.writeln(t.callLog.toString());
             }
         }
         logFile.close();
@@ -300,16 +336,20 @@ public class InstrumentedThread extends Thread {
      */
     public static void saveLogs(String filename, String groupName) throws IOException {
         FileHandler logFile = new FileHandler(filename, FileHandler.HandleMode.OVERWRITE);
-        Vector<InstrumentedThread> groupThreadList = groupThreadLists.get(groupName);
+        ArrayList<InstrumentedThread> groupThreadList = groupThreadLists.get(groupName);
         if (groupThreadList != null) {
-            for (InstrumentedThread t : groupThreadList) {
-                try {
-                    t.join();
+            synchronized (groupThreadList) {
+                for (InstrumentedThread t : groupThreadList) {
+                    try {
+                        t.join();
+                    }
+                    catch (InterruptedException ie) {
+                    }
+                    if (t.callLog.size() > 0) {
+                        logFile.writeln("Thread " + t.getName());
+                        logFile.writeln(t.callLog.toString());
+                    }
                 }
-                catch (InterruptedException ie) {
-                }
-                logFile.writeln("Thread " + t.getName() + ": ");
-                logFile.writeln(t.callLog.toString());
             }
         }
         logFile.close();
