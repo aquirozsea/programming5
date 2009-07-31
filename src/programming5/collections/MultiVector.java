@@ -700,7 +700,43 @@ public class MultiVector<E, D> implements Serializable, Cloneable, Map<E, D> {
      *Unsupported method from Map interface
      */
     public Set<Map.Entry<E, D>> entrySet() {
-        throw new UnsupportedOperationException();
+        Set<Map.Entry<E, D>> ret = new HashSet<Map.Entry<E, D>>();
+        for (int i = 0; i < this.size(); i++) {
+            Map.Entry<E, D> entry = new MultiVectorEntry<E, D>(vector1.elementAt(i), vector2.elementAt(i));
+            ret.add(entry);
+        }
+        return ret;
+    }
+
+    /**
+     * Implementation of the Map.Entry interface
+     */
+    public class MultiVectorEntry<E, D> implements Map.Entry<E, D> {
+
+        E firstElement;
+        D secondElement;
+
+        public MultiVectorEntry(E key, D value) {
+            firstElement = key;
+            secondElement = value;
+        }
+
+        public E getKey() {
+            return firstElement;
+        }
+
+        public D getValue() {
+            return secondElement;
+        }
+
+        /**
+         * Sets a new value in the entry object, but does not modify the original multi vector object
+         */
+        public D setValue(D newValue) {
+            secondElement = newValue;
+            return secondElement;
+        }
+
     }
     
 }
