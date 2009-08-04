@@ -57,7 +57,8 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
     protected Hashtable<String, OutputStream> outStreams = new Hashtable<String, OutputStream>();
     protected Hashtable<String, Integer> localPorts = new Hashtable<String, Integer>();
     protected Hashtable<String, TCPReceiver> receivers = new Hashtable<String, TCPReceiver>();
-    protected ReceiveRequest currentRequest = new ReceiveRequest();
+    final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
+//    protected ReceiveRequest currentRequest = new ReceiveRequest();
     
     private static final int ANYPORT = -1;
     private boolean useSeparator = true;
@@ -285,10 +286,9 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
      */
     public byte[] receiveBytes() {
         byte[] ret = null;
-        ReceiveRequest myRequest;
-        synchronized (currentRequest) {
-            currentRequest.activate();
-            myRequest = currentRequest;
+        ReceiveRequest myRequest = new ReceiveRequest();
+        synchronized (receiveRequests) {
+            receiveRequests.add(myRequest);
         }
         myRequest.awaitUninterruptibly();
         if (myRequest.isDone()) {
@@ -313,12 +313,13 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
      */
     public byte[] receiveBytes(long timeout) throws InterruptedException {
         byte[] ret = null;
-        if (!currentRequest.isActive()) {
-            currentRequest.activate();
+        ReceiveRequest myRequest = new ReceiveRequest();
+        synchronized (receiveRequests) {
+            receiveRequests.add(myRequest);
         }
-        currentRequest.await(timeout, TimeUnit.MILLISECONDS);
-        if (currentRequest.isDone()) {
-            ret = currentRequest.getMessage();
+        myRequest.await(timeout, TimeUnit.MILLISECONDS);
+        if (myRequest.isDone()) {
+            ret = myRequest.getMessage();
         }
         return ret;
     }
@@ -348,13 +349,14 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
     /**
      *Overrides method in Publisher to include the response to the receive methods
      */
+    @Override
     public void fireEvent(MessageArrivedEvent event) {
         super.fireEvent(event);
-        synchronized (currentRequest) {
-            if (currentRequest.isActive()) {
-                currentRequest.setMessage(event.getMessageBytes());
-                currentRequest = new ReceiveRequest();
+        synchronized (receiveRequests) {
+            for (ReceiveRequest request : receiveRequests) {
+                request.setMessage(event.getMessageBytes());
             }
+            receiveRequests.clear();
         }
     }
     
