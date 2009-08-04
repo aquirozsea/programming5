@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Hashtable;
 import programming5.arrays.ArrayOperations;
 import programming5.net.MessageArrivedEvent;
 import programming5.net.Publisher;
@@ -41,8 +44,10 @@ public class UDPReceiver extends ReceivingThread {
     protected DatagramSocket socket;
     protected InetAddress lastAddress = null;
     protected int lastPort = NO_PORT;
-    private final int PACKET_SIZE = 65507;
+    private final int PACKET_SIZE = 65536;
     private boolean listening = true;
+
+    private Hashtable<InetAddress, byte[][]> assembly = new Hashtable<InetAddress, byte[][]>();
     
     public static final int NO_PORT = -1;
     
@@ -61,41 +66,88 @@ public class UDPReceiver extends ReceivingThread {
             bytesMessage = null;
             try {
                 socket.receive(p);
-                packetSize = p.getLength();
-                if (packetSize > 0) {
-                    bytesMessage = p.getData();
-                    bytesMessage = ArrayOperations.prefix(bytesMessage, packetSize);
-                }
-                lastAddress = p.getAddress();
-                lastPort = p.getPort();
-                while (packetSize == PACKET_SIZE) {
-                    p = new DatagramPacket(buf, buf.length);
-                    socket.receive(p);
-                    packetSize = p.getLength();
-                    if (packetSize > 0) {
-                        bytesMessage = ArrayOperations.join(bytesMessage, ArrayOperations.prefix(p.getData(), packetSize));
+                boolean messageComplete = depacketize(p);
+                if (messageComplete) {
+                    lastAddress = p.getAddress();
+                    lastPort = p.getPort();
+                    byte[][] toAssemble = assembly.get(lastAddress);
+                    bytesMessage = toAssemble[0];
+                    for (int i = 1; i < toAssemble.length; i++) {
+                        bytesMessage = ArrayOperations.join(bytesMessage, toAssemble[i]);
                     }
+                    ref.fireEvent(new MessageArrivedEvent(bytesMessage));
                 }
+                buf = new byte[PACKET_SIZE];
             }
             catch (IOException io) {
-                System.out.println("UDPReceiver: " + io.getMessage());
-                end();
+                if (listening) {
+                    System.out.println("UDPReceiver: Error while receiving: " + io.getMessage());
+                    listening = false;
+                }
             }
-            ref.fireEvent(new MessageArrivedEvent(bytesMessage));
-            buf = new byte[PACKET_SIZE];
         }
     }
 
+    /**
+     * @return the last address from which a message was received
+     * @deprecated One of two methods to obtain a full address, in between which another message could be
+     * received and the address could change; use getReplyAddress instead, which returns a URL
+     */
+    @Deprecated
     public InetAddress getLastAddress() {
         return lastAddress;
     }
 
+    /**
+     * @return the last port from which a message was received
+     * @deprecated One of two methods to obtain a full address, in between which another message could be
+     * received and the address could change; use getReplyAddress instead, which returns a URL string
+     */
+    @Deprecated
     public int getLastPort() {
         return lastPort;
     }
+
+    /**
+     * @return the last address from which a message was received; if no message was received when called, 
+     * null will be returned.
+     */
+    public String getReplyAddress() {
+        String ret = null;
+        try {
+            if (lastAddress != null) {
+                ret = new URL("//" + lastAddress.toString() + ":" + Integer.toString(lastPort)).toString();
+            }
+        }
+        catch (MalformedURLException murle) {}
+        finally {
+            return ret;
+        }
+    }
     
-    // TODO: Make graceful exit
     public void end() {
         listening = false;
     }
+
+    private boolean depacketize(DatagramPacket packet) {
+        int packetSize = packet.getLength();
+        byte[] bytesMessage;
+        boolean ret = false;
+        if (packetSize > 0) {
+            InetAddress host = packet.getAddress();
+            byte[][] parts = assembly.get(host);
+            boolean initialize = (parts == null);
+            bytesMessage = packet.getData();
+            bytesMessage = ArrayOperations.prefix(bytesMessage, packetSize);
+//            int separatorIndex = ArrayOperations.seqFind(":".getBytes(), bytesMessage);
+//            if (separatorIndex > 0) {
+//                String sequenceString = new String(ArrayOperations.subArray(bytesMessage, 0, separatorIndex));
+//                String[] numbers = sequenceString.split("/");
+//
+//            }
+        }
+
+        return ret;
+    }
+
 }
