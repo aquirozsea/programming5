@@ -48,7 +48,7 @@ import programming5.net.ReceiveRequest;
  *@see programming5.net.PluggableClient
  *@see java.net.Socket
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.0.1
  */
 public class TCPClient extends Publisher<MessageArrivedEvent> implements MessagingClient {
     
@@ -57,8 +57,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
     protected Hashtable<String, OutputStream> outStreams = new Hashtable<String, OutputStream>();
     protected Hashtable<String, Integer> localPorts = new Hashtable<String, Integer>();
     protected Hashtable<String, TCPReceiver> receivers = new Hashtable<String, TCPReceiver>();
-    final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
-//    protected ReceiveRequest currentRequest = new ReceiveRequest();
+    protected final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
     
     private static final int ANYPORT = -1;
     private boolean useSeparator = true;
@@ -384,7 +383,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
         }
     }
     
-    private class TCPReceiver extends Thread {
+    protected class TCPReceiver extends Thread {
         
         Socket socketRef;
         InputStream in;
@@ -404,6 +403,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
             }
         }
         
+        @Override
         public void run() {
             byte[] fromServer = new byte[BUFFER_SIZE];
             byte[] bytesMsg = null; // = new byte[0];
@@ -483,12 +483,13 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
         
     }
     
-    private class CompatibleTCPReceiver extends TCPReceiver {
+    protected class CompatibleTCPReceiver extends TCPReceiver {
         
         public CompatibleTCPReceiver(Socket mySocket, String myHost) throws NetworkException {
             super(mySocket, myHost);
         }
         
+        @Override
         public void run() {
             byte[] fromServer = new byte[BUFFER_SIZE];
             byte[] bytesMsg = null;
