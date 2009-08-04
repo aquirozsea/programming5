@@ -26,12 +26,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import programming5.arrays.ArrayOperations;
 import programming5.net.MessageArrivedEvent;
@@ -41,163 +39,227 @@ import programming5.net.Publisher;
 import programming5.net.ReceiveRequest;
 
 /**
- *This class is the UDP socket implementation of the MessagingClient. Following its design, it can be instantiated 
- *for a specific host destination; since datagram sockets aren't meant to be opened for a single destination, an 
- *additional send method is provided that has the destination as a parameter to override the predefined host. If a 
- *host is not specified in the object's instantiation, a default server address and port will be held for communication, 
- *until a message is received, in which case the MessagingClient send method will reply to the last host from which the 
- *message was received; again, this behavior can be overridden with the specific send method.
+ *This class is the UDP socket implementation of the MessagingClient. It can be instantiated as a free client
+ *(for sending to any host using the send to url method), directed to a specific host destination (to use the
+ *default send methods, as well as the send to url method), or bound to a remote client using a connection 
+ *protocol and a UDPServer. There are changes in the connection and messaging implementations from previous 
+ *versions of this class, which will be pointed out where they affect the API functionality.
  *@see programming5.net.MessagingClient
  *@see #send(String, String, int)
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
 public class UDPClient extends Publisher<MessageArrivedEvent> implements MessagingClient {
     
     protected DatagramSocket socket;
-    protected InetAddress hostAddress;
+    protected InetAddress hostAddress = null;
     protected int hostPort, localPort;
     protected UDPReceiver receiver;
     protected boolean listening = false;
     protected boolean fixedHost, connect;
-    protected Queue<byte[]> msgQueue = new LinkedList<byte[]>();
-    protected ReceiveRequest currentRequest = new ReceiveRequest();
-    private Timer timeoutTimer = new Timer();
-    
-    private static final String DEFAULTHOST = "localhost";
-    private static final int DEFAULTREMOTEPORT = 4445;
-    private static final int ANYPORT = -1;
-    private static final int MAX_SIZE = 65507;
+    protected final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
+
+    protected static final int MAX_SIZE = 65525;
+    private static final byte[] SEPARATOR = ":".getBytes();
+    private static final byte[] SLASH = "/".getBytes();
+    private static final byte[] CONNECT_MSG = "CON".getBytes();
     
     /**
-     *Creates a unicast client for which the local port will be determined by an available port at the time of connection.
-     *Messages will be sent by default to the localhost on port 4445.
+     *Creates an unicast client for which the local port will be determined by an available port.
+     *The new client will be listening on this port upon creation (no need to call establishConnection),
+     *unlike previous implementations of this class.
      */
     public UDPClient() throws NetworkException {
         try {
-            hostAddress = InetAddress.getByName(DEFAULTHOST);
-        } 
-        catch (UnknownHostException e) {
-            throw new NetworkException("UDPClient: Constructor: Unknown host");
+            socket = new DatagramSocket();
+            localPort = socket.getLocalPort();
+            fixedHost = false;
+            receiver = new UDPReceiver(this, socket);
+            receiver.start();
         }
-        hostPort = DEFAULTREMOTEPORT;
-        localPort = ANYPORT;
-        fixedHost = false;
+        catch (SocketException se) {
+            throw new NetworkException("UDPClient: Could not create datagram socket: " + se.getMessage());
+        }
     }
     
     /**
-     *Creates a unicast client on the specified local port. Messages will be sent by default to the localhost on port 4445.
+     *Creates an unbound unicast client, to be bound on the specified local port at the time of connection.
+     *The new client will be listening on this port upon creation (no need to call establishConnection),
+     *unlike previous implementations of this class.
+     *@param localPort the local port on which the socket will be created to receive messages
      */
     public UDPClient(int localPort) throws NetworkException {
         try {
-            hostAddress = InetAddress.getByName(DEFAULTHOST);
-        } 
-        catch (UnknownHostException e) {
-            throw new NetworkException("UDPClient: Constructor: Unknown host");
+            this.localPort = localPort;
+            socket = new DatagramSocket(localPort);
+            fixedHost = false;
+            receiver = new UDPReceiver(this, socket);
+            receiver.start();
         }
-        this.localPort = localPort;
-        hostPort = DEFAULTREMOTEPORT;
-        fixedHost = false;
+        catch (SocketException se) {
+            throw new NetworkException("UDPClient: Could not create datagram socket on given port: " + se.getMessage());
+        }
     }
     
     /**
      *Creates a unicast client for the specified host address and remote port, to be bound on an available local port.
-     *When establishConnection is called, no special connect message will be sent.
+     *Will not use a connect protocol for use with a UDPServer class.
+     *The new client will be listening on this port upon creation (no need to call establishConnection),
+     *unlike previous implementations of this class.
+     *@param address the host address to which messages will be sent by default; if not valid, the default
+     *address will not be set and the client will only function as a free client
+     *@param remotePort the port to which messages will be sent by default
      */
     public UDPClient(String address, int remotePort) throws NetworkException {
         try {
-            hostAddress = InetAddress.getByName(address);
-        } 
-        catch (UnknownHostException e) {
-            throw new NetworkException("UDPClient: Constructor: Unknown host");
+            socket = new DatagramSocket();
+            localPort = socket.getLocalPort();
+            try {
+                hostAddress = InetAddress.getByName(address);
+                fixedHost = true;
+                hostPort = remotePort;
+            }
+            catch (UnknownHostException uhe) {
+                hostAddress = null;
+                fixedHost = false;
+            }
+            connect = false;
+            receiver = new UDPReceiver(this, socket);
+            receiver.start();
         }
-        hostPort = remotePort;
-        localPort = ANYPORT;
-        fixedHost = true;
-        connect = false;
+        catch (SocketException se) {
+            throw new NetworkException("UDPClient: Could not create datagram socket: " + se.getMessage());
+        }
     }
     
     /**
-     *Creates a unicast client for the specified host address and the specified ports. When establishConnection is
-     *called, no special connect message will be sent.
+     *Creates a unicast client for the specified host address and the specified ports. 
+     *Will not use a connect protocol for use with a UDPServer class.
+     *The new client will be listening on this port upon creation (no need to call establishConnection),
+     *unlike in previous implementations of this class.
+     *@param address the host address to which messages will be sent by default; if not valid, the default
+     *address will not be set and the client will only function as a free client
+     *@param remotePort the port to which messages will be sent by default
+     *@param localPort the local port on which the socket will be created to receive messages
      */
     public UDPClient(String address, int remotePort, int localPort) throws NetworkException {
         try {
-            hostAddress = InetAddress.getByName(address);
-        } 
-        catch (UnknownHostException e) {
-            throw new NetworkException("UDPClient: Constructor: Unknown host");
+            this.localPort = localPort;
+            socket = new DatagramSocket(localPort);
+            try {
+                hostAddress = InetAddress.getByName(address);
+                fixedHost = true;
+                hostPort = remotePort;
+            }
+            catch (UnknownHostException uhe) {
+                hostAddress = null;
+                fixedHost = false;
+            }
+            connect = false;
+            receiver = new UDPReceiver(this, socket);
+            receiver.start();
         }
-        hostPort = remotePort;
-        this.localPort = localPort;
-        fixedHost = true;
-        connect = false;
+        catch (SocketException se) {
+            throw new NetworkException("UDPClient: Could not create datagram socket on given port: " + se.getMessage());
+        }
     }
     
     /**
-     *Creates a unicast client for the specified host address and remote port, to be bound on an available local port.
-     *When establishConnection is called, a special connect message will be sent if useConnectMsg parameter is true.
+     *Creates a unicast client for the specified host address and remote port, to be bound on an available 
+     *local port. If specified, will use a connect protocol to establish connection with a UDPServer class
+     *(requires calling establishConnection method).
+     *The new client will be listening on this port upon creation, unlike previous implementations of this
+     *class.
+     *@param address the host address to which messages will be sent by default; if not valid, the default
+     *address will not be set and the client will only function as a free client
+     *@param remotePort the port to which messages will be sent by default
+     *@param useConnectMsg if true, the connect protocol will be used with a UDP server at the given remote
+     *address and port
+     *@see #establishConnection
      */
     public UDPClient(String address, int remotePort, boolean useConnectMsg) throws NetworkException {
         try {
-            hostAddress = InetAddress.getByName(address);
-        } 
-        catch (UnknownHostException e) {
-            throw new NetworkException("UDPClient: Constructor: Unknown host");
+            socket = new DatagramSocket();
+            localPort = socket.getLocalPort();
+            try {
+                hostAddress = InetAddress.getByName(address);
+                fixedHost = true;
+                hostPort = remotePort;
+                connect = useConnectMsg;
+            }
+            catch (UnknownHostException uhe) {
+                hostAddress = null;
+                fixedHost = false;
+                connect = false;
+            }
+            receiver = new UDPReceiver(this, socket);
+            receiver.start();
         }
-        hostPort = remotePort;
-        localPort = ANYPORT;
-        fixedHost = true;
-        connect = useConnectMsg;
+        catch (SocketException se) {
+            throw new NetworkException("UDPClient: Could not create datagram socket: " + se.getMessage());
+        }
     }
     
     /**
      *Creates a unicast client for the specified host address and the specified ports. When establishConnection is
      *called, a special connect message will be sent if useConnectMsg parameter is true.
+     *The new client will be listening on this port upon creation, unlike previous implementations of this
+     *class.
+     *@param address the host address to which messages will be sent by default; if not valid, the default
+     *address will not be set and the client will only function as a free client
+     *@param remotePort the port to which messages will be sent by default
+     *@param localPort the local port on which the socket will be created to receive messages
+     *@param useConnectMsg if true, the connect protocol will be used with a UDP server at the given remote
+     *address and port
      */
     public UDPClient(String address, int remotePort, int localPort, boolean useConnectMsg) throws NetworkException {
         try {
-            hostAddress = InetAddress.getByName(address);
-        } 
-        catch (UnknownHostException e) {
-            throw new NetworkException("UDPClient: Constructor: Unknown host");
-        }
-        hostPort = remotePort;
-        this.localPort = localPort;
-        fixedHost = true;
-        connect = useConnectMsg;
-    }
-    
-    /**
-     *Implementation of the PluggableClient interface. Opens the datagram socket and
-     *starts the receiver thread. Will send a special connect message if specified in the instantiation.
-     */
-    public void establishConnection() throws NetworkException {
-        try {
-            if (localPort == ANYPORT) {
-                socket = new DatagramSocket();
-                localPort = socket.getLocalPort();
-            } 
-            else {
-                socket = new DatagramSocket(localPort);
+            this.localPort = localPort;
+            socket = new DatagramSocket(localPort);
+            try {
+                hostAddress = InetAddress.getByName(address);
+                fixedHost = true;
+                hostPort = remotePort;
+                connect = useConnectMsg;
+            }
+            catch (UnknownHostException uhe) {
+                hostAddress = null;
+                fixedHost = false;
+                connect = false;
             }
             receiver = new UDPReceiver(this, socket);
             receiver.start();
-            if (fixedHost && connect) {
-                fixedHost = false;
-                send("Connect");
+        }
+        catch (SocketException se) {
+            throw new NetworkException("UDPClient: Could not create datagram socket on the given port: " + se.getMessage());
+        }
+    }
+    
+    /**
+     *Implementation of the PluggableClient interface. Implements a connection protocol for use with a
+     *UDPServer class if this behavior has been specified upon instantiation of the UDP client. If not, a
+     *call to this method will do nothing.
+     */
+    public void establishConnection() throws NetworkException {
+        if (fixedHost && connect) {
+            try {
+                sendConnectMessage();
                 String portMsg = receive();
-                fixedHost = true;
                 try {
                     hostPort = Integer.parseInt(portMsg);
-                } 
+                }
                 catch (Exception e) {
-                    throw new NetworkException("UDPClient: Problem in connection with host: Bad port message");
+                    fixedHost = false;
+                    throw new NetworkException("UDPClient: Problem in connection with host: Bad port message: " + e.getMessage());
                 }
             }
-        } 
-        catch (IOException e) {
-            throw new NetworkException("UDPClient: Can't establish connection: " + e.getMessage());
+            catch (IOException ioe) {
+                fixedHost = false;
+                throw new NetworkException("UDPClient: Could not establish connection: " + ioe.getMessage());
+            }
+            finally {
+                connect = false;
+            }
         }
     }
     
@@ -206,17 +268,33 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *@param msg the message string to send to the host
      */
     public void send(String msg) throws NetworkException {
-        byte[][] packets = packetize(msg.getBytes());
-        for (byte[] packet : packets) {
-            DatagramPacket p = new DatagramPacket(packet, packet.length, hostAddress, hostPort);
-            try {
-                socket.send(p);
-            } 
-            catch (IOException e) {
-                throw new NetworkException("UDPClient: Couldn't send message: " + e.getMessage());
+        if (fixedHost) {
+            byte[][] packets = packetize(msg.getBytes());
+            for (byte[] packet : packets) {
+                DatagramPacket p = new DatagramPacket(packet, packet.length, hostAddress, hostPort);
+                try {
+                    socket.send(p);
+                }
+                catch (IOException e) {
+                    throw new NetworkException("UDPClient: Could not send message: " + e.getMessage());
+                }
             }
-            
         }
+        else throw new NetworkException("UDPClient: Could not send message: No remote host specified");
+    }
+
+    /**
+     * Allows a client to send the message to the host from which the last message was received. Recommended 
+     * for synchronous protocols where no interleaved messages are expected.
+     * This class is particular to UDPClient
+     * @param msg the message to send to the host
+     */
+    public void reply(String msg) throws NetworkException {
+        String destAddress = receiver.getReplyAddress();
+        if (destAddress != null) {
+            send(msg, destAddress);
+        }
+        else throw new NetworkException("UDPClient: Cannot send reply: No message to reply to");
     }
     
     /**
@@ -229,19 +307,19 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
         InetAddress dest = null;
         try {
             dest = InetAddress.getByName(address);
+            byte[][] packets = packetize(msg.getBytes());
+            for (byte[] packet : packets) {
+                DatagramPacket p = new DatagramPacket(packet, packet.length, dest, port);
+                try {
+                    socket.send(p);
+                }
+                catch (IOException e) {
+                    System.out.println("UDPClient: Could not send message: " + e.getMessage());
+                }
+            }
         } 
         catch (UnknownHostException e) {
-            throw new NetworkException("UDPClient: Can't send message: Unknown host");
-        }
-        byte[][] packets = packetize(msg.getBytes());
-        for (byte[] packet : packets) {
-            DatagramPacket p = new DatagramPacket(packet, packet.length, dest, port);
-            try {
-                socket.send(p);
-            } 
-            catch (IOException e) {
-                System.out.println("UDPClient: Couldn't send message: " + e.getMessage());
-            }
+            throw new NetworkException("UDPClient: Cannot send message: Unknown host");
         }
     }
     
@@ -250,16 +328,33 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *@param bytesMessage the packet of bytes to send to the host
      */
     public void send(byte[] bytesMessage) throws NetworkException {
-        byte[][] packets = packetize(bytesMessage);
-        for (byte[] packet : packets) {
-            DatagramPacket p = new DatagramPacket(packet, packet.length, hostAddress, hostPort);
-            try {
-                socket.send(p);
-            } 
-            catch (IOException e) {
-                throw new NetworkException("UDPClient: Couldn't send message: " + e.getMessage());
+        if (fixedHost) {
+            byte[][] packets = packetize(bytesMessage);
+            for (byte[] packet : packets) {
+                DatagramPacket p = new DatagramPacket(packet, packet.length, hostAddress, hostPort);
+                try {
+                    socket.send(p);
+                }
+                catch (IOException e) {
+                    throw new NetworkException("UDPClient: Could not send message: " + e.getMessage());
+                }
             }
         }
+        else throw new NetworkException("UDPClient: Could not send message: No remote host specified");
+    }
+
+    /**
+     * Allows a client to send the message to the host from which the last message was received. Recommended
+     * for synchronous protocols where no interleaved messages are expected.
+     * This class is particular to UDPClient
+     * @param msg the message to send to the host
+     */
+    public void reply(byte[] msg) throws NetworkException {
+        String destAddress = receiver.getReplyAddress();
+        if (destAddress != null) {
+            send(msg, destAddress);
+        }
+        else throw new NetworkException("UDPClient: Cannot send reply: No message to reply to");
     }
     
     /**
@@ -272,19 +367,19 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
         InetAddress dest = null;
         try {
             dest = InetAddress.getByName(address);
+            byte[][] packets = packetize(bytesMessage);
+            for (byte[] packet : packets) {
+                DatagramPacket p = new DatagramPacket(packet, packet.length, dest, port);
+                try {
+                    socket.send(p);
+                }
+                catch (IOException e) {
+                    System.out.println("UDPClient: Could not send message: " + e.getMessage());
+                }
+            }
         } 
         catch (UnknownHostException e) {
-            throw new NetworkException("UDPClient: Can't send message: Unknown host");
-        }
-        byte[][] packets = packetize(bytesMessage);
-        for (byte[] packet : packets) {
-            DatagramPacket p = new DatagramPacket(packet, packet.length, dest, port);
-            try {
-                socket.send(p);
-            } 
-            catch (IOException e) {
-                System.out.println("UDPClient: Couldn't send message: " + e.getMessage());
-            }
+            throw new NetworkException("UDPClient: Cannot send message: Unknown host");
         }
     }
 
@@ -322,19 +417,13 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      */
     public byte[] receiveBytes() {
         byte[] ret = null;
-        if (msgQueue.size() > 0) {
-            ret = msgQueue.poll();
-        } 
-        else {
-            ReceiveRequest myRequest;
-            synchronized (currentRequest) {
-                currentRequest.activate();
-                myRequest = currentRequest;
-            }
-            myRequest.awaitUninterruptibly();
-            if (myRequest.isDone()) {
-                ret = myRequest.getMessage();
-            }
+        ReceiveRequest myRequest = new ReceiveRequest();
+        synchronized (receiveRequests) {
+            receiveRequests.add(myRequest);
+        }
+        myRequest.awaitUninterruptibly();
+        if (myRequest.isDone()) {
+            ret = myRequest.getMessage();
         }
         return ret;
     }
@@ -354,19 +443,13 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      */
     public byte[] receiveBytes(long timeout) throws InterruptedException {
         byte[] ret = null;
-        if (msgQueue.size() > 0) {
-            ret = msgQueue.poll();
-        } 
-        else {
-            ReceiveRequest myRequest;
-            synchronized (currentRequest) {
-                currentRequest.activate();
-                myRequest = currentRequest;
-            }
-            myRequest.await(timeout, TimeUnit.MILLISECONDS);
-            if (myRequest.isDone()) {
-                ret = myRequest.getMessage();
-            }
+        ReceiveRequest myRequest = new ReceiveRequest();
+        synchronized (receiveRequests) {
+            receiveRequests.add(myRequest);
+        }
+        myRequest.await(timeout, TimeUnit.MILLISECONDS);
+        if (myRequest.isDone()) {
+            ret = myRequest.getMessage();
         }
         return ret;
     }
@@ -392,6 +475,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     /**
      *Overrides method in Publisher to include the response to the receive methods
      */
+    @Override
     public void fireEvent(MessageArrivedEvent event) {
         if (event != null) {
             if (!connect) {
@@ -400,19 +484,11 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
             else {
                 connect = false;
             }
-            byte[] messageBytes = event.getMessageBytes();
-            synchronized (currentRequest) {
-                if (currentRequest.isActive()) {
-                    currentRequest.setMessage(event.getMessageBytes());
-                    currentRequest = new ReceiveRequest();
+            synchronized (receiveRequests) {
+                for (ReceiveRequest request : receiveRequests) {
+                    request.setMessage(event.getMessageBytes());
                 }
-                else {
-                    msgQueue.add(messageBytes);
-                }
-            }
-            if (!fixedHost) {
-                hostAddress = receiver.getLastAddress();
-                hostPort = receiver.getLastPort();
+                receiveRequests.clear();
             }
         }
     }
@@ -430,6 +506,14 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     public int getHostPort() {
         return hostPort;
     }
+
+    /**
+     * @return the url of the host from which the last message was received; null if no messages have been
+     * received
+     */
+    public String getReplyAddress() {
+        return receiver.getReplyAddress();
+    }
     
     /**
      *@return the local port on which the client is listening
@@ -437,15 +521,27 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     public int getLocalPort() {
         return localPort;
     }
+
+    private void sendConnectMessage() throws IOException {
+        byte[] connectMsg = ArrayOperations.join(SEPARATOR, CONNECT_MSG);
+        DatagramPacket packet = new DatagramPacket(connectMsg, connectMsg.length, hostAddress, hostPort);
+        socket.send(packet);
+    }
     
     private byte[][] packetize(byte[] bytesMsg) {
         int msgSize = bytesMsg.length;
         int numPackets = (int) (msgSize / MAX_SIZE) + 1;
+        String npString = Integer.toString(numPackets);
         byte[][] ret = new byte[numPackets][];
         for (int i = 0; i < numPackets - 1; i++) {
-            ret[i] = ArrayOperations.subArray(bytesMsg, i*MAX_SIZE, (i+1)*MAX_SIZE);
+            String index = Integer.toString(i+1);
+            byte[] header = (index + "/" + npString).getBytes();
+            byte[] packet = ArrayOperations.subArray(bytesMsg, i*MAX_SIZE, (i+1)*MAX_SIZE);
+            ret[i] = ArrayOperations.join(header, packet);
         }
-        ret[numPackets-1] = ArrayOperations.suffix(bytesMsg, (numPackets-1)*MAX_SIZE);
+        byte[] header = (npString + "/" + npString).getBytes();
+        byte[] packet = ArrayOperations.suffix(bytesMsg, (numPackets-1)*MAX_SIZE);
+        ret[numPackets-1] = ArrayOperations.join(header, packet);
         return ret;
     }
 }
