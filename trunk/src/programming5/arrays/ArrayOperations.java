@@ -1837,6 +1837,37 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array in the position given
      */
+    public static final byte[] insert(byte value, byte[] array, int pos) throws ArrayIndexOutOfBoundsException {
+        byte[] ret = new byte[array.length+1];
+        for (int i = 0; i < pos; i++) {
+            ret[i] = array[i];
+        }
+        ret[pos] = value;
+        for (int i = pos; i < array.length; i++) {
+            ret[i+1] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     *@return new array where value is inserted into array at the end
+     */
+    public static final byte[] addElement(byte elem, byte[] array) {
+        byte[] ret = null;
+        if (array == null) {
+            array = new byte[1];
+            array[0] = elem;
+            ret = array;
+        }
+        else {
+            ret = insert(elem, array, array.length);
+        }
+        return ret;
+    }
+
+    /**
+     *@return new array where value is inserted into array in the position given
+     */
     public static final float[] insert(float value, float[] array, int pos) throws ArrayIndexOutOfBoundsException {
         float[] ret = new float[array.length+1];
         for (int i = 0; i < pos; i++) {
