@@ -21,68 +21,183 @@
 
 package programming5.io;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * This class simply provides a wrapper for conditionally printing to System.out for debugging purposes
+ * This class simply provides a static wrapper for conditionally printing to System.out for debugging purposes.
+ * (This class is incompatible with the Debug class up until release 18)
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
-public class Debug {
+public abstract class Debug {
 
-    boolean debugging;
+    private static Set<String> activeSet = new HashSet<String>();
 
     /**
-     * @param active Indicates if debug printing is active (true) or not (false)
+     * Identifies the default debug set
      */
-    public Debug(boolean active) {
-        debugging = active;
-    }
+    public static final String DEFAULT_SET = "Default";
 
     /**
-     * @param active Indicates if debug printing should be set to active (true) or not (false)
+     * Enables debug printing for debug statements identified with the given name
+     * @param setName the identifier of the debug set
      */
-    public void setActive(boolean active) {
-        debugging = active;
-    }
-
-    public boolean isActive() {
-        return debugging;
+    public static void enable(String setName) {
+        activeSet.add(setName);
     }
 
     /**
-     * Changes the current behavior of the debug object
-     * @return true if the object is now active; false if it was previously active
+     * Enables debug printing for debug statements using the default print methods
      */
-    public boolean toggleActive() {
-        debugging = !debugging;
-        return debugging;
+    public static void enableDefault() {
+        activeSet.add(DEFAULT_SET);
     }
 
     /**
-     * Prints the given message if the object is active
+     * @param setName the identifier of the debug set
+     * @return whether printing is enabled for the given debug set
+     */
+    public static boolean isEnabled(String setName) {
+        return activeSet.contains(setName);
+    }
+    
+    /**
+     * @return whether printing is enabled for the default debug set
+     */
+    public static boolean isEnabled() {
+        return isEnabled(DEFAULT_SET);
+    }
+
+    /**
+     * Disables debug printing for the given debug set
+     * @param setName the identifier of the debug set
+     */
+    public static void disable(String setName) {
+        activeSet.remove(setName);
+    }
+
+    /**
+     * Disables printing for the default debug set
+     */
+    public static void disableDefault() {
+        activeSet.remove(DEFAULT_SET);
+    }
+
+    /**
+     * Disables printing for all currently enabled debug sets
+     */
+    public static void disableAll() {
+        activeSet.clear();
+    }
+
+    /**
+     * Sets the state of the given debug set to the state given by the indicator
+     * @param setName the identifier of the debug set
+     * @param enable true to enable the given set, and false to disable it
+     */
+    public static void setEnabled(String setName, boolean enable) {
+        if (enable) {
+            enable(setName);
+        }
+        else {
+            disable(setName);
+        }
+    }
+
+    /**
+     * Sets the state of the default debug set to the state given by the indicator
+     * @param enable true to enable the given set, and false to disable it
+     */
+    public static void setEnabledDefault(boolean enable) {
+        setEnabled(DEFAULT_SET, enable);
+    }
+
+    /**
+     * Changes the current behavior of the debug object for the given debug set
+     * @param setName the identifier of the debug set
+     * @return true if the set is now enabled; false if it was previously enabled
+     */
+    public static boolean toggleActive(String setName) {
+        boolean ret;
+        if (activeSet.contains(setName)) {
+            activeSet.remove(setName);
+            ret = false;
+        }
+        else {
+            activeSet.add(setName);
+            ret = true;
+        }
+        return ret;
+    }
+
+    /**
+     * Changes the current behavior of the debug object for the default debug set
+     * @return true if the set is now enabled; false if it was previously enabled
+     */
+    public static boolean toggleActive() {
+        return toggleActive(DEFAULT_SET);
+    }
+
+    /**
+     * Prints the given message if the given set is enabled
+     * @param setName the identifier of the debug set
      * @param message the message to print (uses System.out.print())
      */
-    public void print(Object message) {
-        if (debugging) {
+    public static void print(Object message, String setName) {
+        if (isEnabled(setName)) {
             System.out.print(message);
         }
     }
 
     /**
-     * Prints the given message if the object is active
+     * Prints the given message if the default set is enabled
+     * @param message the message to print (uses System.out.print())
+     */
+    public static void print(Object message) {
+        if (isEnabled()) {
+            System.out.print(message);
+        }
+    }
+
+    /**
+     * Prints the given message if the default set is enabled
      * @param message the message to print (uses System.out.println())
      */
-    public void println(Object message) {
-        if (debugging) {
+    public static void println(Object message) {
+        if (isEnabled()) {
             System.out.println(message);
         }
     }
 
     /**
-     * Prints the stack trace of the given exception if the object is active
+     * Prints the given message if the given set is enabled
+     * @param message the message to print (uses System.out.println())
+     * @param setName the identifier of the debug set
+     */
+    public static void println(Object message, String setName) {
+        if (isEnabled(setName)) {
+            System.out.println(message);
+        }
+    }
+
+    /**
+     * Prints the stack trace of the given exception if the default set is active
      * @param ex the exception on which printStackTrace is called
      */
-    public void stackTrace(Exception ex) {
-        if (debugging) {
+    public static void printStackTrace(Exception ex) {
+        if (isEnabled()) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Prints the stack trace of the given exception if the given set is active
+     * @param ex the exception on which printStackTrace is called
+     * @param setName the identifier of the debug set
+     */
+    public static void printStackTrace(Exception ex, String setName) {
+        if (isEnabled(setName)) {
             ex.printStackTrace();
         }
     }
