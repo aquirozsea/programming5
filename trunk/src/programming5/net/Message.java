@@ -21,6 +21,7 @@
 
 package programming5.net;
 
+import java.util.Vector;
 import programming5.arrays.ArrayOperations;
 
 /**
@@ -41,6 +42,11 @@ import programming5.arrays.ArrayOperations;
 public class Message {
     
     protected String header, body[];
+    protected byte[][] bytePayload = null;
+
+    private static final byte colByte = ":".getBytes()[0];
+    private static final byte sepByte = "&".getBytes()[0];
+    private static final byte escByte = "/".getBytes()[0];
     
     /**
      *Constructor to create an empty message object
@@ -53,7 +59,7 @@ public class Message {
     /**
      *Constructor to create a message object decoding a message string of an
      *unknown size. The message must follow the correct syntax or an exception is
-     *thrown.
+     *thrown. Will not be interpreted to carry a byte payload.
      */
     public Message(String message) throws MalformedMessageException {
         if (message != null) {
@@ -80,7 +86,7 @@ public class Message {
     /**
      *Constructor to create a message object decoding a message string of an
      *expected size. The message must follow the correct syntax and correspond
-     *with the size, or an exception is thrown.
+     *with the size, or an exception is thrown. Will not be interpreted to carry a byte payload.
      */
     public Message(String message, int size) throws MalformedMessageException {
         body = message.split(":", 2);
@@ -97,6 +103,57 @@ public class Message {
             }
         } 
         else throw new MalformedMessageException("Message start not found");
+    }
+
+    public Message(byte[] messageBytes) throws MalformedMessageException {
+        int separatorIndex = ArrayOperations.seqFind(sepByte, messageBytes);
+        byte[] stringPart = ArrayOperations.replicate(messageBytes);
+        byte[] bytePart;
+        if (separatorIndex == 0) {
+            throw new MalformedMessageException("Message: Could not construct message: Illegal start");
+        }
+        else {
+            while (separatorIndex > 0 && separatorIndex < (messageBytes.length-1)) {
+                if (messageBytes[separatorIndex+1] == sepByte) {
+                    stringPart = ArrayOperations.prefix(messageBytes, separatorIndex);
+                    bytePart = ArrayOperations.suffix(messageBytes, separatorIndex+2);
+                    // Decode byte part
+                    Vector<Integer> separators = new Vector<Integer>();
+                    int start = 0;
+                    separatorIndex = ArrayOperations.seqFind(sepByte, bytePart);
+                    while (separatorIndex > 0 && separatorIndex < (bytePart.length-1)) {
+                        if (bytePart[separatorIndex+1] == sepByte) {
+                            separators.add(separatorIndex);
+//                            byte[] inflatedItem = ArrayOperations.subArray(bytePart, start, separatorIndex);
+//                            bytePayload = (byte[][]) ArrayOperations.addElement(inflatedItem, bytePayload);
+                        }
+                        start = separatorIndex + 2;
+                        separatorIndex = ArrayOperations.seqFind(sepByte, bytePart, start);
+                    }
+                    bytePayload = new byte[separators.size()+1][];
+                    start = 0;
+                    for (int i = 0; i < separators.size(); i++) {
+                        int separator = separators.elementAt(i);
+                        bytePayload[i] = ArrayOperations.subArray(bytePart, start, separator);
+                        start = separator + 2;
+                    }
+                    bytePayload[bytePayload.length-1] = ArrayOperations.subArray(bytePart, start, bytePart.length);
+                }
+                else {
+                    separatorIndex = ArrayOperations.seqFind(sepByte, messageBytes, separatorIndex+2);
+                }
+            }
+            // Decode string part
+            String messageString = new String(stringPart);
+            Message msgObject = new Message(messageString);
+            this.header = msgObject.header;
+            if (msgObject.body != null) {
+                this.body = new String[msgObject.body.length];
+                for (int i = 0; i < msgObject.body.length; i++) {
+                    this.body[i] = msgObject.body[i];
+                }
+            }
+        }
     }
     
     /**
@@ -274,6 +331,21 @@ public class Message {
         }
         return b;
     }
+
+    public byte[] getItemAsByteArray(int index) throws IndexOutOfBoundsException {
+        byte[] ret = null;
+        int bodyLength = (body == null) ? 0 : body.length;
+        if (index < bodyLength) {
+            ret = deflate(body[index]).getBytes();
+        }
+        else if (bytePayload != null) {
+            ret = deflate(bytePayload[index - bodyLength]);
+        }
+        else {
+            throw new IndexOutOfBoundsException("Message: Cannot get given item: Index out of bounds");
+        }
+        return ret;
+    }
     
     /**
      *Sets the message header
@@ -428,6 +500,8 @@ public class Message {
     private String inflate(String item) {
         String ret = item.replaceAll(":/", "://");
         ret = ret.replaceAll("::", ":/:");
+        ret = ret.replaceAll("&/", "&//");
+        ret = ret.replaceAll("&&", "&/&");
         return ret;
     }
     
@@ -435,6 +509,33 @@ public class Message {
      *Reverses the result of inflate method
      */
     private String deflate(String item) {
-        return item.replaceAll(":/", ":");
+        String ret = item.replaceAll(":/", ":");
+        ret = ret.replaceAll("&/", "&");
+        return ret;
     }
+
+    private byte[] inflate(byte[] byteItem) {
+        byte[] ret = ArrayOperations.replicate(byteItem);
+        int separatorIndex = ArrayOperations.seqFind(sepByte, ret);
+        while (separatorIndex >= 0 && separatorIndex < (ret.length-1)) {
+            if (ret[separatorIndex+1] == sepByte || ret[separatorIndex+1] == escByte) {
+                ret = ArrayOperations.insert(escByte, ret, ++separatorIndex);
+            }
+            separatorIndex = ArrayOperations.seqFind(sepByte, ret, separatorIndex+1);
+        }
+        return ret;
+    }
+
+    private byte[] deflate(byte[] byteItem) {
+        byte[] ret = ArrayOperations.replicate(byteItem);
+        int separatorIndex = ArrayOperations.seqFind(sepByte, ret);
+        while (separatorIndex >= 0 && separatorIndex < (ret.length-2)) {
+            if (ret[separatorIndex+1] == escByte) {
+                ret = ArrayOperations.delete(ret, ++separatorIndex);
+            }
+            separatorIndex = ArrayOperations.seqFind(sepByte, ret, separatorIndex);
+        }
+        return ret;
+    }
+
 }
