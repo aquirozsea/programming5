@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.SocketException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
@@ -391,13 +391,13 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *[protocol:]//host:port[/...]
      */
     @Override
-    public void send(String message, String url) throws NetworkException {
+    public void send(String message, String uri) throws NetworkException {
         try {
-            URL urlObj = new URL(url);
+            URI urlObj = new URI(uri);
             this.send(message, urlObj.getHost(), urlObj.getPort());
         }
-        catch (MalformedURLException murle) {
-            throw new NetworkException("UDPClient: Cannot send message: " + murle.getMessage());
+        catch (URISyntaxException use) {
+            throw new NetworkException("UDPClient: Cannot send message: " + use.getMessage());
         }
     }
 
@@ -406,13 +406,13 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *[protocol:]//host:port[/...]
      */
     @Override
-    public void send(byte[] bytesMessage, String url) throws NetworkException {
+    public void send(byte[] bytesMessage, String uri) throws NetworkException {
         try {
-            URL urlObj = new URL(url);
+            URI urlObj = new URI(uri);
             this.send(bytesMessage, urlObj.getHost(), urlObj.getPort());
         }
-        catch (MalformedURLException murle) {
-            throw new NetworkException("UDPClient: Cannot send message: " + murle.getMessage());
+        catch (URISyntaxException use) {
+            throw new NetworkException("UDPClient: Cannot send message: " + use.getMessage());
         }
     }
     

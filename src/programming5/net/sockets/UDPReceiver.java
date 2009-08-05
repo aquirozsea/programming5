@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Hashtable;
 import programming5.arrays.ArrayOperations;
 import programming5.net.MessageArrivedEvent;
@@ -73,6 +73,7 @@ public class UDPReceiver extends ReceivingThread {
                     lastAddress = p.getAddress();
                     lastPort = p.getPort();
                     byte[][] toAssemble = assembly.get(lastAddress);
+                    assembly.remove(lastAddress);
                     bytesMessage = toAssemble[0];
                     for (int i = 1; i < toAssemble.length; i++) {
                         bytesMessage = ArrayOperations.join(bytesMessage, toAssemble[i]);
@@ -118,10 +119,10 @@ public class UDPReceiver extends ReceivingThread {
         String ret = null;
         try {
             if (lastAddress != null) {
-                ret = new URL("//" + lastAddress.toString() + ":" + Integer.toString(lastPort)).toString();
+                ret = new URI("//" + lastAddress.toString() + ":" + Integer.toString(lastPort)).toString();
             }
         }
-        catch (MalformedURLException murle) {}
+        catch (URISyntaxException use) {}
         finally {
             return ret;
         }
