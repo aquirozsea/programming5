@@ -48,6 +48,7 @@ public class UDPReceiver extends ReceivingThread {
     private boolean listening = true;
 
     private Hashtable<InetAddress, byte[][]> assembly = new Hashtable<InetAddress, byte[][]>();
+    private Hashtable<InetAddress, Integer> assemblyCounter = new Hashtable<InetAddress, Integer>();
     
     public static final int NO_PORT = -1;
     
@@ -56,6 +57,7 @@ public class UDPReceiver extends ReceivingThread {
         socket = mySocket;
     }
     
+    @Override
     public void run() {
         byte[] buf = new byte[PACKET_SIZE];
         byte[] bytesMessage;
@@ -139,14 +141,33 @@ public class UDPReceiver extends ReceivingThread {
             boolean initialize = (parts == null);
             bytesMessage = packet.getData();
             bytesMessage = ArrayOperations.prefix(bytesMessage, packetSize);
-//            int separatorIndex = ArrayOperations.seqFind(":".getBytes(), bytesMessage);
-//            if (separatorIndex > 0) {
-//                String sequenceString = new String(ArrayOperations.subArray(bytesMessage, 0, separatorIndex));
-//                String[] numbers = sequenceString.split("/");
-//
-//            }
+            int separatorIndex = ArrayOperations.seqFind(UDPClient.SEPARATOR.getBytes()[0], bytesMessage);
+            if (separatorIndex > 0) {
+                String sequenceString = new String(ArrayOperations.subArray(bytesMessage, 0, separatorIndex));
+                String[] numbers = sequenceString.split("/");
+                if (initialize) {
+                    int total = Integer.parseInt(numbers[1]);
+                    parts = new byte[total][];
+                    assembly.put(host, parts);
+                    assemblyCounter.put(host, total);
+                }
+                int index = Integer.parseInt(numbers[0]);
+                parts[index-1] = ArrayOperations.suffix(bytesMessage, separatorIndex+1);
+                int left = assemblyCounter.get(host);
+                if (left == 1) {
+                    ret = true;
+                    assemblyCounter.remove(host);
+                }
+                else {
+                    assemblyCounter.put(host, left-1);
+                }
+            }
+            else {
+                parts = new byte[1][];
+                parts[0] = ArrayOperations.suffix(bytesMessage, separatorIndex+1);
+                assembly.put(host, parts);
+            }
         }
-
         return ret;
     }
 

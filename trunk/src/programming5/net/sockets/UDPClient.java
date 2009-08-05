@@ -60,9 +60,9 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     protected final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
 
     protected static final int MAX_SIZE = 65525;
-    private static final byte[] SEPARATOR = ":".getBytes();
-    private static final byte[] SLASH = "/".getBytes();
-    private static final byte[] CONNECT_MSG = "CON".getBytes();
+    protected static final String SEPARATOR = ":";
+    protected static final String SLASH = "/";
+    protected static final String CONNECT_MSG = "CON";
     
     /**
      *Creates an unicast client for which the local port will be determined by an available port.
@@ -240,6 +240,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *UDPServer class if this behavior has been specified upon instantiation of the UDP client. If not, a
      *call to this method will do nothing.
      */
+    @Override
     public void establishConnection() throws NetworkException {
         if (fixedHost && connect) {
             try {
@@ -267,6 +268,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *Implementation of the MessagingClient interface
      *@param msg the message string to send to the host
      */
+    @Override
     public void send(String msg) throws NetworkException {
         if (fixedHost) {
             byte[][] packets = packetize(msg.getBytes());
@@ -327,6 +329,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *Implementation of the MessagingClient interface
      *@param bytesMessage the packet of bytes to send to the host
      */
+    @Override
     public void send(byte[] bytesMessage) throws NetworkException {
         if (fixedHost) {
             byte[][] packets = packetize(bytesMessage);
@@ -387,6 +390,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *Implementation of the MessagingClient interface. Sends the given message to the given url, which must be in the format 
      *[protocol:]//host:port[/...]
      */
+    @Override
     public void send(String message, String url) throws NetworkException {
         try {
             URL urlObj = new URL(url);
@@ -401,6 +405,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *Implementation of the MessagingClient interface. Sends the given message to the given url, which must be in the format 
      *[protocol:]//host:port[/...]
      */
+    @Override
     public void send(byte[] bytesMessage, String url) throws NetworkException {
         try {
             URL urlObj = new URL(url);
@@ -415,6 +420,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *Implementation of the MessagingClient interface. Blocking receive until message arrives.
      *@return the message bytes
      */
+    @Override
     public byte[] receiveBytes() {
         byte[] ret = null;
         ReceiveRequest myRequest = new ReceiveRequest();
@@ -432,6 +438,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *Implementation of the MessagingClient interface. Blocking receive until message arrives.
      *@return the message string
      */
+    @Override
     public String receive() {
         return new String(this.receiveBytes());
     }
@@ -441,6 +448,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *@param timeout wait time in milliseconds
      *@return the message bytes
      */
+    @Override
     public byte[] receiveBytes(long timeout) throws InterruptedException {
         byte[] ret = null;
         ReceiveRequest myRequest = new ReceiveRequest();
@@ -459,6 +467,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *@param timeout wait time in milliseconds
      *@return the message string
      */
+    @Override
     public String receive(long timeout) throws InterruptedException {
         return new String(this.receiveBytes(timeout));
     }
@@ -467,6 +476,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *Implementation of the PluggableClient interface. Stops the receiver thread and
      *closes the socket.
      */
+    @Override
     public void endConnection() {
         receiver.end();
         socket.close();
@@ -523,7 +533,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     }
 
     private void sendConnectMessage() throws IOException {
-        byte[] connectMsg = ArrayOperations.join(SEPARATOR, CONNECT_MSG);
+        byte[] connectMsg = (SEPARATOR + CONNECT_MSG).getBytes();
         DatagramPacket packet = new DatagramPacket(connectMsg, connectMsg.length, hostAddress, hostPort);
         socket.send(packet);
     }
@@ -539,7 +549,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
             byte[] packet = ArrayOperations.subArray(bytesMsg, i*MAX_SIZE, (i+1)*MAX_SIZE);
             ret[i] = ArrayOperations.join(header, packet);
         }
-        byte[] header = (npString + "/" + npString).getBytes();
+        byte[] header = (npString + SLASH + npString + SEPARATOR).getBytes();
         byte[] packet = ArrayOperations.suffix(bytesMsg, (numPackets-1)*MAX_SIZE);
         ret[numPackets-1] = ArrayOperations.join(header, packet);
         return ret;
