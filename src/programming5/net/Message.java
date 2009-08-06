@@ -124,8 +124,6 @@ public class Message {
                     while (separatorIndex > 0 && separatorIndex < (bytePart.length-1)) {
                         if (bytePart[separatorIndex+1] == sepByte) {
                             separators.add(separatorIndex);
-//                            byte[] inflatedItem = ArrayOperations.subArray(bytePart, start, separatorIndex);
-//                            bytePayload = (byte[][]) ArrayOperations.addElement(inflatedItem, bytePayload);
                         }
                         start = separatorIndex + 2;
                         separatorIndex = ArrayOperations.seqFind(sepByte, bytePart, start);
@@ -164,7 +162,7 @@ public class Message {
         Message ret = new Message();
         ret.setHeader(header);
         for (Object item : items) {
-            ret.addMessageItem(item.toString());
+            ret.addMessageItem(item);
         }
         return ret;
     }
@@ -353,12 +351,19 @@ public class Message {
     public void setHeader(String header) {
         this.header = header;
     }
+
+    public int addMessageItem(Object item) {
+        System.out.println("Object add");
+        body = ArrayOperations.addElement(inflate(item.toString()), body);
+        return body.length-1;
+    }
     
     /**
      *Adds a string item to the message, following previously added items
      *@return the position of the item in the message, with numbering starting at 0
      */
     public int addMessageItem(String item) {
+        System.out.println("String add");
         body = ArrayOperations.addElement(inflate(item), body);
         return body.length-1;
     }
@@ -369,6 +374,7 @@ public class Message {
      *@return the position of the item in the message, with numbering starting at 0
      */
     public int addMessageItem(int item) {
+        System.out.println("Int add");
         body = ArrayOperations.addElement(inflate(Integer.toString(item)), body);
         return body.length-1;
     }
@@ -423,6 +429,10 @@ public class Message {
     public int addMessageItem(boolean item) {
         body = ArrayOperations.addElement(inflate(Boolean.toString(item)), body);
         return body.length-1;
+    }
+
+    public void addMessageItem(byte[] item) {
+        System.out.println("Called byte array add");
     }
     
     /**
