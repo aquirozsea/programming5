@@ -25,15 +25,17 @@ import programming5.net.MalformedMessageException;
 import programming5.net.Message;
 
 /**
- * Event that represents the progress percentage of a given operation
+ * Event that represents the progress percentage of a given operation. This class is not "castable" from other
+ * event types.
  * @author Andres Quiroz Hernandez
- * @version 6.1
+ * @version 6.11
  * @see programming5.net.Event
+ * @see programming5.net.Event#castTo(java.lang.Class, programming5.net.Event)
  */
 public class ExecutionProgressEvent extends programming5.net.Event {
     
     public static final String TYPE = "EPE";
-    
+
     /** 
      * Creates a new instance of ExecutionProgressEvent with the current progress percentage and a total
      * value (when other that 100pct is used)
@@ -76,6 +78,19 @@ public class ExecutionProgressEvent extends programming5.net.Event {
         if (this.getMessageSize() != 2) {
             throw new MalformedMessageException("ExecutionProgressEvent: Cannot create from byte array: Incorrect number of items");
         }
+    }
+
+    @Override
+    public boolean assertFormat() {
+        boolean ret = true;
+        try {
+            this.getItemAsFloat(0);
+            this.getItemAsInt(1);
+        }
+        catch (MalformedMessageException mme) {
+            ret = false;
+        }
+        return ret;
     }
     
     /**

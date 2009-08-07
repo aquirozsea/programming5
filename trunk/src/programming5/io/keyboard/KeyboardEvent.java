@@ -31,13 +31,19 @@ import programming5.net.Message;
 /**
  *This event is meant to encapsulate a set of key codes that represent the currently pressed keys of a keyboard. It uses
  *the key codes defined in AWT and complements the AWT KeyEvent which only holds information about a single key.
+ *This class is "castable" from events with empty or integer only payloads.
  *@see java.awt.event.KeyEvent
+ *@see programming5.net.Event#castTo(java.lang.Class, programming5.net.Event)
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.11
  */
 public class KeyboardEvent extends Event {
     
     public static final String TYPE_STRING = "KBE";
+
+    public KeyboardEvent() {
+        super(TYPE_STRING);
+    }
     
     /**
      *Creates a keyboard event for the given set of keys (key codes).
@@ -55,6 +61,21 @@ public class KeyboardEvent extends Event {
     @Deprecated
     public KeyboardEvent(Message evtMsg) {
         super(evtMsg);
+    }
+
+    @Override
+    public boolean assertFormat() {
+        boolean ret = true;
+        for (int i = 0; i < this.getMessageSize(); i++) {
+            try {
+                this.getItemAsInt(i);
+            }
+            catch (MalformedMessageException mme) {
+                ret = false;
+                break;
+            }
+        }
+        return ret;
     }
 
     /**

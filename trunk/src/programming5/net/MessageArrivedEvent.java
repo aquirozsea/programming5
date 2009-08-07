@@ -23,15 +23,20 @@ package programming5.net;
 
 /**
  *Special event type for relaying messages asynchronously between application layers. Its payload is a single
- *string message or byte array.
+ *string message or byte array. This class is "castable" from events with at least one item.
  *WARNING: The constructor and accessor semantics for this object differ from those of the Event base class.
  *Please note the specific documentation for each method.
+ *@see programming5.net.Event#castTo(java.lang.Class, programming5.net.Event) 
  *@author Andres Quiroz Hernandez
- *@version 6.1
+ *@version 6.11
  */
 public class MessageArrivedEvent extends programming5.net.Event {
 
     public static final String TYPE_STRING = "MAE";
+
+    protected MessageArrivedEvent() {
+        super(TYPE_STRING);
+    }
 
     /**
      *Creates a new message arrived event with the given message payload.
@@ -82,6 +87,11 @@ public class MessageArrivedEvent extends programming5.net.Event {
             throw new MalformedMessageException("MessageArrivedEvent: Unable to decode: Event must have single payload message");
         }
         return new MessageArrivedEvent(event.getItemAsByteArray(0));
+    }
+
+    @Override
+    public boolean assertFormat() {
+        return (this.getMessageSize() >= 1);
     }
 
     /**
