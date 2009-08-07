@@ -23,6 +23,7 @@ package programming5.io.keyboard;
 
 import java.util.HashSet;
 import java.util.Set;
+import programming5.io.Debug;
 import programming5.net.Event;
 import programming5.net.MalformedMessageException;
 import programming5.net.Message;
@@ -44,28 +45,30 @@ public class KeyboardEvent extends Event {
     public KeyboardEvent(Set<Integer> keyCodes) {
         super(TYPE_STRING);
         for (Integer code : keyCodes) {
-            message.addMessageItem(code);
+            this.addMessageItem(code);
         }
     }
     
     /**
      *Creates a keyboard event for the given event message, encoding the set of keys.
      */
+    @Deprecated
     public KeyboardEvent(Message evtMsg) {
         super(evtMsg);
     }
-    
+
     /**
      *@return the set of key codes for which this object was created
      */
     public Set<Integer> getPressedKeys() {
         Set<Integer> ret = new HashSet<Integer>();
         try {
-            for (int i = 0; i < message.getMessageSize(); i++) {
-                ret.add(message.getItemAsInt(i));
+            for (int i = 0; i < this.getMessageSize(); i++) {
+                ret.add(this.getItemAsInt(i));
             }
         }
         catch (MalformedMessageException mme) {
+            Debug.printStackTrace(mme, "programming5.io.keyboard.KeyboardEvent");
         }
         return ret;
     }

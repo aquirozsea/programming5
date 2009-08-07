@@ -22,55 +22,90 @@
 package programming5.net;
 
 import java.io.IOException;
+import java.io.NotSerializableException;
+import programming5.io.Debug;
 import programming5.io.Serializer;
 
 /**
- *Event that holds the result of an asynchronous operation. It can hold any type of object as the result of the operation, but 
- *if the event string is needed, the object must be serializable.
- *@see #toString
+ *Event that holds the result of an asynchronous operation. As of version 6.1, objects encapsulated into a
+ *CallbackEvent must be serializable.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
 public class CallbackEvent extends programming5.net.Event {
     
     public static final String TYPE_STRING = "CBKE";
     
-    protected Object result = null;
-    
     /**
      *Creates a new callback event for the given result, with the given message.
+     *@param qualifier a message that describes the encapsulated result
+     *@param opResult the operation result
      */
-    public CallbackEvent(String msg, Object opResult) {
+    public CallbackEvent(String qualifier, Object opResult) {
         super(TYPE_STRING);
-        message.addMessageItem(msg);
-        result = opResult;
+        this.addMessageItem(qualifier);
+        if (opResult != null) {
+            try {
+                this.addMessageItem(Serializer.serializeBytes(opResult));
+            }
+            catch (NotSerializableException nse) {
+                throw new IllegalArgumentException("CallbackEvent: Object must be serializable");
+            }
+            catch (IOException ioe) {
+                throw new RuntimeException("CallbackEvent: Could not serialize object: " + ioe.getMessage());
+            }
+        }
     }
     
     /**
-     *Creates a new callback event from the given message object
-     *@throws IllegalArgumentException if the message object does not correspond to this event type or format.
+     *@deprecated this constructor is no longer supported
+     *@throws UnsupportedOperationException
      */
+    @Deprecated
     public CallbackEvent(Message evtMsg) {
         super(evtMsg);
-        if (!message.getHeader().equals(TYPE_STRING)) {
-            throw new IllegalArgumentException("CallbackEvent: Constructor: Message is not of correct type");
+    }
+
+    /**
+     * Creates a callback event by decoding the given byte array
+     * @param eventBytes the encoded event message, which must follow the Message class syntax
+     * @throws programming5.net.MalformedMessageException if the encoded message does not follow the correct
+     * syntax or is of an incorrect type
+     */
+    public CallbackEvent(byte[] eventBytes) throws MalformedMessageException {
+        super(eventBytes);
+        if (!this.getHeader().equals(TYPE_STRING)) {
+            throw new IllegalArgumentException("CallbackEvent: Cannot create from byte array: Not a callback event: Found (" + this.getHeader() + ")");
+        }
+        if (this.getMessageSize() > 2) {
+            throw new MalformedMessageException("CallbackEvent: Cannot create from byte array: Too many items (at most 2)");
         }
     }
     
     /**
      *@return the result message associated with the event
+     *@deprecated different functionality from (deprecated) base class method; use getQualifier instead
      */
+    @Override
+    @Deprecated
     public String getMessage() {
-        return message.getMessageItem(0);
+        return this.getMessageItem(0);
+    }
+
+    /**
+     * @return the descriptive message associated with the event
+     */
+    public String getQualifier() {
+        return this.getMessageItem(0);
     }
     
     /**
      *@return the result object associated with the event
      */
     public Object getResult() throws IOException, ClassNotFoundException {
-        if (result == null) {
-            String serializedObj = message.getMessageItem(1);
-            result = Serializer.deserialize(serializedObj);
+        Object result = null;
+        if (this.getMessageSize() == 2) {
+            result = Serializer.deserialize(this.getItemAsByteArray(1));
         }
         return result;
     }
@@ -79,23 +114,17 @@ public class CallbackEvent extends programming5.net.Event {
      *@return true if the result object associated with this event is an exception
      */
     public boolean isError() {
-        boolean ind = false;
-        if (result != null) {
-            if (result instanceof Exception) {
-                ind = true;
+        boolean ret = false;
+        try {
+            Object result = this.getResult();
+            if (result != null) {
+                if (result instanceof Exception) {
+                    ret = true;
+                }
             }
         }
-        return ind;
-    }
-    
-    public String toString() {
-        String ret = "";
-        try {
-            message.addMessageItem(Serializer.serialize(result));
-            ret = message.getMessage();
-        }
         catch (Exception e) {
-            throw new RuntimeException("CallbackEvent: Couldn't get event string: " + e.getMessage());
+            Debug.printStackTrace(e, "programming5.net.CallbackEvent");
         }
         return ret;
     }

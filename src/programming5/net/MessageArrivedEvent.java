@@ -22,58 +22,100 @@
 package programming5.net;
 
 /**
- *Special event type for network messages. Its payload is a single string message or byte array.
+ *Special event type for relaying messages asynchronously between application layers. Its payload is a single
+ *string message or byte array.
+ *WARNING: The constructor and accessor semantics for this object differ from those of the Event base class.
+ *Please note the specific documentation for each method.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
 public class MessageArrivedEvent extends programming5.net.Event {
-	
-	public static final String TYPE_STRING = "MAE";
-        
-        protected byte[] messageBytes;
-	
-	/**
-         *Creates a new message arrived event with the given message payload.
-         */
-        public MessageArrivedEvent(String msg) {
-		super(TYPE_STRING);
-		message.addMessageItem(msg);
-                messageBytes = msg.getBytes();
-	}
-	
-	/**
-         *Creates a new message arrived event from the given Message object.
-         *@throws java.lang.IllegalArgumentException if the given message isn't of the correct type
-         */
-        public MessageArrivedEvent(Message evtMsg) {
-		super(evtMsg);
-		if (!message.getHeader().equals(TYPE_STRING)) {
-			throw new IllegalArgumentException("MessageArrivedEvent: Constructor: Message is not of correct type");
-		}
-                messageBytes = message.getMessageItem(0).getBytes();
-	}
-        
-        /**
-         *Creates a new message arrived event with the given payload, trasforming the byte array to a String object.
-         */
-        public MessageArrivedEvent(byte[] bytesMsg) {
-            super(TYPE_STRING);
-            message.addMessageItem(new String(bytesMsg));
-            messageBytes = bytesMsg;
+
+    public static final String TYPE_STRING = "MAE";
+
+    /**
+     *Creates a new message arrived event with the given message payload.
+     *WARNING: This differs from the semantics of the corresponding Event constructor, which takes the string
+     *input as the event type. This class automatically assigns an event type to the encoded object.
+     *@param msg the message content encapsulated by the event
+     */
+    public MessageArrivedEvent(String msg) {
+        super(TYPE_STRING);
+        this.addMessageItem(msg);
+    }
+
+    /**
+     *@deprecated this constructor is no longer supported
+     *@throws UnsupportedOperationException
+     */
+    @Deprecated
+    public MessageArrivedEvent(Message evtMsg) {
+        super(evtMsg);
+    }
+
+    /**
+     *Creates a new message arrived event with the given payload, trasforming the byte array to a String 
+     *object.
+     *WARNING: This differs from the semantics of the corresponding Event constructor, which takes the byte
+     *array input as the encoded event. To decode a complete message arrived event byte array, use the static
+     *decode method.
+     *@param bytesMsg the message content encapsulated by the event
+     */
+    public MessageArrivedEvent(byte[] bytesMsg) {
+        super(TYPE_STRING);
+        this.addMessageItem(bytesMsg);
+    }
+
+    /**
+     * Creates a MessageArrivedEvent object from an encoded byte array
+     * @param eventBytes the encoded byte array, which must be an event of the correct type
+     * @return the decoded MessageArrivedEvent object
+     * @throws programming5.net.MalformedMessageException if the byte array does not conform to the correct 
+     * syntax or is of the incorrect type.
+     */
+    public static MessageArrivedEvent decode(byte[] eventBytes) throws MalformedMessageException {
+        Event event = new Event(eventBytes);
+        if (!event.getHeader().equals(TYPE_STRING)) {
+            throw new MalformedMessageException("MessageArrivedEvent: Unable to decode: Not a message arrived event (Found " + event.getHeader() + ")");
         }
-	
-	/**
-         *@return the message associated with this event
-         */
-        public String getMessage() {
-		return message.getMessageItem(0);
-	}
-        
-        /**
-         *@return the byte array representation of the message associated with this event
-         */
-        public byte[] getMessageBytes() {
-            return messageBytes;
+        else if (event.getMessageSize() != 1) {
+            throw new MalformedMessageException("MessageArrivedEvent: Unable to decode: Event must have single payload message");
         }
-	
+        return new MessageArrivedEvent(event.getItemAsByteArray(0));
+    }
+
+    /**
+     *@return the message associated with this event
+     *@deprecated different functionality from (deprecated) base class method; use getContent instead
+     */
+    @Override
+    @Deprecated
+    public String getMessage() {
+        return this.getMessageItem(0);
+    }
+
+    /**
+     * @return the message payload associated with this event
+     */
+    public String getContent() {
+        return this.getMessageItem(0);
+    }
+
+    /**
+     *@return the byte array representation of the message associated with this event
+     *@deprecated different functionality from base class method; use getContentBytes instead
+     */
+    @Override
+    @Deprecated
+    public byte[] getMessageBytes() {
+        return this.getItemAsByteArray(0);
+    }
+
+    /**
+     *@return the byte array representation of the message associated with this event
+     */
+    public byte[] getContentBytes() {
+        return this.getItemAsByteArray(0);
+    }
+
 }
