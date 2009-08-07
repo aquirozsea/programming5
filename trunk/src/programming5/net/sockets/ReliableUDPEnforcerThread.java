@@ -57,7 +57,7 @@ public class ReliableUDPEnforcerThread extends Thread {
                 message = client.receive(timeout);
                 if (message != null) {
                     try {
-                        receivedMsg = new ReliableProtocolMessage(message);
+                        receivedMsg = new ReliableProtocolMessage(message.getBytes());
                         if (receivedMsg.isAcknowledge() && receivedMsg.getSequence() == enforcedMsg.getSequence()) {
                             done = true;
                         }
