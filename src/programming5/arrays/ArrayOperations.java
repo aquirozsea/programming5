@@ -2472,4 +2472,13 @@ public abstract class ArrayOperations {
         return ret;
     }
 
+    /**
+     * @param array an array reference
+     * @return true if the given reference is null or an array of length zero; false otherwise
+     */
+    public static final <T> boolean isEmpty(T[] array) {
+        int length = (array == null) ? 0 : array.length;
+        return (length == 0);
+    }
+
 }
