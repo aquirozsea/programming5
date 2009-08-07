@@ -25,7 +25,7 @@ package programming5.net;
  *As of version 6.1, an Event is a message with a header, which is interpreted as the event type. All events
  *must have a specified type.
  *@author Andres Quiroz Hernandez
- *@version 6.1
+ *@version 6.11
  */
 public class Event extends Message {
     
@@ -60,6 +60,40 @@ public class Event extends Message {
         if (this.header == null) {
             throw new MalformedMessageException("Event: Cannot create event from byte array: No event type");
         }
+    }
+
+    /**
+     * Used to downcast a given event instance (created with an Event class constructor) to a specific event 
+     * class type. This method creates a new instance of the given type and copies the event body into the 
+     * new instance (the original object should be discarded). In order to be "castable" a derived class must 
+     * provide a public default constructor and should override the assertFormat method, to return false for 
+     * events with items that do not match the specific event format and force the castTo method to throw a 
+     * ClassCastException.
+     * @param eventClass the derived Event class type
+     * @param eventObject the object to cast into the new type
+     * @return a new object of the desired type, if the original object is "castable"
+     * @throws java.lang.ClassCastException if the given object is not "castable"
+     */
+    public static <T extends Event> T castTo(Class<T> eventClass, Event eventObject) throws ClassCastException {
+        T ret = null;
+        try {
+            ret = eventClass.newInstance();
+            ret.body = eventObject.body;
+            if (!ret.assertFormat()) {
+                throw new ClassCastException("Event: Cannot cast to given event type: Incorrect event format");
+            }
+        }
+        catch (InstantiationException ie) {
+            throw new ClassCastException("Event: Cannot cast to given type: Default constructor not available: " + ie.getMessage());
+        }
+        catch (IllegalAccessException iae) {
+            throw new ClassCastException("Event: Cannot cast to given type: Illegal access exception: " + iae.getMessage());
+        }
+        return ret;
+    }
+
+    public boolean assertFormat() {
+        return true;
     }
 
     /**

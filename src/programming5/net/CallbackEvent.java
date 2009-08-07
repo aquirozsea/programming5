@@ -28,13 +28,19 @@ import programming5.io.Serializer;
 
 /**
  *Event that holds the result of an asynchronous operation. As of version 6.1, objects encapsulated into a
- *CallbackEvent must be serializable.
+ *CallbackEvent must be serializable. This class is "castable" from events that contain at least two items,
+ *the second of which must be the serialization of an instantiable object.
+ *@see programming5.net.Event#castTo(java.lang.Class, programming5.net.Event)
  *@author Andres Quiroz Hernandez
- *@version 6.1
+ *@version 6.11
  */
 public class CallbackEvent extends programming5.net.Event {
     
     public static final String TYPE_STRING = "CBKE";
+
+    protected CallbackEvent() {
+        super(TYPE_STRING);
+    }
     
     /**
      *Creates a new callback event for the given result, with the given message.
@@ -80,6 +86,20 @@ public class CallbackEvent extends programming5.net.Event {
         if (this.getMessageSize() > 2) {
             throw new MalformedMessageException("CallbackEvent: Cannot create from byte array: Too many items (at most 2)");
         }
+    }
+
+    @Override
+    public boolean assertFormat() {
+        boolean ret = (this.getMessageSize() >= 2);
+        if (ret) {
+            try {
+                this.getResult();
+            }
+            catch (Exception e) {
+                ret = false;
+            }
+        }
+        return ret;
     }
     
     /**
