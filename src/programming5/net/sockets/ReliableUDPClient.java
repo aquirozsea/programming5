@@ -123,14 +123,9 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      *@param msg the message string to send to the host
      */
     public void send(String msg) throws NetworkException {
-        try {
-            ReliableProtocolMessage rmsg = ReliableProtocolMessage.encapsulate(msg, sendSequence++);
-            client.send(rmsg.getMessage());
-            new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
-        }
-        catch (MalformedMessageException mme) {
-            throw new NetworkException("ReliableUDPClient: Bad message: " + mme.getMessage());
-        }
+        ReliableProtocolMessage rmsg = new ReliableProtocolMessage(msg.getBytes(), sendSequence++);
+        client.send(rmsg.getMessageBytes());
+        new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
     }
     
     /**
@@ -138,7 +133,9 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      *@param msgBytes the message bytes, which might be corrupted if it contains characters that are not defined for a String object
      */
     public void send(byte[] msgBytes) throws NetworkException {
-        this.send(new String(msgBytes));
+        ReliableProtocolMessage rmsg = new ReliableProtocolMessage(msgBytes, sendSequence++);
+        client.send(rmsg.getMessageBytes());
+        new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
     }
     
     /**
@@ -154,13 +151,13 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
         boolean ok = false;
         while (!ok) {
             try {
-                rmsg = new ReliableProtocolMessage(client.receive());
+                rmsg = new ReliableProtocolMessage(client.receiveBytes());
                 while (!rmsg.isMessage())
-                    rmsg = new ReliableProtocolMessage(client.receive());
-                ret = rmsg.getPayload();
+                    rmsg = new ReliableProtocolMessage(client.receiveBytes());
+                ret = new String(rmsg.getPayload());
                 auxseq = rmsg.getSequence();
-                ack = ReliableProtocolMessage.createAck(auxseq);
-                client.send(ack.getMessage());
+                ack = new ReliableProtocolMessage(auxseq);
+                client.send(ack.getMessageBytes());
                 if (auxseq == rcvdSequence + 1 || rcvdSequence == -1) {
                     ok = true;
                     rcvdSequence = auxseq;
@@ -199,13 +196,13 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
         boolean ok = false;
         while (!ok) {
             try {
-                rmsg = new ReliableProtocolMessage(client.receive(timeout));
+                rmsg = new ReliableProtocolMessage(client.receiveBytes(timeout));
                 while (!rmsg.isMessage())
-                    rmsg = new ReliableProtocolMessage(client.receive(timeout));
-                ret = rmsg.getPayload();
+                    rmsg = new ReliableProtocolMessage(client.receiveBytes(timeout));
+                ret = new String(rmsg.getPayload());
                 auxseq = rmsg.getSequence();
-                ack = ReliableProtocolMessage.createAck(auxseq);
-                client.send(ack.getMessage());
+                ack = new ReliableProtocolMessage(auxseq);
+                client.send(ack.getMessageBytes());
                 if (auxseq == rcvdSequence + 1 || rcvdSequence == -1) {
                     ok = true;
                     rcvdSequence = auxseq;
@@ -240,10 +237,10 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
         ReliableProtocolMessage rmsg = null;
         ReliableProtocolMessage ack = null;
         try {
-            rmsg = new ReliableProtocolMessage(event.getMessage());
+            rmsg = new ReliableProtocolMessage(event.getMessageBytes());
             if (rmsg.isMessage()) {
                 int auxseq = rmsg.getSequence();
-                ack = ReliableProtocolMessage.createAck(auxseq);
+                ack = new ReliableProtocolMessage(auxseq);
                 client.send(ack.getMessage());
                 if (auxseq == rcvdSequence + 1 || rcvdSequence == -1) {
                     fireEvent(new MessageArrivedEvent(rmsg.getPayload()));
@@ -301,7 +298,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     public void send(String message, String url) throws NetworkException {
         try {
             URL urlObj = new URL(url);
-            ReliableProtocolMessage rmsg = ReliableProtocolMessage.encapsulate(message, sendSequence++);
+            ReliableProtocolMessage rmsg = new ReliableProtocolMessage(message.getBytes(), sendSequence++);
             client.send(message, urlObj.getHost(), urlObj.getPort());
             new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
         }

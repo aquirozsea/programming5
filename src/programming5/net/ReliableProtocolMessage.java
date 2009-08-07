@@ -26,7 +26,7 @@ package programming5.net;
  *from actual content messages.
  *@see programming5.net.Message
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
 public class ReliableProtocolMessage extends Message {
     
@@ -36,7 +36,7 @@ public class ReliableProtocolMessage extends Message {
     /**
      *Creates a reliable protocol message from the given message string, which must follow the correct format (otherwise a MalformedMessageException is thrown)
      */
-    public ReliableProtocolMessage(String rpm) throws MalformedMessageException {
+    public ReliableProtocolMessage(byte[] rpm) throws MalformedMessageException {
         super(rpm);
         if (!this.header.equals(MESSAGE_HEADER) && !this.header.equals(ACK_HEADER)) {
             throw new MalformedMessageException("ReliableProtocolMessage: Constructor: Not a reliable protocol message");
@@ -46,39 +46,30 @@ public class ReliableProtocolMessage extends Message {
     /**
      *Creates a reliable protocol message that encapsulates the given message payload with the given sequence number
      */
-    public static ReliableProtocolMessage encapsulate(String msg, int sequence) {
-        Message message = Message.constructMessage(MESSAGE_HEADER, sequence, msg);
-        ReliableProtocolMessage ret = null;
-        try {
-            ret = new ReliableProtocolMessage(message.getMessage());
-        } 
-        catch (MalformedMessageException mme) {}
-        return ret;
+    public ReliableProtocolMessage(byte[] msg, long sequence) {
+        super();
+        this.setHeader(MESSAGE_HEADER);
+        this.addMessageItem(sequence);
+        this.addMessageItem(msg);
     }
     
     /**
      *Creates an acknowledgement message as a reliable protocol message for the given sequence number
      */
-    public static ReliableProtocolMessage createAck(int sequence) {
-        ReliableProtocolMessage ret = null;
-        try {
-            Message message = new Message();
-            message.setHeader(ACK_HEADER);
-            message.addMessageItem(sequence);
-            ret = new ReliableProtocolMessage(message.getMessage());
-        } 
-        catch (MalformedMessageException mme) {}
-        return ret;
+    public ReliableProtocolMessage(long sequence) {
+        super();
+        this.setHeader(ACK_HEADER);
+        this.addMessageItem(sequence);
     }
     
     /**
      *@return the payload if not an acknowledgement (otherwise a malformed message exception is thrown)
      */
-    public String getPayload() throws MalformedMessageException {
-        String ret = null;
+    public byte[] getPayload() throws MalformedMessageException {
+        byte[] ret = null;
         if (header.equals(MESSAGE_HEADER)) {
             try {
-                ret = this.getMessageItem(1);
+                ret = this.getItemAsByteArray(1);
             }
             catch (IndexOutOfBoundsException iobe) {
                 throw new MalformedMessageException("ReliableProtocolMessage: No message");
