@@ -22,68 +22,82 @@
 package programming5.net;
 
 /**
- *An Event is a holder class based on a Message object. It is meant to serve as a base class for other events to be used 
- *within the Programming5 network framework, being able to hold a message object and provide 
- *accessor methods for its items. All events must have a specified type, with is coded as the message header.
- *@see Message
+ *As of version 6.1, an Event is a message with a header, which is interpreted as the event type. All events
+ *must have a specified type.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
-public class Event {
-    protected Message message;
+public class Event extends Message {
     
     /**
-     *Creates an event of the given type
+     *Creates an event of the given type.
+     *WARNING: Note that this differs from the functionality of the corresponding deprecated constructor in
+     *the Message class.
+     *@param type the event type, which will be encoded as the message header
      */
     public Event(String type) {
-        message = new Message();
-        message.setHeader(type);
+        super();
+        this.setHeader(type);
     }
     
     /**
-     *Creates an event from the given event message, which must have a header, which is taken as the event type.
+     *@deprecated this constructor is no longer supported as of version 6.1
+     *@throws UnsupportedOperationException
      */
+    @Deprecated
     public Event(Message evtMsg) {
-        if (evtMsg.getHeader() != null) {
-            message = evtMsg;
-        } 
-        else throw new IllegalArgumentException("Event: Constructor: A valid type is needed (code as message header)");
+        throw new UnsupportedOperationException();
     }
-    
+
     /**
+     * Creates an event by decoding the given byte array
+     * @param messageBytes the encoded event message, which must follow the Message class syntax
+     * @throws programming5.net.MalformedMessageException if the encoded message does not follow the correct 
+     * syntax or does not contain a header to be used as the event type
+     */
+    public Event(byte[] messageBytes) throws MalformedMessageException {
+        super(messageBytes);
+        if (this.header == null) {
+            throw new MalformedMessageException("Event: Cannot create event from byte array: No event type");
+        }
+    }
+
+    /**
+     *Analogous to getHeader
      *@return the string that corresponds to the event type
      */
     public String getType() {
-        return message.getHeader();
+        return this.getHeader();
     }
     
     /**
+     *@param type a type string for comparison
      *@return true if the event is of the given type (the descriptor equals the given string)
      */
     public boolean isType(String type) {
-        return type.equals(message.getHeader());
+        return type.equals(this.getHeader());
     }
     
     /**
      *@return each of the items carried within the event message
+     *@deprecated since events can carry raw byte payloads as of version 6.1, conversion to strings might
+     *corrupt the payload content. The payload can be accessed via the specific accessor methods defined in
+     *the Message class.
      */
+    @Deprecated
     public String[] getPayload() {
-        String[] ret = new String[message.getMessageSize()];
-        for (int i = 0; i < message.getMessageSize(); i++) {
-            ret[i] = message.getMessageItem(i);
+        String[] ret = new String[this.getMessageSize()];
+        for (int i = 0; i < this.getMessageSize(); i++) {
+            ret[i] = this.getMessageItem(i);
         }
         return ret;
     }
     
     /**
-     *@return the string message that holds event data in the format TYPE:PAYLOAD
+     *@return the string message that holds event data in the format TYPE:PAYLOAD, for display purposes
      */
+    @Override
     public String toString() {
-        String ret = null;
-        try {
-            ret = message.getMessage();
-        } 
-        catch (MalformedMessageException mme) {}
-        return ret;
+        return this.toString();
     }
 }

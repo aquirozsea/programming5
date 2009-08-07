@@ -27,24 +27,21 @@ import programming5.net.Message;
 /**
  * Event that represents the progress percentage of a given operation
  * @author Andres Quiroz Hernandez
+ * @version 6.1
  * @see programming5.net.Event
  */
 public class ExecutionProgressEvent extends programming5.net.Event {
     
     public static final String TYPE = "EPE";
     
-    protected float progress;
-    protected int total;
-    
     /** 
-     * Creates a new instance of ExecutionProgressEvent with the current progress percentage and a total value (when other that 100pct is used)
+     * Creates a new instance of ExecutionProgressEvent with the current progress percentage and a total
+     * value (when other that 100pct is used)
      */
     public ExecutionProgressEvent(float currentProgress, int referenceTotal) {
         super(TYPE);
-        progress = currentProgress;
-        this.message.addMessageItem(progress);
-        total = referenceTotal;
-        this.message.addMessageItem(total);
+        this.addMessageItem(currentProgress);
+        this.addMessageItem(referenceTotal);
     }
     
     /** 
@@ -52,24 +49,32 @@ public class ExecutionProgressEvent extends programming5.net.Event {
      */
     public ExecutionProgressEvent(float currentProgress) {
         super(TYPE);
-        progress = currentProgress;
-        this.message.addMessageItem(progress);
-        total = 1;
-        this.message.addMessageItem(total);
+        this.addMessageItem(currentProgress);
+        this.addMessageItem(1);
     }
     
-    /** 
-     * Creates a new instance of ExecutionProgressEvent from a given message object
-     *@see programming5.net.Message
+    /**
+     *@deprecated this constructor is no longer supported
+     *@throws UnsupportedOperationException
      */
+    @Deprecated
     public ExecutionProgressEvent(Message evtMsg) {
         super(evtMsg);
-        try {
-            progress = this.message.getItemAsFloat(0);
-            total = this.message.getItemAsInt(1);
+    }
+
+    /**
+     * Creates an execution progress event by decoding the given byte array
+     * @param eventBytes the encoded event message, which must follow the Message class syntax
+     * @throws programming5.net.MalformedMessageException if the encoded message does not follow the correct
+     * syntax or is of an incorrect type
+     */
+    public ExecutionProgressEvent(byte[] eventBytes) throws MalformedMessageException {
+        super(eventBytes);
+        if (!this.getType().equals(TYPE)) {
+            throw new IllegalArgumentException("ExecutionProgressEvent: Cannot create from byte array: Incorrect type (found " + this.getType() + ")");
         }
-        catch (MalformedMessageException mme) {
-            throw new IllegalArgumentException("ExecutionProgressEvent: Bad event message: " + mme.getMessage());
+        if (this.getMessageSize() != 2) {
+            throw new MalformedMessageException("ExecutionProgressEvent: Cannot create from byte array: Incorrect number of items");
         }
     }
     
@@ -77,28 +82,53 @@ public class ExecutionProgressEvent extends programming5.net.Event {
      *@return the progress value contained in this event
      */
     public float getProgress() {
-        return progress;
+        float ret = 0f;
+        try {
+            ret = this.getItemAsFloat(0);
+        }
+        catch (MalformedMessageException mme) {
+            Debug.printStackTrace(mme, "programming5.io.ExecutionProgressEvent");
+        }
+        finally {
+            return ret;
+        }
     }
     
     /**
      *@return the total with respect to which the progress is measured (default = 1)
      */
     public int getReferenceTotal() {
-        return total;
+        int total = 1;
+        try {
+            total = this.getItemAsInt(1);
+        }
+        catch (MalformedMessageException mme) {
+            Debug.printStackTrace(mme, "programming5.io.ExecutionProgressEvent");
+        }
+        finally {
+            return total;
+        }
     }
     
     /**
      *@return a percentage or ratio as represented by the event values
      */
     public String getProgressString() {
-        String ret = this.message.getMessageItem(0);
+        String currentProgress = this.getMessageItem(0);
+        int total = 1;
+        try {
+            total = this.getItemAsInt(1);
+        }
+        catch (MalformedMessageException mme) {
+            Debug.printStackTrace(mme, "programming5.io.ExecutionProgressEvent");
+        }
         if (total != 1) {
-            ret = ret + "/" + this.message.getMessageItem(1);
+            currentProgress = currentProgress + "/" + Integer.toString(total);
         }
         else {
-            ret = ret + "%";
+            currentProgress = currentProgress + "%";
         }
-        return ret;
+        return currentProgress;
     }
     
 }

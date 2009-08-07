@@ -1,7 +1,7 @@
 /*
  * Message.java
  *
- * Copyright 2008 Andres Quiroz Hernandez
+ * Copyright 2004 Andres Quiroz Hernandez
  *
  * This file is part of Programming5.
  * Programming5 is free software: you can redistribute it and/or modify
@@ -25,57 +25,62 @@ import java.util.Vector;
 import programming5.arrays.ArrayOperations;
 
 /**
- *This class is used to store an organized array of strings in a message 
- *context of header and body items, to produce message strings of the   
+ *This class is used to store and manipulate an organized array of items in a message
+ *context of header and body items, to produce encoded messages of the
  *following syntax: [header]:[item{::item}]<p>
- *There are no restrictions on the syntax of the items. If constructing a message string by hand, however, take care 
- *that all sequences of consecutive colons (::) correspond to message separators; otherwise, the message will be decoded 
- *incorrectly. Additionally, if colon-slash sequences (:/) exist in an item, they will be modified by the decoding 
- *methods. In both these cases, adding a slash after the first colon will allow correct decoding of the message items; 
- *this is precisely what is done when messages are encoded normally, to allow for arbitrary syntax of message items.
- *This class uses the String split method for message decoding.<p>
- *Note that the shortest valid message is a single colon (:) (message with no header and no body) and that all messages 
- *must have at least one colon.<p>
+ *There are no restrictions on the syntax of the items. If constructing a message string by hand, however, 
+ *take care that all sequences of consecutive colons (::) correspond to message separators; otherwise, the
+ *message will be decoded incorrectly. Additionally, if colon-slash sequences (:/) exist in an item, they will
+ *be modified by the decoding methods. In both these cases, adding a slash after the first colon will allow
+ *correct decoding of the message items; this is precisely what is done when messages are encoded normally,
+ *to allow for arbitrary syntax of message items.<p>
+ *Note that the shortest valid message is a single colon (:) (message with no header and no body) and that 
+ *all messages must have at least one colon.<p>
+ *As of version 6.1, the internal encoding of messages is handled with arrays of bytes, to prevent conversion
+ *errors when encoding byte arrays as strings. For the basic types, these arrays correspond to the byte
+ *representation of the items' string representations, not their internal numeric representation. Byte array
+ *accessors were added to manipulate these items directly as byte arrays, for serialized objects or raw byte
+ *payloads.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
 public class Message {
     
-    protected String header, body[];
-    protected byte[][] bytePayload = null;
+    protected String header = null;
+    protected byte[][] body = null;
 
-    private static final byte colByte = ":".getBytes()[0];
-    private static final byte sepByte = "&".getBytes()[0];
+    private static final String sepString = ":";
+    private static final String sep2String = "::";
+    private static final byte sepByte = ":".getBytes()[0];
     private static final byte escByte = "/".getBytes()[0];
     
     /**
      *Constructor to create an empty message object
      */
     public Message() {
-        header = null;
-        body = null;
     }
     
     /**
      *Constructor to create a message object decoding a message string of an
      *unknown size. The message must follow the correct syntax or an exception is
-     *thrown. Will not be interpreted to carry a byte payload.
+     *thrown.
+     *@param message the encoded message in String format
+     *@deprecated the preferred way to encode messages is as byte arrays
      */
+    @Deprecated
     public Message(String message) throws MalformedMessageException {
         if (message != null) {
-            body = message.split(":", 2);
-            if (body.length == 2) {
-                if (body[0].length() > 0) {
-                    header = body[0];
+            String[] parts = message.split(sepString, 2);
+            if (parts.length == 2) {
+                if (parts[0].length() > 0) {
+                    header = parts[0];
                 }
-                else {
-                    header = null;
-                }
-                if (!body[1].equals("")) {
-                    body = body[1].split("::");
-                }
-                else {
-                    body = null;
+                if (!parts[1].equals("")) {
+                    parts = parts[1].split(sep2String);
+                    body = new byte[parts.length][];
+                    for (int i = 0; i < parts.length; i++) {
+                        body[i] = parts[i].getBytes();
+                    }
                 }
             } 
             else throw new MalformedMessageException("Message start not found");
@@ -86,119 +91,180 @@ public class Message {
     /**
      *Constructor to create a message object decoding a message string of an
      *expected size. The message must follow the correct syntax and correspond
-     *with the size, or an exception is thrown. Will not be interpreted to carry a byte payload.
+     *with the size, or an exception is thrown.
+     *@param message the encoded message in String format
+     *@param size the expected message size
+     *@deprecated the preferred way to encode messages is as byte arrays
      */
+    @Deprecated
     public Message(String message, int size) throws MalformedMessageException {
-        body = message.split(":", 2);
-        if (body.length == 2) {
-            if (body[0].length() > 0) {
-                header = body[0];
-            }
-            else {
-                header = null;
-            }
-            body = body[1].split("::");
-            if (body.length != size) {
-                throw new MalformedMessageException("Incorrect number of message items");
-            }
-        } 
-        else throw new MalformedMessageException("Message start not found");
-    }
-
-    public Message(byte[] messageBytes) throws MalformedMessageException {
-        int separatorIndex = ArrayOperations.seqFind(sepByte, messageBytes);
-        byte[] stringPart = ArrayOperations.replicate(messageBytes);
-        byte[] bytePart;
-        if (separatorIndex == 0) {
-            throw new MalformedMessageException("Message: Could not construct message: Illegal start");
-        }
-        else {
-            while (separatorIndex > 0 && separatorIndex < (messageBytes.length-1)) {
-                if (messageBytes[separatorIndex+1] == sepByte) {
-                    stringPart = ArrayOperations.prefix(messageBytes, separatorIndex);
-                    bytePart = ArrayOperations.suffix(messageBytes, separatorIndex+2);
-                    // Decode byte part
-                    Vector<Integer> separators = new Vector<Integer>();
-                    int start = 0;
-                    separatorIndex = ArrayOperations.seqFind(sepByte, bytePart);
-                    while (separatorIndex > 0 && separatorIndex < (bytePart.length-1)) {
-                        if (bytePart[separatorIndex+1] == sepByte) {
-                            separators.add(separatorIndex);
-                        }
-                        start = separatorIndex + 2;
-                        separatorIndex = ArrayOperations.seqFind(sepByte, bytePart, start);
+        if (message != null) {
+            String[] parts = message.split(sepString, 2);
+            if (parts.length == 2) {
+                if (parts[0].length() > 0) {
+                    header = parts[0];
+                }
+                parts = parts[1].split(sep2String);
+                if (parts.length == size) {
+                    body = new byte[parts.length][];
+                    for (int i = 0; i < parts.length; i++) {
+                        body[i] = parts[i].getBytes();
                     }
-                    bytePayload = new byte[separators.size()+1][];
-                    start = 0;
-                    for (int i = 0; i < separators.size(); i++) {
-                        int separator = separators.elementAt(i);
-                        bytePayload[i] = ArrayOperations.subArray(bytePart, start, separator);
-                        start = separator + 2;
-                    }
-                    bytePayload[bytePayload.length-1] = ArrayOperations.subArray(bytePart, start, bytePart.length);
                 }
                 else {
-                    separatorIndex = ArrayOperations.seqFind(sepByte, messageBytes, separatorIndex+2);
+                    throw new MalformedMessageException("Incorrect number of message items");
                 }
             }
-            // Decode string part
-            String messageString = new String(stringPart);
-            Message msgObject = new Message(messageString);
-            this.header = msgObject.header;
-            if (msgObject.body != null) {
-                this.body = new String[msgObject.body.length];
-                for (int i = 0; i < msgObject.body.length; i++) {
-                    this.body[i] = msgObject.body[i];
-                }
-            }
+            else throw new MalformedMessageException("Message start not found");
         }
+        else throw new MalformedMessageException("Message is null");
+    }
+
+    /**
+     * Constructor to create a message object decoding a byte array with an
+     * unknown number of items. The message must follow the correct syntax or an exception is
+     * thrown.
+     * @param messageBytes the encoded message as a byte array
+     * @throws programming5.net.MalformedMessageException
+     */
+    public Message(byte[] messageBytes) throws MalformedMessageException {
+        int headerIndex = ArrayOperations.seqFind(sepByte, messageBytes);
+        if (headerIndex >= 0) {
+            if (headerIndex > 0) {
+                header = new String(ArrayOperations.prefix(messageBytes, headerIndex));
+            }
+            Vector<Integer> separators = new Vector<Integer>();
+            int start = headerIndex + 1;
+            int separatorIndex = ArrayOperations.seqFind(sepByte, messageBytes, start);
+            while (separatorIndex > 0 && separatorIndex < (messageBytes.length-1)) {
+                if (messageBytes[separatorIndex+1] == sepByte) {
+                    separators.add(separatorIndex);
+                }
+                start = separatorIndex + 2;
+                separatorIndex = ArrayOperations.seqFind(sepByte, messageBytes, start);
+            }
+            body = new byte[separators.size()+1][];
+            start = headerIndex + 1;
+            for (int i = 0; i < separators.size(); i++) {
+                int separator = separators.elementAt(i);
+                body[i] = ArrayOperations.subArray(messageBytes, start, separator);
+                start = separator + 2;
+            }
+            body[separators.size()] = ArrayOperations.subArray(messageBytes, start, messageBytes.length);
+        }
+        else throw new MalformedMessageException("Message: Could not construct message: Illegal start");
     }
     
     /**
      *Creates a complete message from specific objects.
-     *WARNING: This method uses the objects' toString method to obtain the item it will keep.
+     *WARNING: This method uses the objects' toString method to obtain the item it will keep, with the 
+     *exception of byte array objects, which will be encoded without change.
+     *@param header the header string (must not contain the reserved character ':')
+     *@param items a list of items to be encoded in the message object
+     *@return the filled message object
      */
     public static Message constructMessage(String header, Object... items) {
         Message ret = new Message();
         ret.setHeader(header);
         for (Object item : items) {
-            ret.addMessageItem(item);
+            if (item instanceof byte[]) {
+                ret.addMessageItem((byte[]) item);
+            }
+            else {
+                ret.addMessageItem(item);
+            }
         }
         return ret;
     }
     
     /**
-     *Creates a message without a header from specific objects.
-     *WARNING: This method uses the objects' toString method to obtain the item it will keep.
+     *Creates a headerless message from specific objects.
+     *WARNING: This method uses the objects' toString method to obtain the item it will keep, with the
+     *exception of byte array objects, which will be encoded without change.
+     *@param header the header string (must not contain the reserved character ':')
+     *@param items a list of items to be encoded in the message object
+     *@return the filled message object
      */
     public static Message constructHeaderlessMessage(Object... items) {
         Message ret = new Message();
         for (Object item : items) {
-            ret.addMessageItem(item.toString());
+            if (item instanceof byte[]) {
+                ret.addMessageItem((byte[]) item);
+            }
+            else {
+                ret.addMessageItem(item);
+            }
         }
         return ret;
     }
     
     /**
-     *Gets the message string of a message object.
+     *Gets the encoded string of a message object.
+     *@deprecated the string representation might not be reconstructed correctly as a new Message object
+     * because of byte array to String conversion
      */
+    @Deprecated
     public String getMessage() throws MalformedMessageException {
         String message;
         if (header != null) {
-            message = header + ":";
+            message = header + sepString;
         }
         else {
-            message = ":";
+            message = sepString;
         }
-        if (body != null) {
-            try {
-                message = message.concat(body[0]);
-                for (int i = 1; i < body.length; i++) {
-                    message = message.concat("::");
-                    message = message.concat(body[i]);
-                }
-            } 
-            catch (ArrayIndexOutOfBoundsException np) {
+        int bodyLength = (body == null) ? 0 : body.length;
+        if (bodyLength > 0) {
+            message = message.concat(new String(body[0]));
+            for (int i = 1; i < bodyLength; i++) {
+                message = message.concat(sep2String);
+                message = message.concat(new String(body[i]));
+            }
+        }
+        return message;
+    }
+
+    /**
+     * @return a string representation of the encoded message, for inspection purposes; the string returned 
+     * by this method should not be used for decoding unless no raw byte array items are contained
+     */
+    @Override
+    public String toString() {
+        String message;
+        if (header != null) {
+            message = header + sepString;
+        }
+        else {
+            message = sepString;
+        }
+        int bodyLength = (body == null) ? 0 : body.length;
+        if (bodyLength > 0) {
+            message = message.concat(new String(body[0]));
+            for (int i = 1; i < bodyLength; i++) {
+                message = message.concat(sep2String);
+                message = message.concat(new String(body[i]));
+            }
+        }
+        return message;
+    }
+
+    /**
+     * @return the encoded message as a byte array; the array obtained from this method can be used to 
+     * reconstruct a message object when decoded using the corresponding constructor
+     */
+    public byte[] getMessageBytes() {
+        byte[] message;
+        if (header != null) {
+            message = (header + sepString).getBytes();
+        }
+        else {
+            message = sepString.getBytes();
+        }
+        int bodyLength = (body == null) ? 0 : body.length;
+        if (bodyLength > 0) {
+            message = ArrayOperations.join(message, body[0]);
+            for (int i = 1; i < bodyLength; i++) {
+                message = ArrayOperations.join(message, sep2String.getBytes());
+                message = ArrayOperations.join(message, body[i]);
             }
         }
         return message;
@@ -213,12 +279,15 @@ public class Message {
     
     /**
      *Message items are returned as strings.
+     *WARNING: If any items were saved as raw byte arrays, the conversion to string might corrupt the item's
+     *content.
      *@param index the position of the item in the message, with numbering from 0 on
+     *@return the string representation of the item at the given position
      */
     public String getMessageItem(int index) throws IndexOutOfBoundsException {
         String ret = null;
         if (body != null) {
-            ret = deflate(body[index]);
+            ret = new String(deflate(body[index]));
         } 
         else throw new IndexOutOfBoundsException("Message: No body");
         return ret;
@@ -227,11 +296,13 @@ public class Message {
     /**
      *Gets an item if it can be representend by an integer
      *@param index the position of the item in the message, with numbering from 0 on
+     *@return the integer representation of the item at the given position
+     *@throws MalformedMessageException if the item cannot be represented as an integer
      */
     public int getItemAsInt(int index) throws MalformedMessageException, IndexOutOfBoundsException {
         int i;
         try {
-            i = Integer.parseInt(deflate(body[index]));
+            i = Integer.parseInt(new String(deflate(body[index])));
         } 
         catch (NullPointerException npe) {
             throw new IndexOutOfBoundsException("Message: No body");
@@ -245,11 +316,13 @@ public class Message {
     /**
      *Gets an item if it can be representend by a double
      *@param index the position of the item in the message, with numbering from 0 on
+     *@return the double representation of the item at the given position
+     *@throws MalformedMessageException if the item cannot be represented as an double
      */
     public double getItemAsDouble(int index) throws MalformedMessageException, IndexOutOfBoundsException {
         double d;
         try {
-            d = Double.parseDouble(deflate(body[index]));
+            d = Double.parseDouble(new String(deflate(body[index])));
         } 
         catch (NullPointerException npe) {
             throw new IndexOutOfBoundsException("Message: No body");
@@ -263,11 +336,13 @@ public class Message {
     /**
      *Gets an item if it can be representend by a float
      *@param index the position of the item in the message, with numbering starting at 0
+     *@return the floating point representation of the item at the given position
+     *@throws MalformedMessageException if the item cannot be represented as an float
      */
     public float getItemAsFloat(int index) throws MalformedMessageException, IndexOutOfBoundsException {
         float f;
         try {
-            f = Float.parseFloat(deflate(body[index]));
+            f = Float.parseFloat(new String(deflate(body[index])));
         } 
         catch (NullPointerException npe) {
             throw new IndexOutOfBoundsException("Message: No body");
@@ -281,11 +356,13 @@ public class Message {
     /**
      *Gets an item if it can be representend by a long integer
      *@param index the position of the item in the message, with numbering starting at 0
+     *@return the long integer representation of the item at the given position
+     *@throws MalformedMessageException if the item cannot be represented as a long integer
      */
     public long getItemAsLong(int index) throws MalformedMessageException, IndexOutOfBoundsException {
         long l;
         try {
-            l = Long.parseLong(deflate(body[index]));
+            l = Long.parseLong(new String(deflate(body[index])));
         } 
         catch (NullPointerException npe) {
             throw new IndexOutOfBoundsException("Message: No body");
@@ -299,27 +376,28 @@ public class Message {
     /**
      *Gets an item if it can be representend by a char
      *@param index the position of the item in the message, with numbering starting at 0
+     *@return the char representation of the item at the given position
+     *@throws MalformedMessageException if the item cannot be represented as a char
      */
     public char getItemAsChar(int index) throws MalformedMessageException, IndexOutOfBoundsException {
-        char c = ' ';
-        if (body != null) {
-            if (body[index].length() == 1) {
-                c = body[index].charAt(0);
-            }
-            else throw new MalformedMessageException("Incorrect type for item " + index + ": Expected char, found " + deflate(body[index]));
-        } 
-        else throw new IndexOutOfBoundsException("Message: No body");
+        String cs = this.getMessageItem(index);
+        char c = cs.charAt(0);
+        if (cs.length() > 1) {
+            throw new MalformedMessageException("Incorrect type for item " + index + ": Expected char, found " + deflate(body[index]));
+        }
         return c;
     }
     
     /**
      *Gets an item if it can be representend by a boolean
      *@param index the position of the item in the message, with numbering starting at 0
+     *@return the boolean representation of the item at the given position
+     *@throws MalformedMessageException if the item cannot be represented as a boolean
      */
     public boolean getItemAsBoolean(int index) throws MalformedMessageException, IndexOutOfBoundsException {
         boolean b;
         try {
-            b = Boolean.parseBoolean(deflate(body[index]));
+            b = Boolean.parseBoolean(new String(deflate(body[index])));
         } 
         catch (NullPointerException npe) {
             throw new IndexOutOfBoundsException("Message: No body");
@@ -330,109 +408,123 @@ public class Message {
         return b;
     }
 
+    /**
+     * Gets the byte array representation of a message item
+     * @param index the position of the item in the message, with numbering starting at 0
+     * @return the byte array representation of the item at the given position
+     */
     public byte[] getItemAsByteArray(int index) throws IndexOutOfBoundsException {
         byte[] ret = null;
-        int bodyLength = (body == null) ? 0 : body.length;
-        if (index < bodyLength) {
-            ret = deflate(body[index]).getBytes();
-        }
-        else if (bytePayload != null) {
-            ret = deflate(bytePayload[index - bodyLength]);
+        if (body != null) {
+            ret = deflate(body[index]);
         }
         else {
-            throw new IndexOutOfBoundsException("Message: Cannot get given item: Index out of bounds");
+            throw new IndexOutOfBoundsException("Message: Cannot get given item: No message body");
         }
         return ret;
     }
     
     /**
      *Sets the message header
+     *@param header the header string, which must not contain the reserved character ':'
      */
     public void setHeader(String header) {
-        this.header = header;
+        if (header.indexOf(sepString) < 0) {
+            this.header = header;
+        }
+        else throw new IllegalArgumentException("Message: Header must not contain the reserved character '" + sepString + "'");
     }
 
+    /**
+     * Adds the string representation of the given object to the message, following previously added items.
+     * Uses the object's toString method
+     * @param item the item to be added
+     * @return the position of the item in the message, with numbering starting at 0
+     */
     public int addMessageItem(Object item) {
-        System.out.println("Object add");
-        body = ArrayOperations.addElement(inflate(item.toString()), body);
+        this.addBodyItem(inflate(item.toString().getBytes()));
         return body.length-1;
     }
     
     /**
      *Adds a string item to the message, following previously added items
+     *@param item the item to be added
      *@return the position of the item in the message, with numbering starting at 0
      */
     public int addMessageItem(String item) {
-        System.out.println("String add");
-        body = ArrayOperations.addElement(inflate(item), body);
+        this.addBodyItem(inflate(item.getBytes()));
         return body.length-1;
     }
     
     /**
-     *Adds an integer item to the message, following previously added items. Its is
-     *converted to a string to be stored.
+     *Adds an integer item to the message, following previously added items. 
+     *@param item the item to be added
      *@return the position of the item in the message, with numbering starting at 0
      */
     public int addMessageItem(int item) {
-        System.out.println("Int add");
-        body = ArrayOperations.addElement(inflate(Integer.toString(item)), body);
+        this.addBodyItem(inflate(Integer.toString(item).getBytes()));
         return body.length-1;
     }
     
     /**
-     *Adds a double item to the message, following previously added items. Its is
-     *converted to a string to be stored.
+     *Adds a double item to the message, following previously added items. 
+     *@param item the item to be added
      *@return the position of the item in the message, with numbering starting at 0
      */
     public int addMessageItem(double item) {
-        body = ArrayOperations.addElement(inflate(Double.toString(item)), body);
+        this.addBodyItem(inflate(Double.toString(item).getBytes()));
         return body.length-1;
     }
     
     /**
-     *Adds a float item to the message, following previously added items. Its is
-     *converted to a string to be stored.
+     *Adds a float item to the message, following previously added items. 
+     *@param item the item to be added
      *@return the position of the item in the message, with numbering starting at 0
      */
     public int addMessageItem(float item) {
-        body = ArrayOperations.addElement(inflate(Float.toString(item)), body);
+        this.addBodyItem(inflate(Float.toString(item).getBytes()));
         return body.length-1;
     }
     
     /**
-     *Adds a long item to the message, following previously added items. Its is
-     *converted to a string to be stored.
+     *Adds a long item to the message, following previously added items. 
+     *@param item the item to be added
      *@return the position of the item in the message, with numbering starting at 0
      */
     public int addMessageItem(long item) {
-        body = ArrayOperations.addElement(inflate(Long.toString(item)), body);
+        this.addBodyItem(inflate(Long.toString(item).getBytes()));
         return body.length-1;
     }
     
     /**
-     *Adds a char item to the message, following previously added items. Its is
-     *converted to a string to be stored.
+     *Adds a char item to the message, following previously added items. 
+     *@param item the item to be added
      *@return the position of the item in the message, with numbering starting at 0
      */
     public int addMessageItem(char item) {
-        char[] s = new char[1];
-        s[0] = item;
-        body = ArrayOperations.addElement(new String(s), body);
-        return body.length-1;
+        byte[] b = new byte[1];
+        b[0] = (byte) item;
+        return this.addMessageItem(new String(b));
     }
     
     /**
-     *Adds a boolean item to the message, following previously added items. Its is
-     *converted to a string to be stored.
+     *Adds a boolean item to the message, following previously added items. 
+     *@param item the item to be added
      *@return the position of the item in the message, with numbering starting at 0
      */
     public int addMessageItem(boolean item) {
-        body = ArrayOperations.addElement(inflate(Boolean.toString(item)), body);
+        this.addBodyItem(inflate(Boolean.toString(item).getBytes()));
         return body.length-1;
     }
 
-    public void addMessageItem(byte[] item) {
-        System.out.println("Called byte array add");
+    /**
+     * Adds a raw byte array as a message item, following previously added items.
+     * @param item the item to be added
+     * @return the position of the item in the message, with numbering starting at 0
+     */
+    public int addMessageItem(byte[] item) {
+        this.addBodyItem(inflate(item));
+        return body.length-1;
     }
     
     /**
@@ -441,7 +533,7 @@ public class Message {
      *@param item the string representation of the item
      */
     public void editMessageItem(int index, String item) throws IndexOutOfBoundsException {
-        body[index] = inflate(item);
+        body[index] = inflate(item.getBytes());
     }
     
     /**
@@ -450,7 +542,7 @@ public class Message {
      *@param item the int representation of the item
      */
     public void editMessageItem(int index, int item) throws IndexOutOfBoundsException {
-        body[index] = inflate(Integer.toString(item));
+        body[index] = inflate(Integer.toString(item).getBytes());
     }
     
     /**
@@ -459,7 +551,7 @@ public class Message {
      *@param item the double representation of the item
      */
     public void editMessageItem(int index, double item) throws IndexOutOfBoundsException {
-        body[index] = inflate(Double.toString(item));
+        body[index] = inflate(Double.toString(item).getBytes());
     }
     
     /**
@@ -468,7 +560,7 @@ public class Message {
      *@param item the float representation of the item
      */
     public void editMessageItem(int index, float item) throws IndexOutOfBoundsException {
-        body[index] = inflate(Float.toString(item));
+        body[index] = inflate(Float.toString(item).getBytes());
     }
     
     /**
@@ -477,9 +569,9 @@ public class Message {
      *@param item the char representation of the item
      */
     public void editMessageItem(int index, char item) throws IndexOutOfBoundsException {
-        char[] s = new char[1];
-        s[0] = item;
-        body[index] = new String(s);
+        byte[] b = new byte[1];
+        b[0] = (byte) item;
+        body[index] = b;
     }
     
     /**
@@ -488,50 +580,57 @@ public class Message {
      *@param item the boolean representation of the item
      */
     public void editMessageItem(int index, boolean item) throws IndexOutOfBoundsException {
-        body[index] = inflate(Boolean.toString(item));
+        body[index] = inflate(Boolean.toString(item).getBytes());
+    }
+
+    /**
+     * Allows the replacement of an existing item.
+     * @param index the position of the item in the message, with numbering starting at 0
+     * @param item the byte array representation of the item
+     */
+    public void editMessageItem(int index, byte[] item) throws IndexOutOfBoundsException {
+        body[index] = inflate(item);
     }
     
     /**
-     *@return the number of items in the message
+     *@return the number of items in the message (excluding the header)
      */
     public int getMessageSize() {
-        int ret = 0;
-        try {
-            ret = body.length;
-        } 
-        catch (NullPointerException npe) {}
-        return ret;
+        return (body == null) ? 0 : body.length;
     }
     
-    /**
-     *Adds escape characters to all existing sequences in a message item that can conflict with the special separator
-     *sequences used by this class.
-     */
-    private String inflate(String item) {
-        String ret = item.replaceAll(":/", "://");
-        ret = ret.replaceAll("::", ":/:");
-        ret = ret.replaceAll("&/", "&//");
-        ret = ret.replaceAll("&&", "&/&");
-        return ret;
-    }
-    
-    /**
-     *Reverses the result of inflate method
-     */
-    private String deflate(String item) {
-        String ret = item.replaceAll(":/", ":");
-        ret = ret.replaceAll("&/", "&");
-        return ret;
-    }
+//    /**
+//     *Adds escape characters to all existing sequences in a message item that can conflict with the special separator
+//     *sequences used by this class.
+//     */
+//    private String inflate(String item) {
+//        String ret = item.replaceAll(":/", "://");
+//        ret = ret.replaceAll("::", ":/:");
+//        return ret;
+//    }
+//
+//    /**
+//     *Reverses the result of inflate method
+//     */
+//    private String deflate(String item) {
+//        String ret = item.replaceAll(":/", ":");
+//        return ret;
+//    }
 
     private byte[] inflate(byte[] byteItem) {
         byte[] ret = ArrayOperations.replicate(byteItem);
         int separatorIndex = ArrayOperations.seqFind(sepByte, ret);
-        while (separatorIndex >= 0 && separatorIndex < (ret.length-1)) {
-            if (ret[separatorIndex+1] == sepByte || ret[separatorIndex+1] == escByte) {
-                ret = ArrayOperations.insert(escByte, ret, ++separatorIndex);
+        while (separatorIndex >= 0) { //  && separatorIndex < (ret.length-1)
+            if (separatorIndex < (ret.length-1)) {
+                if (ret[separatorIndex+1] == sepByte || ret[separatorIndex+1] == escByte) {
+                    ret = ArrayOperations.insert(escByte, ret, ++separatorIndex);
+                }
+                separatorIndex = ArrayOperations.seqFind(sepByte, ret, separatorIndex+1);
             }
-            separatorIndex = ArrayOperations.seqFind(sepByte, ret, separatorIndex+1);
+            else {
+                ret = ArrayOperations.addElement(escByte, ret);
+                separatorIndex = -1;
+            }
         }
         return ret;
     }
@@ -539,13 +638,27 @@ public class Message {
     private byte[] deflate(byte[] byteItem) {
         byte[] ret = ArrayOperations.replicate(byteItem);
         int separatorIndex = ArrayOperations.seqFind(sepByte, ret);
-        while (separatorIndex >= 0 && separatorIndex < (ret.length-2)) {
+        while (separatorIndex >= 0 && separatorIndex < (ret.length-1)) {
             if (ret[separatorIndex+1] == escByte) {
-                ret = ArrayOperations.delete(ret, ++separatorIndex);
+                ret = ArrayOperations.delete(ret, separatorIndex+1);
             }
-            separatorIndex = ArrayOperations.seqFind(sepByte, ret, separatorIndex);
+            separatorIndex = ArrayOperations.seqFind(sepByte, ret, separatorIndex+1);
         }
         return ret;
+    }
+
+    private void addBodyItem(byte[] item) {
+        if (body == null) {
+            body = new byte[1][];
+        }
+        else {
+            byte[][] aux = body;
+            body = new byte[body.length+1][];
+            for (int i = 0; i < aux.length; i++) {
+                body[i] = aux[i];
+            }
+        }
+        body[body.length-1] = item;
     }
 
 }
