@@ -496,7 +496,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
             }
             synchronized (receiveRequests) {
                 for (ReceiveRequest request : receiveRequests) {
-                    request.setMessage(event.getMessageBytes());
+                    request.setMessage(event.getContentBytes());
                 }
                 receiveRequests.clear();
             }
@@ -507,7 +507,11 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *@return the local host address
      */
     public String getHostAddress() {
-        return hostAddress.getHostAddress();
+        String ret = null;
+        if (hostAddress != null) {
+            ret = hostAddress.getHostAddress();
+        }
+        return ret;
     }
     
     /**

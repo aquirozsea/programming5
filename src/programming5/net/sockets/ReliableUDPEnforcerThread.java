@@ -30,7 +30,9 @@ import programming5.net.ReliableProtocolMessage;
  *@see ReliableUDPClient
  *@author Andres Quiroz Hernandez
  *@version 6.0
+ *@deprecated This class is no longer used by the ReliableUDPClient class
  */
+@Deprecated
 public class ReliableUDPEnforcerThread extends Thread {
     
     ReliableProtocolMessage enforcedMsg;
@@ -71,7 +73,7 @@ public class ReliableUDPEnforcerThread extends Thread {
             catch (InterruptedException ie) {
                 failCount++;
                 if (failCount == MAX_WAIT) {
-                    ownerRef.signalFail();
+                    ownerRef.signalFail("Fail");
                     done = true;
                 } 
                 else {
