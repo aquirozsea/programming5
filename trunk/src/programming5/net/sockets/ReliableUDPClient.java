@@ -256,6 +256,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
             try {
                 ReliableProtocolMessage rcvdMsg = new ReliableProtocolMessage(protocolEvent.getContentBytes());
                 if (rcvdMsg.isAcknowledge()) {
+                    Debug.println("Ack received at " + client.getLocalPort());
                     synchronized (messageTable) {
                         messageTable.remove(rcvdMsg.getSequence());
                     }
@@ -353,6 +354,12 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                 unackedMessages = new Vector<ReliableProtocolMessage>(messageTable.values());
             }
             for (ReliableProtocolMessage message : unackedMessages) {
+                try {
+                    Debug.println("Resending unacked message: " + new String(message.getPayload()));
+                }
+                catch (MalformedMessageException mme) {
+                    Debug.printStackTrace(mme);
+                }
                 if (message.getSendCount() < maxResend) {
                     message.signalSent();
                     try {
