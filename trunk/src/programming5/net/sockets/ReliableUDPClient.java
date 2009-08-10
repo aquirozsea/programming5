@@ -21,14 +21,20 @@
 
 package programming5.net.sockets;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.Hashtable;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+import programming5.io.Debug;
 import programming5.net.MalformedMessageException;
 import programming5.net.MessageArrivedEvent;
 import programming5.net.MessageArrivedListener;
 import programming5.net.MessagingClient;
 import programming5.net.NetworkException;
 import programming5.net.Publisher;
+import programming5.net.ReceiveRequest;
 import programming5.net.ReliableProtocolMessage;
 
 
@@ -44,16 +50,21 @@ import programming5.net.ReliableProtocolMessage;
  *@see programming5.net.sockets.UDPClient
  *@see programming5.net.ReliableProtocolMessage
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
 public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements MessagingClient, MessageArrivedListener {
     
     protected UDPClient client;
-    protected int sendSequence = 0;
-    protected int rcvdSequence = -1;
-    protected int timeout = DEF_TIMEOUT;
+    protected final Hashtable<Long, ReliableProtocolMessage> messageTable = new Hashtable<Long, ReliableProtocolMessage>();
+    protected final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
     
-    public static final int DEF_TIMEOUT = 5000;
+    private long timeout = DEF_TIMEOUT;
+    private int maxResend = DEF_RESEND;
+    private Random random = new Random(System.currentTimeMillis());
+    private Timer timer = new Timer();
+    
+    public static final long DEF_TIMEOUT = 10000;
+    public static final int DEF_RESEND = 3;
     
     /**
      *Creates a reliable unicast client for which the local port will be determined by an available port at the time of 
@@ -61,6 +72,8 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      */
     public ReliableUDPClient() throws NetworkException {
         client = new UDPClient();
+        client.addListener(this);
+        timer.scheduleAtFixedRate(new ReliableProtocolEnforceTask(), timeout, timeout);
     }
     
     /**
@@ -69,6 +82,8 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      */
     public ReliableUDPClient(int localPort) throws NetworkException {
         client = new UDPClient(localPort);
+        client.addListener(this);
+        timer.scheduleAtFixedRate(new ReliableProtocolEnforceTask(), timeout, timeout);
     }
     
     /**
@@ -77,6 +92,8 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      */
     public ReliableUDPClient(String address, int remotePort) throws NetworkException {
         client = new UDPClient(address, remotePort);
+        client.addListener(this);
+        timer.scheduleAtFixedRate(new ReliableProtocolEnforceTask(), timeout, timeout);
     }
     
     /**
@@ -84,6 +101,8 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      */
     public ReliableUDPClient(String address, int remotePort, int localPort) throws NetworkException {
         client = new UDPClient(address, remotePort, localPort);
+        client.addListener(this);
+        timer.scheduleAtFixedRate(new ReliableProtocolEnforceTask(), timeout, timeout);
     }
     
     /**
@@ -93,6 +112,8 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      */
     public ReliableUDPClient(String address, int remotePort, boolean useConnectMsg) throws NetworkException {
         client = new UDPClient(address, remotePort, useConnectMsg);
+        client.addListener(this);
+        timer.scheduleAtFixedRate(new ReliableProtocolEnforceTask(), timeout, timeout);
     }
     
     /**
@@ -101,19 +122,26 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      */
     public ReliableUDPClient(String address, int remotePort, int localPort, boolean useConnectMsg) throws NetworkException {
         client = new UDPClient(address, remotePort, localPort, useConnectMsg);
+        client.addListener(this);
+        timer.scheduleAtFixedRate(new ReliableProtocolEnforceTask(), timeout, timeout);
     }
     
     /**
      *Sets a specific timeout for acknowledgement reception.
      */
-    public void setTimeout(int timeMillis) {
+    public void setTimeout(long timeMillis) {
         timeout = timeMillis;
+    }
+
+    public void setResendLimit(int value) {
+        maxResend = value;
     }
     
     /**
      *Implementation of the PluggableClient interface. Opens the datagram socket and
      *starts the receiver thread.
      */
+    @Override
     public void establishConnection() throws NetworkException {
         client.establishConnection();
     }
@@ -122,193 +150,224 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      *Implementation of the MessagingClient interface
      *@param msg the message string to send to the host
      */
+    @Override
     public void send(String msg) throws NetworkException {
-        ReliableProtocolMessage rmsg = new ReliableProtocolMessage(msg.getBytes(), sendSequence++);
-        client.send(rmsg.getMessageBytes());
-        new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
+        if (client.fixedHost) {
+            String destURL = "//" + client.getHostAddress() + ":" + Integer.toString(client.getHostPort());
+            ReliableProtocolMessage rmsg = this.createMessage(msg.getBytes(), destURL);
+            client.send(rmsg.getMessageBytes());
+//            new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
+        }
+        else throw new NetworkException("ReliableUDPClient: Could not send message: No remote host specified");
     }
     
     /**
      *Temporary implementation of the MessagingClient interface, which is a wrapper for send(String)
      *@param msgBytes the message bytes, which might be corrupted if it contains characters that are not defined for a String object
      */
+    @Override
     public void send(byte[] msgBytes) throws NetworkException {
-        ReliableProtocolMessage rmsg = new ReliableProtocolMessage(msgBytes, sendSequence++);
-        client.send(rmsg.getMessageBytes());
-        new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
-    }
-    
-    /**
-     *Implementation of the MessagingClient interface. Blocking receive until message
-     *arrives. It sends an acknowledgement upon message reception.
-     *@return the message string
-     */
-    public String receive() {
-        ReliableProtocolMessage rmsg = null;
-        ReliableProtocolMessage ack = null;
-        String ret = null;
-        int auxseq;
-        boolean ok = false;
-        while (!ok) {
-            try {
-                rmsg = new ReliableProtocolMessage(client.receiveBytes());
-                while (!rmsg.isMessage())
-                    rmsg = new ReliableProtocolMessage(client.receiveBytes());
-                ret = new String(rmsg.getPayload());
-                auxseq = rmsg.getSequence();
-                ack = new ReliableProtocolMessage(auxseq);
-                client.send(ack.getMessageBytes());
-                if (auxseq == rcvdSequence + 1 || rcvdSequence == -1) {
-                    ok = true;
-                    rcvdSequence = auxseq;
-                }
-            } 
-            catch (MalformedMessageException mme) {
-                ok = false;
-            } 
-            catch (NetworkException ne) {
-                ok = false;
-            }
+        if (client.fixedHost) {
+            String destURL = "//" + client.getHostAddress() + ":" + Integer.toString(client.getHostPort());
+            ReliableProtocolMessage rmsg = this.createMessage(msgBytes, destURL);
+            client.send(rmsg.getMessageBytes());
+//            new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
         }
-        return ret;
+        else throw new NetworkException("ReliableUDPClient: Could not send message: No remote host specified");
     }
     
+    @Override
+    public void send(String message, String url) throws NetworkException {
+        ReliableProtocolMessage rmsg = this.createMessage(message.getBytes(), url);
+        client.send(rmsg.getMessageBytes(), url);
+//        new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
+    }
+
+    @Override
+    public void send(byte[] bytesMessage, String url) throws NetworkException {
+        ReliableProtocolMessage rmsg = this.createMessage(bytesMessage, url);
+        client.send(rmsg.getMessageBytes(), url);
+//        new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
+    }
+
     /**
-     *Temporary implementation of the MessagingClient interface. Blocking receive until message
-     *arrives. It sends an acknowledgement upon message reception.
-     *@return the message bytes, which might be corrupted if the message was sent as a string
+     *Implementation of the MessagingClient interface. Blocking receive until message arrives.
+     *@return the message bytes
      */
+    @Override
     public byte[] receiveBytes() {
-        return this.receive().getBytes();
-    }
-    
-    /**
-     *Implementation of the MessagingClient interface. Waits for an incoming message for limited time. It sends an 
-     *acknowledgement upon message reception.
-     *@param timeout wait time in milliseconds
-     *@return the message string
-     */
-    public String receive(long timeout) throws InterruptedException {
-        ReliableProtocolMessage rmsg = null;
-        ReliableProtocolMessage ack = null;
-        String ret = null;
-        int auxseq;
-        boolean ok = false;
-        while (!ok) {
-            try {
-                rmsg = new ReliableProtocolMessage(client.receiveBytes(timeout));
-                while (!rmsg.isMessage())
-                    rmsg = new ReliableProtocolMessage(client.receiveBytes(timeout));
-                ret = new String(rmsg.getPayload());
-                auxseq = rmsg.getSequence();
-                ack = new ReliableProtocolMessage(auxseq);
-                client.send(ack.getMessageBytes());
-                if (auxseq == rcvdSequence + 1 || rcvdSequence == -1) {
-                    ok = true;
-                    rcvdSequence = auxseq;
-                }
-                ok = true;
-            } 
-            catch (MalformedMessageException mme) {
-                ok = false;
-            } 
-            catch (NetworkException ne) {
-                ok = false;
-            }
+        byte[] ret = null;
+        ReceiveRequest myRequest = new ReceiveRequest();
+        synchronized (receiveRequests) {
+            receiveRequests.add(myRequest);
+        }
+        myRequest.awaitUninterruptibly();
+        if (myRequest.isDone()) {
+            ret = myRequest.getMessage();
         }
         return ret;
     }
-    
+
     /**
-     *Temporary implementation of the MessagingClient interface. Waits for an incoming message for limited time. It sends an 
-     *acknowledgement upon message reception.
-     *@param timeout wait time in milliseconds
-     *@return the message bytes, which might be corrupted if the message was sent as a string
+     *Implementation of the MessagingClient interface. Blocking receive until message arrives.
+     *@return the message string
      */
-    public byte[] receiveBytes(long timeout) throws InterruptedException {
-        return this.receive(timeout).getBytes();
+    @Override
+    public String receive() {
+        return new String(this.receiveBytes());
     }
-    
+
+    /**
+     *Implementation of the MessagingClient interface. Waits for an incoming message for limited time.
+     *@param timeout wait time in milliseconds
+     *@return the message bytes
+     */
+    @Override
+    public byte[] receiveBytes(long timeout) throws InterruptedException {
+        byte[] ret = null;
+        ReceiveRequest myRequest = new ReceiveRequest();
+        synchronized (receiveRequests) {
+            receiveRequests.add(myRequest);
+        }
+        myRequest.await(timeout, TimeUnit.MILLISECONDS);
+        if (myRequest.isDone()) {
+            ret = myRequest.getMessage();
+        }
+        return ret;
+    }
+
+    /**
+     *Implementation of the MessagingClient interface. Waits for an incoming message for limited time.
+     *@param timeout wait time in milliseconds
+     *@return the message string
+     */
+    @Override
+    public String receive(long timeout) throws InterruptedException {
+        return new String(this.receiveBytes(timeout));
+    }
+
     /**
      *Implementation of the MessageArrivedListener interface. Acknowledges messages received by subscribers to the
      *unicast client.
      */
-    public void signalEvent(MessageArrivedEvent event) {
-        ReliableProtocolMessage rmsg = null;
-        ReliableProtocolMessage ack = null;
-        try {
-            rmsg = new ReliableProtocolMessage(event.getMessageBytes());
-            if (rmsg.isMessage()) {
-                int auxseq = rmsg.getSequence();
-                ack = new ReliableProtocolMessage(auxseq);
-                client.send(ack.getMessage());
-                if (auxseq == rcvdSequence + 1 || rcvdSequence == -1) {
-                    fireEvent(new MessageArrivedEvent(rmsg.getPayload()));
-                    rcvdSequence = auxseq;
+    @Override
+    public void signalEvent(MessageArrivedEvent protocolEvent) {
+        if (protocolEvent != null) {
+            try {
+                ReliableProtocolMessage rcvdMsg = new ReliableProtocolMessage(protocolEvent.getContentBytes());
+                if (rcvdMsg.isAcknowledge()) {
+                    synchronized (messageTable) {
+                        messageTable.remove(rcvdMsg.getSequence());
+                    }
+                }
+                else {
+                    ReliableProtocolMessage ack = new ReliableProtocolMessage(rcvdMsg.getSequence());
+                    try {
+                        client.reply(ack.getMessageBytes());    // TODO: Implement robust reply mechanism
+                    }
+                    catch (NetworkException ne) {
+                        Debug.printStackTrace(ne, "programming5.net.sockets.ReliableUDPClient");
+                    }
+                    MessageArrivedEvent messageEvent = new MessageArrivedEvent(rcvdMsg.getPayload());
+                    this.fireEvent(messageEvent);
+                    synchronized (receiveRequests) {
+                        for (ReceiveRequest request : receiveRequests) {
+                            request.setMessage(messageEvent.getContentBytes());
+                        }
+                        receiveRequests.clear();
+                    }
                 }
             }
-        } 
-        catch (MalformedMessageException mme) {} catch (NetworkException ne) {}
+            catch (MalformedMessageException mme) {
+                Debug.println("ReliableProtocolMessage: Bad message received: " + protocolEvent.getContent(), "programming5.net.sockets.ReliableUDPClient");
+                Debug.printStackTrace(mme, "programming5.net.sockets.ReliableUDPClient");
+            }
+        }
     }
     
     /**
      *Implementation of the PluggableClient interface. Stops the receiver thread and
      *closes the socket.
      */
+    @Override
     public void endConnection() {
         client.endConnection();
+        timer.cancel();
+    }
+    
+    protected void signalFail(String destURL) {
+        System.out.println("ReliableUDPClient: Cannot guarantee connection for " + destURL);
     }
     
     /**
-     *Overrides method in Publisher to realize implementation of PluggableClient interface
+     *@return the local host address
      */
-    public void addListener(MessageArrivedListener mal) {
-        super.addListener(mal);
-        if (listeners.size() == 1) {
-            client.addListener(this);
-        }
-    }
-    
-    /**
-     *Overrides method in Publisher to realize implementation of PluggableClient interface
-     */
-    public void removeListener(MessageArrivedListener mal) {
-        super.removeListener(mal);
-        if (listeners.size() == 0) {
-            client.removeListener(this);
-        }
-    }
-    
-    protected void signalFail() {
-        System.out.println("ReliableUDPClient: Cannot guarantee connection");
-    }
-    
     public String getHostAddress() {
         return client.getHostAddress();
     }
-    
+
+    /**
+     *@return the port to which the client is currently sending
+     */
     public int getHostPort() {
         return client.getHostPort();
     }
-    
+
+    /**
+     * @return the url of the host from which the last message was received; null if no messages have been
+     * received
+     */
+    public String getReplyAddress() {
+        return client.getReplyAddress();
+    }
+
+    /**
+     *@return the local port on which the client is listening
+     */
     public int getLocalPort() {
         return client.getLocalPort();
     }
 
-    public void send(String message, String url) throws NetworkException {
-        try {
-            URL urlObj = new URL(url);
-            ReliableProtocolMessage rmsg = new ReliableProtocolMessage(message.getBytes(), sendSequence++);
-            client.send(message, urlObj.getHost(), urlObj.getPort());
-            new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
+    private ReliableProtocolMessage createMessage(byte[] msgBytes, String destURL) {
+        ReliableProtocolMessage ret = null;
+        long sendSequence = random.nextLong();
+        synchronized (messageTable) {
+            ReliableProtocolMessage collision = messageTable.get(sendSequence);
+            while (collision != null) {
+                sendSequence = random.nextLong();
+                collision = messageTable.get(sendSequence);
+            }
+            ret = new ReliableProtocolMessage(msgBytes, sendSequence, destURL);
+            ret.signalSent();
+            messageTable.put(sendSequence, ret);
         }
-        catch (MalformedURLException murle) {
-            throw new NetworkException("ReliableUDPClient: Cannot send message: " + murle.getMessage());
-        }
+        return ret;
     }
 
-    public void send(byte[] bytesMessage, String url) throws NetworkException {
-        this.send(new String(bytesMessage), url);
+    private class ReliableProtocolEnforceTask extends TimerTask {
+
+        @Override
+        public void run() {
+            Vector<ReliableProtocolMessage> unackedMessages;
+            synchronized (messageTable) {
+                unackedMessages = new Vector<ReliableProtocolMessage>(messageTable.values());
+            }
+            for (ReliableProtocolMessage message : unackedMessages) {
+                if (message.getSendCount() < maxResend) {
+                    message.signalSent();
+                    try {
+                        client.send(message.getMessageBytes(), message.getDestination());
+                    }
+                    catch (NetworkException ne) {
+                        Debug.printStackTrace(ne, "programming5.net.sockets.ReliableUDPClient");
+                    }
+                }
+                else {
+                    signalFail(message.getDestination());   // TODO: Improve failure reporting mechanism
+                }
+            }
+        }
+
     }
 
 }
