@@ -29,6 +29,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Hashtable;
 import programming5.arrays.ArrayOperations;
+import programming5.io.Debug;
 import programming5.net.MessageArrivedEvent;
 import programming5.net.Publisher;
 import programming5.net.ReceivingThread;
@@ -72,6 +73,7 @@ public class UDPReceiver extends ReceivingThread {
                 if (messageComplete) {
                     lastAddress = p.getAddress();
                     lastPort = p.getPort();
+                    Debug.println("Received from " + lastPort);
                     byte[][] toAssemble = assembly.get(lastAddress);
                     assembly.remove(lastAddress);
                     bytesMessage = toAssemble[0];
@@ -119,8 +121,9 @@ public class UDPReceiver extends ReceivingThread {
         String ret = null;
         try {
             if (lastAddress != null) {
-                ret = new URI("//" + lastAddress.toString() + ":" + Integer.toString(lastPort)).toString();
+                ret = new URI("//" + lastAddress.getHostAddress() + ":" + Integer.toString(lastPort)).toString();
             }
+            Debug.println("Replying to: " + ret);
         }
         catch (URISyntaxException use) {}
         finally {
