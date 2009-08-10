@@ -32,6 +32,9 @@ public class ReliableProtocolMessage extends Message {
     
     public static String MESSAGE_HEADER = "RPM";
     public static String ACK_HEADER = "ACK";
+
+    protected String destination = null;
+    protected int sendCount = 0;
     
     /**
      *Creates a reliable protocol message from the given message string, which must follow the correct format (otherwise a MalformedMessageException is thrown)
@@ -46,11 +49,12 @@ public class ReliableProtocolMessage extends Message {
     /**
      *Creates a reliable protocol message that encapsulates the given message payload with the given sequence number
      */
-    public ReliableProtocolMessage(byte[] msg, long sequence) {
+    public ReliableProtocolMessage(byte[] msg, long sequence, String destURL) {
         super();
         this.setHeader(MESSAGE_HEADER);
         this.addMessageItem(sequence);
         this.addMessageItem(msg);
+        destination = destURL;
     }
     
     /**
@@ -84,8 +88,8 @@ public class ReliableProtocolMessage extends Message {
     /**
      *@return the sequence number of message or acknowledgement
      */
-    public int getSequence() throws MalformedMessageException {
-        return this.getItemAsInt(0);
+    public long getSequence() throws MalformedMessageException {
+        return this.getItemAsLong(0);
     }
     
     /**
@@ -101,4 +105,17 @@ public class ReliableProtocolMessage extends Message {
     public boolean isMessage() {
         return header.equals(MESSAGE_HEADER);
     }
+
+    public void signalSent() {
+        sendCount++;
+    }
+
+    public int getSendCount() {
+        return sendCount;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
 }
