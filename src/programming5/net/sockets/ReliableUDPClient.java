@@ -27,7 +27,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+import programming5.collections.RotatingVector;
 import programming5.io.Debug;
+import programming5.net.AsynchMessageArrivedEvent;
 import programming5.net.MalformedMessageException;
 import programming5.net.MessageArrivedEvent;
 import programming5.net.MessageArrivedListener;
@@ -35,20 +37,26 @@ import programming5.net.MessagingClient;
 import programming5.net.NetworkException;
 import programming5.net.Publisher;
 import programming5.net.ReceiveRequest;
+import programming5.net.ReliableMessageArrivedListener;
 import programming5.net.ReliableProtocolMessage;
+import programming5.net.Subscriber;
 
 
 /**
- *<-----------WARNING!------------> Implementation of this class is not complete
- *This class is a UDP socket implementation of a MessagingClient that ensures reliable transmission (replaces the UDPClient 
- *class of the previous Programming release). It uses a UDPClient object to send and receive messages. After each send, it 
- *waits a time given by timeout for an acknowledgement packet, and responds with an acknowledgement of its own upon message 
- *reception. Both ends of the unicast communication must implement this class, or a class that behaves in the same way.<p> 
+ *This class is a UDP socket implementation of a MessagingClient that ensures reliable transmission
+ *It uses a UDPClient object to send and receive messages. It keeps track and waits for
+ *acknowledgements for all messages sent, and also automatically sends acknowledgements for all
+ *messages received. Messages for which no acknowledgements are received within a configurable
+ *amount of time are resent, up to a certain limit, after which the message is dropped (and
+ *subscribed clients are notified if enabled to do so as ReliableMessageArrivedListeners). Both
+ *ends of the unicast communication must implement this class, or a class that behaves in the same
+ *way.<p>
  *<p>It uses a special message object that creates messages with the following syntax:<p>
  *<p>"RPM:seq_number::payload"<p>
  *"ACK:seq_number"
  *@see programming5.net.sockets.UDPClient
  *@see programming5.net.ReliableProtocolMessage
+ *@see programming5.net.ReliableMessageArrivedListener
  *@author Andres Quiroz Hernandez
  *@version 6.1
  */
@@ -56,6 +64,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     
     protected UDPClient client;
     protected final Hashtable<Long, ReliableProtocolMessage> messageTable = new Hashtable<Long, ReliableProtocolMessage>();
+    protected final RotatingVector<Long> receivedMessages = new RotatingVector<Long>(DEF_RCV_MEMORY);
     protected final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
     
     private long timeout = DEF_TIMEOUT;
@@ -65,10 +74,13 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     
     public static final long DEF_TIMEOUT = 10000;
     public static final int DEF_RESEND = 3;
+    public static final int DEF_RCV_MEMORY = 100;
     
     /**
-     *Creates a reliable unicast client for which the local port will be determined by an available port at the time of 
-     *connection. Messages will be sent by default to the localhost on port 4445.
+     *Creates a reliable unicast client for which the local port will be determined by an
+     *available port.
+     *The new client will be listening on this port upon creation (no need to call
+     *establishConnection), unlike previous implementations of this class.
      */
     public ReliableUDPClient() throws NetworkException {
         client = new UDPClient();
@@ -77,8 +89,11 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     }
     
     /**
-     *Creates a reliable unicast client on the specified local port. Messages will be sent by default to the localhost on 
-     *port 4445.
+     *Creates an unbound reliable unicast client, to be bound on the specified local port at the
+     *time of connection.
+     *The new client will be listening on this port upon creation (no need to call
+     *establishConnection), unlike previous implementations of this class.
+     *@param localPort the local port on which the socket will be created to receive messages
      */
     public ReliableUDPClient(int localPort) throws NetworkException {
         client = new UDPClient(localPort);
@@ -87,8 +102,14 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     }
     
     /**
-     *Creates a reliable unicast client for the specified host address and remote port, to be bound on an available
-     *local port. When establishConnection is called, no special connect message will be sent.
+     *Creates a reliable unicast client for the specified host address and remote port, to be
+     *bound on an available local port.
+     *Will not use a connect protocol for use with a UDPServer class.
+     *The new client will be listening on this port upon creation (no need to call
+     *establishConnection), unlike previous implementations of this class.
+     *@param address the host address to which messages will be sent by default; if not valid, the default
+     *address will not be set and the client will only function as a free client
+     *@param remotePort the port to which messages will be sent by default
      */
     public ReliableUDPClient(String address, int remotePort) throws NetworkException {
         client = new UDPClient(address, remotePort);
@@ -97,7 +118,14 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     }
     
     /**
-     *Creates a reliable unicast client for the specified host address and the specified ports
+     *Creates a reliable unicast client for the specified host address and the specified ports.
+     *Will not use a connect protocol for use with a UDPServer class.
+     *The new client will be listening on this port upon creation (no need to call establishConnection),
+     *unlike in previous implementations of this class.
+     *@param address the host address to which messages will be sent by default; if not valid, the default
+     *address will not be set and the client will only function as a free client
+     *@param remotePort the port to which messages will be sent by default
+     *@param localPort the local port on which the socket will be created to receive messages
      */
     public ReliableUDPClient(String address, int remotePort, int localPort) throws NetworkException {
         client = new UDPClient(address, remotePort, localPort);
@@ -106,9 +134,17 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     }
     
     /**
-     *Creates a reliable unicast client for the specified host address and remote port, to be bound on an available
-     *local port. When establishConnection is called, a special connect message will be sent if useConnectMsg
-     *parameter is true.
+     *Creates a reliable unicast client for the specified host address and remote port, to be
+     *bound on an available local port. If specified, will use a connect protocol to establish
+     *connection with a UDPServer class (requires calling establishConnection method).
+     *The new client will be listening on this port upon creation, unlike previous implementations
+     *of this class.
+     *@param address the host address to which messages will be sent by default; if not valid, the default
+     *address will not be set and the client will only function as a free client
+     *@param remotePort the port to which messages will be sent by default
+     *@param useConnectMsg if true, the connect protocol will be used with a UDP server at the given remote
+     *address and port
+     *@see #establishConnection
      */
     public ReliableUDPClient(String address, int remotePort, boolean useConnectMsg) throws NetworkException {
         client = new UDPClient(address, remotePort, useConnectMsg);
@@ -117,8 +153,17 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     }
     
     /**
-     *Creates a reliable unicast client for the specified host address and the specified ports. The client will send
-     *a special connect message upon call of establishConnection if specified by useConnectMsg.
+     *Creates a reliable unicast client for the specified host address and the specified ports.
+     *When establishConnection is called, a special connect message will be sent if useConnectMsg
+     *parameter is true.
+     *The new client will be listening on this port upon creation, unlike previous implementations
+     *of this class.
+     *@param address the host address to which messages will be sent by default; if not valid, the default
+     *address will not be set and the client will only function as a free client
+     *@param remotePort the port to which messages will be sent by default
+     *@param localPort the local port on which the socket will be created to receive messages
+     *@param useConnectMsg if true, the connect protocol will be used with a UDP server at the given remote
+     *address and port
      */
     public ReliableUDPClient(String address, int remotePort, int localPort, boolean useConnectMsg) throws NetworkException {
         client = new UDPClient(address, remotePort, localPort, useConnectMsg);
@@ -128,18 +173,34 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     
     /**
      *Sets a specific timeout for acknowledgement reception.
+     *@param timeMillis the time to wait before resending unacknowledged messages
      */
     public void setTimeout(long timeMillis) {
         timeout = timeMillis;
     }
 
+    /**
+     * Sets a specific number of times a message can be resent before it is dropped.
+     * @param value the resend limit
+     */
     public void setResendLimit(int value) {
         maxResend = value;
     }
+
+    /**
+     * When a message that has already been acknowledged is received again (possibly due to a lost 
+     * ack), it should not be delivered to this application again. This parameter controls the 
+     * number of received messages kept in memory in order to accomplish this.
+     * @param value the number of messages to keep in memory in case of duplicate reception
+     */
+    public void setReceiveMemory(int value) {
+        receivedMessages.setSize(value);
+    }
     
     /**
-     *Implementation of the PluggableClient interface. Opens the datagram socket and
-     *starts the receiver thread.
+     *Implementation of the PluggableClient interface. Implements a connection protocol for use
+     *with a UDPServer class if this behavior has been specified upon instantiation of the UDP
+     *client. If not, a call to this method will do nothing.
      */
     @Override
     public void establishConnection() throws NetworkException {
@@ -156,14 +217,13 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
             String destURL = "//" + client.getHostAddress() + ":" + Integer.toString(client.getHostPort());
             ReliableProtocolMessage rmsg = this.createMessage(msg.getBytes(), destURL);
             client.send(rmsg.getMessageBytes());
-//            new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
         }
         else throw new NetworkException("ReliableUDPClient: Could not send message: No remote host specified");
     }
     
     /**
-     *Temporary implementation of the MessagingClient interface, which is a wrapper for send(String)
-     *@param msgBytes the message bytes, which might be corrupted if it contains characters that are not defined for a String object
+     *Implementation of the MessagingClient interface
+     *@param bytesMessage the packet of bytes to send to the host
      */
     @Override
     public void send(byte[] msgBytes) throws NetworkException {
@@ -171,23 +231,64 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
             String destURL = "//" + client.getHostAddress() + ":" + Integer.toString(client.getHostPort());
             ReliableProtocolMessage rmsg = this.createMessage(msgBytes, destURL);
             client.send(rmsg.getMessageBytes());
-//            new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
         }
         else throw new NetworkException("ReliableUDPClient: Could not send message: No remote host specified");
     }
     
+    /**
+     *Implementation of the MessagingClient interface. Sends the given message to the given uri.
+     *@param message the message to send
+     *@param uri the destination uri, which must be in the format [protocol:]//host:port[/...]
+     */
     @Override
-    public void send(String message, String url) throws NetworkException {
-        ReliableProtocolMessage rmsg = this.createMessage(message.getBytes(), url);
-        client.send(rmsg.getMessageBytes(), url);
-//        new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
+    public void send(String message, String uri) throws NetworkException {
+        ReliableProtocolMessage rmsg = this.createMessage(message.getBytes(), uri);
+        client.send(rmsg.getMessageBytes(), uri);
     }
 
+    /**
+     *Implementation of the MessagingClient interface. Sends the given message to the given uri.
+     *@param message the message to send
+     *@param uri the destination uri, which must be in the format [protocol:]//host:port[/...]
+     */
     @Override
     public void send(byte[] bytesMessage, String url) throws NetworkException {
         ReliableProtocolMessage rmsg = this.createMessage(bytesMessage, url);
         client.send(rmsg.getMessageBytes(), url);
-//        new ReliableUDPEnforcerThread(rmsg, client, timeout, this).start();
+    }
+
+    /**
+     * Allows a client to send the message to the host from which the last message was received. Recommended
+     * for synchronous protocols where no interleaved messages are expected.
+     * This class is particular to UDPClient
+     * @param msg the message to send to the host
+     */
+    public void replyTo(MessageArrivedEvent event, String msg) throws NetworkException {
+        if (event instanceof AsynchMessageArrivedEvent) {
+            String destAddress = ((AsynchMessageArrivedEvent) event).getSourceURL();
+            if (destAddress != null) {
+                send(msg, destAddress);
+            }
+            else throw new NetworkException("UDPClient: Cannot send reply: No message to reply to");
+        }
+        else throw new NetworkException("UDPClient: Cannot send reply: Arrived event does not contain return address");
+    }
+
+    /**
+     * Allows a client to send the message to the host from which the last message was received. Recommended
+     * for synchronous protocols where no interleaved messages are expected.
+     * This class is particular to UDPClient
+     * @param msg the message to send to the host
+     */
+    public void replyTo(MessageArrivedEvent event, byte[] msg) throws NetworkException {
+        if (event instanceof AsynchMessageArrivedEvent) {
+            String destAddress = ((AsynchMessageArrivedEvent) event).getSourceURL();
+            if (destAddress != null) {
+                send(msg, destAddress);
+            }
+            else throw new NetworkException("UDPClient: Cannot send reply: Return address not set");
+        }
+        else throw new NetworkException("UDPClient: Cannot send reply: Arrived event does not contain return address");
     }
 
     /**
@@ -247,8 +348,9 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     }
 
     /**
-     *Implementation of the MessageArrivedListener interface. Acknowledges messages received by subscribers to the
-     *unicast client.
+     *Implementation of the MessageArrivedListener interface to receive and decode messages
+     *received over the network, and send the corresponding acknowledgements and relay the message
+     *to the application. Not meant for external use.
      */
     @Override
     public void signalEvent(MessageArrivedEvent protocolEvent) {
@@ -262,20 +364,24 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                     }
                 }
                 else {
-                    ReliableProtocolMessage ack = new ReliableProtocolMessage(rcvdMsg.getSequence());
+                    long sequence = rcvdMsg.getSequence();
+                    ReliableProtocolMessage ack = new ReliableProtocolMessage(sequence);
                     try {
-                        client.reply(ack.getMessageBytes());    // TODO: Implement robust reply mechanism
+                        client.replyTo(protocolEvent, ack.getMessageBytes());
                     }
                     catch (NetworkException ne) {
                         Debug.printStackTrace(ne, "programming5.net.sockets.ReliableUDPClient");
                     }
-                    MessageArrivedEvent messageEvent = new MessageArrivedEvent(rcvdMsg.getPayload());
-                    this.fireEvent(messageEvent);
-                    synchronized (receiveRequests) {
-                        for (ReceiveRequest request : receiveRequests) {
-                            request.setMessage(messageEvent.getContentBytes());
+                    if (!receivedMessages.contains(sequence)) {
+                        receivedMessages.add(sequence);
+                        AsynchMessageArrivedEvent messageEvent = new AsynchMessageArrivedEvent(rcvdMsg.getPayload(), ((AsynchMessageArrivedEvent) protocolEvent).getSourceURL());
+                        this.fireEvent(messageEvent);
+                        synchronized (receiveRequests) {
+                            for (ReceiveRequest request : receiveRequests) {
+                                request.setMessage(messageEvent.getContentBytes());
+                            }
+                            receiveRequests.clear();
                         }
-                        receiveRequests.clear();
                     }
                 }
             }
@@ -288,7 +394,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     
     /**
      *Implementation of the PluggableClient interface. Stops the receiver thread and
-     *closes the socket.
+     *closes the socket and cancels the resend timer.
      */
     @Override
     public void endConnection() {
@@ -297,7 +403,11 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     }
     
     protected void signalFail(String destURL) {
-        System.out.println("ReliableUDPClient: Cannot guarantee connection for " + destURL);
+        for (Subscriber<MessageArrivedEvent> listener : this.listeners) {
+            if (listener instanceof ReliableMessageArrivedListener) {
+                ((ReliableMessageArrivedListener) listener).signalSendError(destURL, "ReliableUDPClient: Cannot guarantee connection: Exceeded resend limit");
+            }
+        }
     }
     
     /**
@@ -356,21 +466,24 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
             for (ReliableProtocolMessage message : unackedMessages) {
                 try {
                     Debug.println("Resending unacked message: " + new String(message.getPayload()));
+                    if (message.getSendCount() < maxResend) {
+                        message.signalSent();
+                        try {
+                            client.send(message.getMessageBytes(), message.getDestination());
+                        }
+                        catch (NetworkException ne) {
+                            Debug.printStackTrace(ne, "programming5.net.sockets.ReliableUDPClient");
+                        }
+                    }
+                    else {
+                        synchronized (messageTable) {
+                            messageTable.remove(message.getSequence());
+                        }
+                        signalFail(message.getDestination());
+                    }
                 }
                 catch (MalformedMessageException mme) {
                     Debug.printStackTrace(mme);
-                }
-                if (message.getSendCount() < maxResend) {
-                    message.signalSent();
-                    try {
-                        client.send(message.getMessageBytes(), message.getDestination());
-                    }
-                    catch (NetworkException ne) {
-                        Debug.printStackTrace(ne, "programming5.net.sockets.ReliableUDPClient");
-                    }
-                }
-                else {
-                    signalFail(message.getDestination());   // TODO: Improve failure reporting mechanism
                 }
             }
         }
