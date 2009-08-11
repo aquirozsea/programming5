@@ -22,7 +22,7 @@
 package programming5.net;
 
 /**
- *Special event type for relaying messages asynchronously between application layers. Its payload is a single
+ *Special event type for relaying messages between application layers. Its payload is a single
  *string message or byte array. This class is "castable" from events with at least one item.
  *WARNING: The constructor and accessor semantics for this object differ from those of the Event base class.
  *Please note the specific documentation for each method.
