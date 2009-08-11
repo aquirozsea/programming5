@@ -56,6 +56,12 @@ public abstract class CollectionUtils {
         return ret;
     }
 
+    /**
+     * To create a vector initialized to contain the given element of a subclass of the vector type.
+     * @param element the input element, which will be put into the vector by reference
+     * @param type the vector type, which is a superclass of the element type.
+     * @return the typed vector containing the given element
+     */
     public static final <T, U extends T> Vector<T> vectorFromElement(U element, Class<T> type) {
         Vector<T> ret = new Vector<T>();
         ret.add(element);
@@ -63,11 +69,13 @@ public abstract class CollectionUtils {
     }
 
     /**
-     * Downcasts the given vector of an derived class to a vector of a base class
+     * Upcasts the given vector of a derived class to a vector of a base class
      * @param vector the vector to downcast
-     * @return a new vector of the base type with all the elements of the input vector
+     * @param type the superclass that will determine the returned vector class
+     * @return a new vector of the base type with all the elements of the input vector (by
+     * reference)
      */
-    public static final <T, U extends T> Vector<T> downcastVector(Vector<U> vector, Class<T> type) {
+    public static final <T, U extends T> Vector<T> upcastVector(Vector<U> vector, Class<T> type) {
         Vector<T> ret = new Vector<T>();
         for (U element : vector) {
             ret.add(element);
@@ -76,12 +84,12 @@ public abstract class CollectionUtils {
     }
 
     /**
-     * Upcasts the given vector of a base class, if possible, to a vector of an derived class.
+     * Downcasts the given vector of a base class, if possible, to a vector of a derived class.
      * @param vector the vector to upcast, which must be composed of elements of the derived class
      * @return a new vector of the derived class with all the elements of the input vector
      * @throws ClassCastException if the elements of the input vector are not of the derived class
      */
-    public static final <T, U extends T> Vector<U> upcastVector(Vector<T> vector) {
+    public static final <T, U extends T> Vector<U> downcastVector(Vector<T> vector) {
         Vector<U> ret = new Vector<U>();
         for (T element : vector) {
             ret.add((U) element);
