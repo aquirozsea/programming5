@@ -22,8 +22,8 @@
 package programming5.net;
 
 /**
- *This is a special message wrapper for transmission in a reliable protocol. It allows the distinction of acknowledge messages 
- *from actual content messages.
+ *This is a special message wrapper for transmission in a reliable protocol. It allows the
+ *distinction of acknowledge messages from actual content messages.
  *@see programming5.net.Message
  *@author Andres Quiroz Hernandez
  *@version 6.1
@@ -37,7 +37,10 @@ public class ReliableProtocolMessage extends Message {
     protected int sendCount = 0;
     
     /**
-     *Creates a reliable protocol message from the given message string, which must follow the correct format (otherwise a MalformedMessageException is thrown)
+     *Creates a reliable protocol message from the given message string, which must follow the 
+     *correct format (otherwise a MalformedMessageException is thrown)
+     *@param rpm the encoded reliable protocol message
+     *@throws MalformedMessageException when the byte message does not follow the correct format
      */
     public ReliableProtocolMessage(byte[] rpm) throws MalformedMessageException {
         super(rpm);
@@ -47,7 +50,12 @@ public class ReliableProtocolMessage extends Message {
     }
     
     /**
-     *Creates a reliable protocol message that encapsulates the given message payload with the given sequence number
+     *Creates a reliable protocol message that encapsulates the given message payload with the 
+     *given sequence number
+     *@param msg the message to encapsulate
+     *@param sequence the sequence number associated with the message
+     *@param destURL the URL of the destination where the message will be sent (this information
+     * is not encoded in the message sent over the network
      */
     public ReliableProtocolMessage(byte[] msg, long sequence, String destURL) {
         super();
@@ -58,7 +66,9 @@ public class ReliableProtocolMessage extends Message {
     }
     
     /**
-     *Creates an acknowledgement message as a reliable protocol message for the given sequence number
+     *Creates an acknowledgement message as a reliable protocol message for the given sequence 
+     *number
+     *@param sequence the sequence number of the message that will be acknowledged
      */
     public ReliableProtocolMessage(long sequence) {
         super();
@@ -67,7 +77,8 @@ public class ReliableProtocolMessage extends Message {
     }
     
     /**
-     *@return the payload if not an acknowledgement (otherwise a malformed message exception is thrown)
+     *@return the payload, if not an acknowledgement
+     *@throws MalformedMessageException if the message was not correctly constructed
      */
     public byte[] getPayload() throws MalformedMessageException {
         byte[] ret = null;
@@ -87,6 +98,7 @@ public class ReliableProtocolMessage extends Message {
     
     /**
      *@return the sequence number of message or acknowledgement
+     *@throws MalformedMessageException if the message was not constructed correctly
      */
     public long getSequence() throws MalformedMessageException {
         return this.getItemAsLong(0);
@@ -106,14 +118,25 @@ public class ReliableProtocolMessage extends Message {
         return header.equals(MESSAGE_HEADER);
     }
 
+    /**
+     * Increments an internal counter, not sent over the network, for every time the message has 
+     * been sent.
+     */
     public void signalSent() {
         sendCount++;
     }
 
+    /**
+     * @return the number of times the message has been sent, if this has been kept track of using 
+     * the signalSent method
+     */
     public int getSendCount() {
         return sendCount;
     }
 
+    /**
+     * @return the URL corresponding to the destination of the message
+     */
     public String getDestination() {
         return destination;
     }
