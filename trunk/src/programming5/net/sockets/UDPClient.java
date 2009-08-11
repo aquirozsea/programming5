@@ -32,6 +32,7 @@ import java.net.UnknownHostException;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import programming5.arrays.ArrayOperations;
+import programming5.net.AsynchMessageArrivedEvent;
 import programming5.net.MessageArrivedEvent;
 import programming5.net.MessagingClient;
 import programming5.net.NetworkException;
@@ -39,11 +40,12 @@ import programming5.net.Publisher;
 import programming5.net.ReceiveRequest;
 
 /**
- *This class is the UDP socket implementation of the MessagingClient. It can be instantiated as a free client
- *(for sending to any host using the send to url method), directed to a specific host destination (to use the
- *default send methods, as well as the send to url method), or bound to a remote client using a connection 
- *protocol and a UDPServer. There are changes in the connection and messaging implementations from previous 
- *versions of this class, which will be pointed out where they affect the API functionality.
+ *This class is the UDP socket implementation of the MessagingClient. It can be instantiated as a 
+ *free client (for sending to any host using the send to url method), directed to a specific host
+ *destination (to use the default send methods, as well as the send to url method), or bound to a
+ *remote client using a connection protocol and a UDPServer. There are changes in the connection
+ *and messaging implementations from previous versions of this class, which will be pointed out
+ *where they affect the API functionality.
  *@see programming5.net.MessagingClient
  *@see #send(String, String, int)
  *@author Andres Quiroz Hernandez
@@ -286,17 +288,21 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     }
 
     /**
-     * Allows a client to send the message to the host from which the last message was received. Recommended 
-     * for synchronous protocols where no interleaved messages are expected.
-     * This class is particular to UDPClient
+     * Allows a client to send the message to the host from which the given message was received.
+     * This method is particular to UDPClient (not a MessagingClient method)
+     * @param event the event containing the origin of the message, to which the reply will be
+     * sent
      * @param msg the message to send to the host
      */
-    public void reply(String msg) throws NetworkException {
-        String destAddress = receiver.getReplyAddress();
-        if (destAddress != null) {
-            send(msg, destAddress);
+    public void replyTo(MessageArrivedEvent event, String msg) throws NetworkException {
+        if (event instanceof AsynchMessageArrivedEvent) {
+            String destAddress = ((AsynchMessageArrivedEvent) event).getSourceURL();
+            if (destAddress != null) {
+                send(msg, destAddress);
+            }
+            else throw new NetworkException("UDPClient: Cannot send reply: No message to reply to");
         }
-        else throw new NetworkException("UDPClient: Cannot send reply: No message to reply to");
+        else throw new NetworkException("UDPClient: Cannot send reply: Arrived event does not contain return address");
     }
     
     /**
@@ -347,17 +353,21 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     }
 
     /**
-     * Allows a client to send the message to the host from which the last message was received. Recommended
-     * for synchronous protocols where no interleaved messages are expected.
-     * This class is particular to UDPClient
+     * Allows a client to send the message to the host from which the given message was received.
+     * This method is particular to UDPClient (not a MessagingClient method)
+     * @param event the event containing the origin of the message, to which the reply will be
+     * sent
      * @param msg the message to send to the host
      */
-    public void reply(byte[] msg) throws NetworkException {
-        String destAddress = receiver.getReplyAddress();
-        if (destAddress != null) {
-            send(msg, destAddress);
+    public void replyTo(MessageArrivedEvent event, byte[] msg) throws NetworkException {
+        if (event instanceof AsynchMessageArrivedEvent) {
+            String destAddress = ((AsynchMessageArrivedEvent) event).getSourceURL();
+            if (destAddress != null) {
+                send(msg, destAddress);
+            }
+            else throw new NetworkException("UDPClient: Cannot send reply: Return address not set");
         }
-        else throw new NetworkException("UDPClient: Cannot send reply: No message to reply to");
+        else throw new NetworkException("UDPClient: Cannot send reply: Arrived event does not contain return address");
     }
     
     /**
@@ -387,8 +397,9 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     }
 
     /**
-     *Implementation of the MessagingClient interface. Sends the given message to the given url, which must be in the format 
-     *[protocol:]//host:port[/...]
+     *Implementation of the MessagingClient interface. Sends the given message to the given uri.
+     *@param message the message to send
+     *@param uri the destination uri, which must be in the format [protocol:]//host:port[/...]
      */
     @Override
     public void send(String message, String uri) throws NetworkException {
@@ -402,8 +413,9 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     }
 
     /**
-     *Implementation of the MessagingClient interface. Sends the given message to the given url, which must be in the format 
-     *[protocol:]//host:port[/...]
+     *Implementation of the MessagingClient interface. Sends the given message to the given uri.
+     *@param message the message to send
+     *@param uri the destination uri, which must be in the format [protocol:]//host:port[/...]
      */
     @Override
     public void send(byte[] bytesMessage, String uri) throws NetworkException {
@@ -522,8 +534,8 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     }
 
     /**
-     * @return the url of the host from which the last message was received; null if no messages have been
-     * received
+     * @return the url of the host from which the last message was received; null if no messages 
+     * have been received
      */
     public String getReplyAddress() {
         return receiver.getReplyAddress();
@@ -558,4 +570,5 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
         ret[numPackets-1] = ArrayOperations.join(header, packet);
         return ret;
     }
+    
 }

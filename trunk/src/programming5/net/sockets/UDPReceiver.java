@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 import java.util.Hashtable;
 import programming5.arrays.ArrayOperations;
 import programming5.io.Debug;
+import programming5.net.AsynchMessageArrivedEvent;
 import programming5.net.MessageArrivedEvent;
 import programming5.net.Publisher;
 import programming5.net.ReceivingThread;
@@ -38,7 +39,7 @@ import programming5.net.ReceivingThread;
  *This class complements the UDPClient class as a constant listener to the socket
  *@see programming5.net.sockets.UDPClient
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
 public class UDPReceiver extends ReceivingThread {
     
@@ -73,14 +74,13 @@ public class UDPReceiver extends ReceivingThread {
                 if (messageComplete) {
                     lastAddress = p.getAddress();
                     lastPort = p.getPort();
-                    Debug.println("Received from " + lastPort);
                     byte[][] toAssemble = assembly.get(lastAddress);
                     assembly.remove(lastAddress);
                     bytesMessage = toAssemble[0];
                     for (int i = 1; i < toAssemble.length; i++) {
                         bytesMessage = ArrayOperations.join(bytesMessage, toAssemble[i]);
                     }
-                    ref.fireEvent(new MessageArrivedEvent(bytesMessage));
+                    ref.fireEvent(new AsynchMessageArrivedEvent(bytesMessage, "//" + lastAddress.getHostAddress() + ":" + Integer.toString(lastPort)));
                 }
                 buf = new byte[PACKET_SIZE];
             }
@@ -123,7 +123,6 @@ public class UDPReceiver extends ReceivingThread {
             if (lastAddress != null) {
                 ret = new URI("//" + lastAddress.getHostAddress() + ":" + Integer.toString(lastPort)).toString();
             }
-            Debug.println("Replying to: " + ret);
         }
         catch (URISyntaxException use) {}
         finally {
@@ -131,7 +130,7 @@ public class UDPReceiver extends ReceivingThread {
         }
     }
     
-    public void end() {
+    protected void end() {
         listening = false;
     }
 
