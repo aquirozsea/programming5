@@ -57,10 +57,12 @@ public class ReliableProtocolMessage extends Message {
      *@param destURL the URL of the destination where the message will be sent (this information
      * is not encoded in the message sent over the network
      */
-    public ReliableProtocolMessage(byte[] msg, long sequence, String destURL) {
+    public ReliableProtocolMessage(byte[] msg, long sequence, int index, int total, String destURL) {
         super();
         this.setHeader(MESSAGE_HEADER);
         this.addMessageItem(sequence);
+        this.addMessageItem(index);
+        this.addMessageItem(total);
         this.addMessageItem(msg);
         destination = destURL;
     }
@@ -70,10 +72,11 @@ public class ReliableProtocolMessage extends Message {
      *number
      *@param sequence the sequence number of the message that will be acknowledged
      */
-    public ReliableProtocolMessage(long sequence) {
+    public ReliableProtocolMessage(long sequence, int index) {
         super();
         this.setHeader(ACK_HEADER);
         this.addMessageItem(sequence);
+        this.addMessageItem(index);
     }
     
     /**
@@ -84,7 +87,7 @@ public class ReliableProtocolMessage extends Message {
         byte[] ret = null;
         if (header.equals(MESSAGE_HEADER)) {
             try {
-                ret = this.getItemAsByteArray(1);
+                ret = this.getItemAsByteArray(3);
             }
             catch (IndexOutOfBoundsException iobe) {
                 throw new MalformedMessageException("ReliableProtocolMessage: No message");
@@ -102,6 +105,14 @@ public class ReliableProtocolMessage extends Message {
      */
     public long getSequence() throws MalformedMessageException {
         return this.getItemAsLong(0);
+    }
+
+    public int getIndex() throws MalformedMessageException {
+        return this.getItemAsInt(1);
+    }
+
+    public int getTotal() throws MalformedMessageException {
+        return this.getItemAsInt(2);
     }
     
     /**
