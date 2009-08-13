@@ -29,9 +29,11 @@ import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import programming5.arrays.ArrayOperations;
+import programming5.io.Debug;
 import programming5.net.AsynchMessageArrivedEvent;
 import programming5.net.MessageArrivedEvent;
 import programming5.net.MessagingClient;
@@ -61,10 +63,12 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     protected boolean fixedHost, connect;
     protected final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
 
-    protected static final int MAX_SIZE = 65525;
+    protected static final int MAX_SIZE = 65450;
     protected static final String SEPARATOR = ":";
     protected static final String SLASH = "/";
     protected static final String CONNECT_MSG = "CON";
+
+    private Random random = new Random(System.currentTimeMillis());
     
     /**
      *Creates an unicast client for which the local port will be determined by an available port.
@@ -322,7 +326,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
                     socket.send(p);
                 }
                 catch (IOException e) {
-                    System.out.println("UDPClient: Could not send message: " + e.getMessage());
+                    throw new NetworkException("UDPClient: Could not send message: " + e.getMessage());
                 }
             }
         } 
@@ -383,11 +387,12 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
             byte[][] packets = packetize(bytesMessage);
             for (byte[] packet : packets) {
                 DatagramPacket p = new DatagramPacket(packet, packet.length, dest, port);
+                Debug.println(Integer.toString(packet.length), "programming5.net.sockets.UDPClient");
                 try {
                     socket.send(p);
                 }
                 catch (IOException e) {
-                    System.out.println("UDPClient: Could not send message: " + e.getMessage());
+                    throw new NetworkException("UDPClient: Could not send message: " + e.getMessage());
                 }
             }
         } 
@@ -558,16 +563,19 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
         int msgSize = bytesMsg.length;
         int numPackets = (int) (msgSize / MAX_SIZE) + 1;
         String npString = Integer.toString(numPackets);
+        String messageID = Long.toString(random.nextLong());
         byte[][] ret = new byte[numPackets][];
         for (int i = 0; i < numPackets - 1; i++) {
             String index = Integer.toString(i+1);
-            byte[] header = (index + "/" + npString).getBytes();
+            byte[] header = (messageID + SLASH + index + SLASH + npString + SEPARATOR).getBytes();
             byte[] packet = ArrayOperations.subArray(bytesMsg, i*MAX_SIZE, (i+1)*MAX_SIZE);
             ret[i] = ArrayOperations.join(header, packet);
+            Debug.println(new String(ret[i]), "programming5.net.sockets.UDPClient");
         }
-        byte[] header = (npString + SLASH + npString + SEPARATOR).getBytes();
+        byte[] header = (messageID + SLASH + npString + SLASH + npString + SEPARATOR).getBytes();
         byte[] packet = ArrayOperations.suffix(bytesMsg, (numPackets-1)*MAX_SIZE);
         ret[numPackets-1] = ArrayOperations.join(header, packet);
+        Debug.println(new String(ret[numPackets-1]), "programming5.net.sockets.UDPClient");
         return ret;
     }
     

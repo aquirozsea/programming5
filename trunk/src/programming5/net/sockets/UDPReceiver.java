@@ -49,8 +49,8 @@ public class UDPReceiver extends ReceivingThread {
     private final int PACKET_SIZE = 65536;
     private boolean listening = true;
 
-    private Hashtable<InetAddress, byte[][]> assembly = new Hashtable<InetAddress, byte[][]>();
-    private Hashtable<InetAddress, Integer> assemblyCounter = new Hashtable<InetAddress, Integer>();
+    private Hashtable<String, byte[][]> assembly = new Hashtable<String, byte[][]>();
+    private Hashtable<String, boolean[]> assemblyCounter = new Hashtable<String, boolean[]>();
     
     public static final int NO_PORT = -1;
     
@@ -70,16 +70,14 @@ public class UDPReceiver extends ReceivingThread {
             bytesMessage = null;
             try {
                 socket.receive(p);
-                boolean messageComplete = depacketize(p);
-                if (messageComplete) {
+                String streamID = depacketize(p);
+                if (streamID != null) {    // Message is completely received (all packets)
                     lastAddress = p.getAddress();
                     lastPort = p.getPort();
-                    byte[][] toAssemble = assembly.get(lastAddress);
-                    assembly.remove(lastAddress);
-                    bytesMessage = toAssemble[0];
-                    for (int i = 1; i < toAssemble.length; i++) {
-                        bytesMessage = ArrayOperations.join(bytesMessage, toAssemble[i]);
-                    }
+                    Debug.println("StreamID: " + streamID);
+                    byte[][] toAssemble = assembly.get(streamID);
+                    assembly.remove(streamID);
+                    bytesMessage = assemble(toAssemble);
                     ref.fireEvent(new AsynchMessageArrivedEvent(bytesMessage, "//" + lastAddress.getHostAddress() + ":" + Integer.toString(lastPort)));
                 }
                 buf = new byte[PACKET_SIZE];
@@ -134,41 +132,61 @@ public class UDPReceiver extends ReceivingThread {
         listening = false;
     }
 
-    private boolean depacketize(DatagramPacket packet) {
+    private String depacketize(DatagramPacket packet) {
         int packetSize = packet.getLength();
         byte[] bytesMessage;
-        boolean ret = false;
+        String ret = null;
         if (packetSize > 0) {
             InetAddress host = packet.getAddress();
-            byte[][] parts = assembly.get(host);
-            boolean initialize = (parts == null);
             bytesMessage = packet.getData();
             bytesMessage = ArrayOperations.prefix(bytesMessage, packetSize);
             int separatorIndex = ArrayOperations.seqFind(UDPClient.SEPARATOR.getBytes()[0], bytesMessage);
             if (separatorIndex > 0) {
                 String sequenceString = new String(ArrayOperations.subArray(bytesMessage, 0, separatorIndex));
+                Debug.println("Packet " + sequenceString);
                 String[] numbers = sequenceString.split("/");
-                if (initialize) {
-                    int total = Integer.parseInt(numbers[1]);
+                String streamID = host.getHostAddress() + "/" + numbers[0];
+                Debug.println("StreamID: " + streamID);
+                byte[][] parts = assembly.get(streamID);
+                if (parts == null) {
+                    int total = Integer.parseInt(numbers[2]);
                     parts = new byte[total][];
-                    assembly.put(host, parts);
-                    assemblyCounter.put(host, total);
+                    assembly.put(streamID, parts);
+                    boolean[] counter = new boolean[total];
+                    ArrayOperations.initialize(counter, false);
+                    assemblyCounter.put(streamID, counter);
+                    Debug.println("Total packets: " + total);
                 }
-                int index = Integer.parseInt(numbers[0]);
+                int index = Integer.parseInt(numbers[1]);
                 parts[index-1] = ArrayOperations.suffix(bytesMessage, separatorIndex+1);
-                int left = assemblyCounter.get(host);
-                if (left == 1) {
-                    ret = true;
-                    assemblyCounter.remove(host);
-                }
-                else {
-                    assemblyCounter.put(host, left-1);
+                boolean[] progress = assemblyCounter.get(streamID);
+                progress[index-1] = true;
+                if (ArrayOperations.tautology(progress)) {
+                    ret = streamID;
+                    assemblyCounter.remove(streamID);
                 }
             }
             else {
-                parts = new byte[1][];
-                parts[0] = ArrayOperations.suffix(bytesMessage, separatorIndex+1);
-                assembly.put(host, parts);
+                int start = (separatorIndex == 0) ? 1 : 0;
+                byte[][] parts = new byte[1][];
+                parts[0] = ArrayOperations.suffix(bytesMessage, start);
+                ret = host.getHostAddress();
+                assembly.put(ret, parts);
+            }
+        }
+        return ret;
+    }
+
+    private byte[] assemble(byte[][] parts) {
+        int size = 0;
+        for (byte[] part : parts) {
+            size += part.length;
+        }
+        byte[] ret = new byte[size];
+        int place = 0;
+        for (int i = 0; i < parts.length; i++) {
+            for (int j = 0; j < parts[i].length; j++) {
+                ret[place++] = parts[i][j];
             }
         }
         return ret;
