@@ -624,99 +624,128 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return a new array containing the elements of a1 followed by those of a2
+     *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final byte[] join(byte[] a1, byte[] a2) {
-        byte[] ret = new byte[a1.length+a2.length];
-        for (int i = 0; i < a1.length; i++) {
-            ret[i] = a1[i];
+    public static final byte[] join(byte[]... arrays) {
+        int totalLength = 0;
+        for (byte[] array : arrays) {
+            totalLength += array.length;
         }
-        for (int i = 0; i < a2.length; i++) {
-            ret[i+a1.length] = a2[i];
+        byte[] ret = new byte[totalLength];
+        int pos = 0;
+        for (byte[] array : arrays) {
+            for (int i = 0; i < array.length; i++) {
+                ret[pos++] = array[i];
+            }
         }
         return ret;
     }
     
     /**
-     *@return a new array containing the elements of a1 followed by those of a2
+     *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final int[] join(int[] a1, int[] a2) {
-        int[] ret = new int[a1.length+a2.length];
-        for (int i = 0; i < a1.length; i++) {
-            ret[i] = a1[i];
+    public static final int[] join(int[]... arrays) {
+        int totalLength = 0;
+        for (int[] array : arrays) {
+            totalLength += array.length;
         }
-        for (int i = 0; i < a2.length; i++) {
-            ret[i+a1.length] = a2[i];
+        int[] ret = new int[totalLength];
+        int pos = 0;
+        for (int[] array : arrays) {
+            for (int i = 0; i < array.length; i++) {
+                ret[pos++] = array[i];
+            }
         }
         return ret;
     }
     
     /**
-     *@return a new array containing the elements of a1 followed by those of a2
+     *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final float[] join(float[] a1, float[] a2) {
-        float[] ret = new float[a1.length+a2.length];
-        for (int i = 0; i < a1.length; i++) {
-            ret[i] = a1[i];
+    public static final float[] join(float[]... arrays) {
+        int totalLength = 0;
+        for (float[] array : arrays) {
+            totalLength += array.length;
         }
-        for (int i = 0; i < a2.length; i++) {
-            ret[i+a1.length] = a2[i];
+        float[] ret = new float[totalLength];
+        int pos = 0;
+        for (float[] array : arrays) {
+            for (int i = 0; i < array.length; i++) {
+                ret[pos++] = array[i];
+            }
         }
         return ret;
     }
     
     /**
-     *@return a new array containing the elements of a1 followed by those of a2
+     *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final double[] join(double[] a1, double[] a2) {
-        double[] ret = new double[a1.length+a2.length];
-        for (int i = 0; i < a1.length; i++) {
-            ret[i] = a1[i];
+    public static final double[] join(double[]... arrays) {
+        int totalLength = 0;
+        for (double[] array : arrays) {
+            totalLength += array.length;
         }
-        for (int i = 0; i < a2.length; i++) {
-            ret[i+a1.length] = a2[i];
+        double[] ret = new double[totalLength];
+        int pos = 0;
+        for (double[] array : arrays) {
+            for (int i = 0; i < array.length; i++) {
+                ret[pos++] = array[i];
+            }
         }
         return ret;
     }
     
     /**
-     *@return a new array containing the elements of a1 followed by those of a2
+     *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final char[] join(char[] a1, char[] a2) {
-        char[] ret = new char[a1.length+a2.length];
-        for (int i = 0; i < a1.length; i++) {
-            ret[i] = a1[i];
+    public static final char[] join(char[]... arrays) {
+        int totalLength = 0;
+        for (char[] array : arrays) {
+            totalLength += array.length;
         }
-        for (int i = 0; i < a2.length; i++) {
-            ret[i+a1.length] = a2[i];
+        char[] ret = new char[totalLength];
+        int pos = 0;
+        for (char[] array : arrays) {
+            for (int i = 0; i < array.length; i++) {
+                ret[pos++] = array[i];
+            }
         }
         return ret;
     }
     
     /**
-     *@return a new array containing the elements of a1 followed by those of a2
+     *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final String[] join(String[] a1, String[] a2) {
-        String[] ret = new String[a1.length+a2.length];
-        for (int i = 0; i < a1.length; i++) {
-            ret[i] = new String(a1[i]);
+    public static final String[] join(String[]... arrays) {
+        int totalLength = 0;
+        for (String[] array : arrays) {
+            totalLength += array.length;
         }
-        for (int i = 0; i < a2.length; i++) {
-            ret[i+a1.length] = new String(a2[i]);
+        String[] ret = new String[totalLength];
+        int pos = 0;
+        for (String[] array : arrays) {
+            for (int i = 0; i < array.length; i++) {
+                ret[pos++] = array[i];
+            }
         }
         return ret;
     }
     
     /**
-     *@return a new array containing the elements of a1 followed by those of a2. Caution: Does not replicate objects!
+     *@return a new array containing the elements of all arrays in sequential order.
+     *Caution: Does not replicate objects!
      */
-    public static final Object[] join(Object[] a1, Object[] a2) {
-        Object[] ret = new Object[a1.length+a2.length];
-        for (int i = 0; i < a1.length; i++) {
-            ret[i] = a1[i];
+    public static final Object[] join(Object[]... arrays) {
+        int totalLength = 0;
+        for (Object[] array : arrays) {
+            totalLength += array.length;
         }
-        for (int i = 0; i < a2.length; i++) {
-            ret[i+a1.length] = a2[i];
+        Object[] ret = new Object[totalLength];
+        int pos = 0;
+        for (Object[] array : arrays) {
+            for (int i = 0; i < array.length; i++) {
+                ret[pos++] = array[i];
+            }
         }
         return ret;
     }
