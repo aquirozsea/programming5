@@ -256,8 +256,10 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     @Override
     public void send(String message, String uri) throws NetworkException {
         ReliableProtocolMessage[] rmsgs = this.createMessage(message.getBytes(), uri);
+        Debug.println("Sending " + rmsgs.length + " reliable messages", "programming5.net.sockets.ReliableUDPClient");
         for (ReliableProtocolMessage rmsg : rmsgs) {
             client.send(rmsg.getMessageBytes(), uri);
+            Debug.println("RUDP message length " + rmsg.getMessageBytes().length, "programming5.net.sockets.ReliableUDPClient");
         }
     }
 
@@ -375,7 +377,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
             try {
                 ReliableProtocolMessage rcvdMsg = new ReliableProtocolMessage(protocolEvent.getContentBytes());
                 if (rcvdMsg.isAcknowledge()) {
-                    Debug.println("Ack received at " + client.getLocalPort());
+                    Debug.println("RUDP Ack received for " + rcvdMsg.getSequence() + " at " + rcvdMsg.getIndex(), "programming5.net.sockets.ReliableUDPClient");
                     synchronized (messageTable) {
                         messageTable.get(rcvdMsg.getSequence())[rcvdMsg.getIndex()-1] = null;
                     }
@@ -387,14 +389,17 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                         client.replyTo(protocolEvent, ack.getMessageBytes());
                     }
                     catch (NetworkException ne) {
-                        Debug.printStackTrace(ne, "programming5.net.sockets.ReliableUDPClient");
+                        Debug.printStackTrace(ne);
                     }
                     String streamID = ((AsynchMessageArrivedEvent) protocolEvent).getSourceURL() + "/" + Long.toString(rcvdMsg.getSequence());
                     if (!receivedMessages.contains(streamID)) {
                         boolean messageComplete = depacketize(rcvdMsg, streamID);
                         if (messageComplete) {
                             receivedMessages.add(streamID);
-                            AsynchMessageArrivedEvent messageEvent = new AsynchMessageArrivedEvent(rcvdMsg.getPayload(), ((AsynchMessageArrivedEvent) protocolEvent).getSourceURL());
+                            byte[][] toAssemble = assembly.get(streamID);
+                            assembly.remove(streamID);
+                            byte[] bytesMessage = assemble(toAssemble);
+                            AsynchMessageArrivedEvent messageEvent = new AsynchMessageArrivedEvent(bytesMessage, ((AsynchMessageArrivedEvent) protocolEvent).getSourceURL());
                             this.fireEvent(messageEvent);
                             synchronized (receiveRequests) {
                                 for (ReceiveRequest request : receiveRequests) {
@@ -408,7 +413,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
             }
             catch (MalformedMessageException mme) {
                 Debug.println("ReliableProtocolMessage: Bad message received: " + protocolEvent.getContent(), "programming5.net.sockets.ReliableUDPClient");
-                Debug.printStackTrace(mme, "programming5.net.sockets.ReliableUDPClient");
+                Debug.printStackTrace(mme);
             }
         }
     }
@@ -421,14 +426,6 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     public void endConnection() {
         client.endConnection();
         timer.cancel();
-    }
-    
-    protected void signalFail(String destURL) {
-        for (Subscriber<MessageArrivedEvent> listener : this.listeners) {
-            if (listener instanceof ReliableMessageArrivedListener) {
-                ((ReliableMessageArrivedListener) listener).signalSendError(destURL, "ReliableUDPClient: Cannot guarantee connection: Exceeded resend limit");
-            }
-        }
     }
     
     /**
@@ -460,6 +457,14 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
         return client.getLocalPort();
     }
 
+    protected void signalFail(String destURL) {
+        for (Subscriber<MessageArrivedEvent> listener : this.listeners) {
+            if (listener instanceof ReliableMessageArrivedListener) {
+                ((ReliableMessageArrivedListener) listener).signalSendError(destURL, "ReliableUDPClient: Cannot guarantee connection: Exceeded resend limit");
+            }
+        }
+    }
+
     private ReliableProtocolMessage[] createMessage(byte[] msgBytes, String destURL) {
         byte[][] packetization = packetize(msgBytes);
         ReliableProtocolMessage[] ret = new ReliableProtocolMessage[packetization.length];
@@ -471,7 +476,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                 collision = messageTable.get(sendSequence);
             }
             for (int i = 0; i < packetization.length; i++) {
-                ret[i] = new ReliableProtocolMessage(msgBytes, sendSequence, (i+1), packetization.length, destURL);
+                ret[i] = new ReliableProtocolMessage(packetization[i], sendSequence, (i+1), packetization.length, destURL);
             }
             messageTable.put(sendSequence, ret);
         }
@@ -484,10 +489,10 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
         byte[][] ret = new byte[numPackets][];
         for (int i = 0; i < numPackets - 1; i++) {
             ret[i] = ArrayOperations.subArray(bytesMsg, i*MAX_SIZE, (i+1)*MAX_SIZE);
-            Debug.println(new String(ret[i]), "programming5.net.sockets.ReliableUDPClient");
+            Debug.println(new String(ret[i]), "programming5.net.sockets.ReliableUDPClient#packetize");
         }
         ret[numPackets-1] = ArrayOperations.suffix(bytesMsg, (numPackets-1)*MAX_SIZE);
-        Debug.println(new String(ret[numPackets-1]), "programming5.net.sockets.ReliableUDPClient");
+        Debug.println(new String(ret[numPackets-1]), "programming5.net.sockets.ReliableUDPClient#packetize");
         return ret;
     }
 
@@ -540,14 +545,14 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                 for (ReliableProtocolMessage messagePart : message) {
                     if (messagePart != null) {
                         try {
-                            Debug.println("Resending unacked message");
+                            Debug.println("Resending unacked message from sequence " + messagePart.getSequence() + " at index " + messagePart.getIndex(), "programming5.net.sockets.ReliableUDPClient");
                             if (messagePart.getSendCount() < maxResend) {
                                 messagePart.signalSent();
                                 try {
                                     client.send(messagePart.getMessageBytes(), messagePart.getDestination());
                                 }
                                 catch (NetworkException ne) {
-                                    Debug.printStackTrace(ne, "programming5.net.sockets.ReliableUDPClient");
+                                    Debug.printStackTrace(ne);
                                 }
                             }
                             else {

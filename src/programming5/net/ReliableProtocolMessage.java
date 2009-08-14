@@ -51,9 +51,11 @@ public class ReliableProtocolMessage extends Message {
     
     /**
      *Creates a reliable protocol message that encapsulates the given message payload with the 
-     *given sequence number
+     *given sequence and part numbers
      *@param msg the message to encapsulate
      *@param sequence the sequence number associated with the message
+     *@param index the index of the message part, for multiple part messages (1 to total)
+     *@param total the total number of parts of this message
      *@param destURL the URL of the destination where the message will be sent (this information
      * is not encoded in the message sent over the network
      */
@@ -68,9 +70,10 @@ public class ReliableProtocolMessage extends Message {
     }
     
     /**
-     *Creates an acknowledgement message as a reliable protocol message for the given sequence 
-     *number
-     *@param sequence the sequence number of the message that will be acknowledged
+     *Creates an acknowledgement message as a reliable protocol message for the given sequence and part
+     *numbers
+     *@param sequence the sequence number of the message for which a part will be acknowledged
+     *@param index the index of the message part that will be acknowledged
      */
     public ReliableProtocolMessage(long sequence, int index) {
         super();
@@ -100,17 +103,27 @@ public class ReliableProtocolMessage extends Message {
     }
     
     /**
-     *@return the sequence number of message or acknowledgement
+     *@return the sequence number of message or acknowledgement (identifies an entire message and is shared
+     * by all parts is a multipart message
      *@throws MalformedMessageException if the message was not constructed correctly
      */
     public long getSequence() throws MalformedMessageException {
         return this.getItemAsLong(0);
     }
 
+    /**
+     * @return the index of the message part of a multipart message (will be 1 if the message has a single 
+     * part)
+     * @throws programming5.net.MalformedMessageException if the message was not constructed correctly
+     */
     public int getIndex() throws MalformedMessageException {
         return this.getItemAsInt(1);
     }
 
+    /**
+     * @return the total number of parts of this message (will be 1 if the message has a single part)
+     * @throws programming5.net.MalformedMessageException if the message was not constructed correctly
+     */
     public int getTotal() throws MalformedMessageException {
         return this.getItemAsInt(2);
     }
