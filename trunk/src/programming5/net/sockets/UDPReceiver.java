@@ -64,7 +64,6 @@ public class UDPReceiver extends ReceivingThread {
         byte[] buf = new byte[PACKET_SIZE];
         byte[] bytesMessage;
         DatagramPacket p = null;
-        int packetSize;
         while (listening) {
             p = new DatagramPacket(buf, buf.length);
             bytesMessage = null;
@@ -74,7 +73,7 @@ public class UDPReceiver extends ReceivingThread {
                 if (streamID != null) {    // Message is completely received (all packets)
                     lastAddress = p.getAddress();
                     lastPort = p.getPort();
-                    Debug.println("StreamID: " + streamID);
+                    Debug.println("Received streamID: " + streamID, "programming5.net.sockets.UDPClient");
                     byte[][] toAssemble = assembly.get(streamID);
                     assembly.remove(streamID);
                     bytesMessage = assemble(toAssemble);
@@ -143,10 +142,8 @@ public class UDPReceiver extends ReceivingThread {
             int separatorIndex = ArrayOperations.seqFind(UDPClient.SEPARATOR.getBytes()[0], bytesMessage);
             if (separatorIndex > 0) {
                 String sequenceString = new String(ArrayOperations.subArray(bytesMessage, 0, separatorIndex));
-                Debug.println("Packet " + sequenceString);
                 String[] numbers = sequenceString.split("/");
                 String streamID = host.getHostAddress() + "/" + numbers[0];
-                Debug.println("StreamID: " + streamID);
                 byte[][] parts = assembly.get(streamID);
                 if (parts == null) {
                     int total = Integer.parseInt(numbers[2]);
@@ -155,7 +152,6 @@ public class UDPReceiver extends ReceivingThread {
                     boolean[] counter = new boolean[total];
                     ArrayOperations.initialize(counter, false);
                     assemblyCounter.put(streamID, counter);
-                    Debug.println("Total packets: " + total);
                 }
                 int index = Integer.parseInt(numbers[1]);
                 parts[index-1] = ArrayOperations.suffix(bytesMessage, separatorIndex+1);

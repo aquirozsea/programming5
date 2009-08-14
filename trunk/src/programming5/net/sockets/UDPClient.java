@@ -385,9 +385,10 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
         try {
             dest = InetAddress.getByName(address);
             byte[][] packets = packetize(bytesMessage);
+            Debug.println("Sending " + packets.length + " UDP packets", "programming5.net.sockets.UDPClient");
             for (byte[] packet : packets) {
                 DatagramPacket p = new DatagramPacket(packet, packet.length, dest, port);
-                Debug.println(Integer.toString(packet.length), "programming5.net.sockets.UDPClient");
+                Debug.println("UDP packet length: " + Integer.toString(packet.length), "programming5.net.sockets.UDPClient");
                 try {
                     socket.send(p);
                 }
@@ -570,12 +571,12 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
             byte[] header = (messageID + SLASH + index + SLASH + npString + SEPARATOR).getBytes();
             byte[] packet = ArrayOperations.subArray(bytesMsg, i*MAX_SIZE, (i+1)*MAX_SIZE);
             ret[i] = ArrayOperations.join(header, packet);
-            Debug.println(new String(ret[i]), "programming5.net.sockets.UDPClient");
+            Debug.println(new String(ret[i]), "programming5.net.sockets.UDPClient#packetize");
         }
         byte[] header = (messageID + SLASH + npString + SLASH + npString + SEPARATOR).getBytes();
         byte[] packet = ArrayOperations.suffix(bytesMsg, (numPackets-1)*MAX_SIZE);
         ret[numPackets-1] = ArrayOperations.join(header, packet);
-        Debug.println(new String(ret[numPackets-1]), "programming5.net.sockets.UDPClient");
+        Debug.println(new String(ret[numPackets-1]), "programming5.net.sockets.UDPClient#packetize");
         return ret;
     }
     
