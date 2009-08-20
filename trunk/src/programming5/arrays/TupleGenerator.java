@@ -1,5 +1,5 @@
 /*
- * SubsetGenerator.java
+ * TupleGenerator.java
  *
  * Copyright 2004 Andres Quiroz Hernandez
  *
@@ -30,8 +30,10 @@ package programming5.arrays;
  *<p>It can be used like an enumeration, going through one combination at a time, 
  *until the combinations are exhausted.
  *@author Andres Quiroz Hernandez
- *@version 5.0
- *@deprecated As of jdk1.5.0, the easiest way to implement a cartesian product of arrays or collections is to use nested foreach statements
+ *@version 6.0
+ *@deprecated As of jdk1.5.0, the easiest way to implement a cartesian product of arrays or collections is to use nested foreach statements.
+ * However, this class has been found to be useful when the number of sets is determined at runtime and thus cannot be coded in nested loops.
+ * In the next version of this library the class will be renamed to TupleIndexGenerator to more closely reflect its functionality.
  */
 public class TupleGenerator {
 	
