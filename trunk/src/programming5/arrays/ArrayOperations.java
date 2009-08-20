@@ -2510,4 +2510,134 @@ public abstract class ArrayOperations {
         return (length == 0);
     }
 
+    /**
+     * Transforms a primitive type array into an array of the corresponding object type
+     * @param array the primitive array
+     * @return the object type array
+     */
+    public static final Integer[] box(int[] array) {
+        Integer[] ret = new Integer[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Transforms a primitive type array into an array of the corresponding object type
+     * @param array the primitive array
+     * @return the object type array
+     */
+    public static final Long[] box(long[] array) {
+        Long[] ret = new Long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Transforms a primitive type array into an array of the corresponding object type
+     * @param array the primitive array
+     * @return the object type array
+     */
+    public static final Float[] box(float[] array) {
+        Float[] ret = new Float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Transforms a primitive type array into an array of the corresponding object type
+     * @param array the primitive array
+     * @return the object type array
+     */
+    public static final Double[] box(double[] array) {
+        Double[] ret = new Double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Transforms a primitive type array into an array of the corresponding object type
+     * @param array the primitive array
+     * @return the object type array
+     */
+    public static final Boolean[] box(boolean[] array) {
+        Boolean[] ret = new Boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Transforms a numeric object type array into an array of the corresponding primitive type
+     * @param array the object type array
+     * @return the primitive array
+     */
+    public static final int[] unbox(Integer[] array) {
+        int[] ret = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Transforms a numeric object type array into an array of the corresponding primitive type
+     * @param array the object type array
+     * @return the primitive array
+     */
+    public static final long[] unbox(Long[] array) {
+        long[] ret = new long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Transforms a numeric object type array into an array of the corresponding primitive type
+     * @param array the object type array
+     * @return the primitive array
+     */
+    public static final float[] unbox(Float[] array) {
+        float[] ret = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Transforms a numeric object type array into an array of the corresponding primitive type
+     * @param array the object type array
+     * @return the primitive array
+     */
+    public static final double[] unbox(Double[] array) {
+        double[] ret = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Transforms a numeric object type array into an array of the corresponding primitive type
+     * @param array the object type array
+     * @return the primitive array
+     */
+    public static final boolean[] unbox(Boolean[] array) {
+        boolean[] ret = new boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
+
 }
