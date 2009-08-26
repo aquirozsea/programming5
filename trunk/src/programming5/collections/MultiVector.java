@@ -36,7 +36,7 @@ import java.util.Vector;
  *@author Andres Quiroz Hernandez
  *@version 6.0
  */
-public class MultiVector<E, D> implements Serializable, Cloneable, Map<E, D> {
+public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
     
     protected Vector<E> vector1;
     protected Vector<D> vector2;
@@ -704,6 +704,23 @@ public class MultiVector<E, D> implements Serializable, Cloneable, Map<E, D> {
         for (int i = 0; i < this.size(); i++) {
             Map.Entry<E, D> entry = new MultiVectorEntry<E, D>(vector1.elementAt(i), vector2.elementAt(i));
             ret.add(entry);
+        }
+        return ret;
+    }
+
+    /**
+     * Implementation of the safeGet method from the PMap interface.
+     * @param key the search key
+     * @param defaultValue an initializer or default value to be associated with the key in case no value is
+     * associated with the key in the map already
+     * @return this.get(key) if it is not null; otherwise, defaultValue
+     * @see programming5.collections.PMap#safeGet(java.lang.Object, java.lang.Object) 
+     */
+    public D safeGet(E key, D defaultValue) {
+        D ret = this.get(key);
+        if (ret == null) {
+            this.put(key, defaultValue);
+            ret = defaultValue;
         }
         return ret;
     }
