@@ -485,7 +485,10 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
 
     private byte[][] packetize(byte[] bytesMsg) {
         int msgSize = bytesMsg.length;
-        int numPackets = (int) (msgSize / MAX_SIZE) + 1;
+        int numPackets = (int) (msgSize / MAX_SIZE);
+        if (msgSize % MAX_SIZE != 0) {
+            numPackets++;
+        }
         byte[][] ret = new byte[numPackets][];
         for (int i = 0; i < numPackets - 1; i++) {
             ret[i] = ArrayOperations.subArray(bytesMsg, i*MAX_SIZE, (i+1)*MAX_SIZE);
