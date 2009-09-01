@@ -26,7 +26,7 @@ package programming5.net;
  *distinction of acknowledge messages from actual content messages.
  *@see programming5.net.Message
  *@author Andres Quiroz Hernandez
- *@version 6.1
+ *@version 6.11
  */
 public class ReliableProtocolMessage extends Message {
     
@@ -35,6 +35,7 @@ public class ReliableProtocolMessage extends Message {
 
     protected String destination = null;
     protected int sendCount = 0;
+    protected boolean acked = false;
     
     /**
      *Creates a reliable protocol message from the given message string, which must follow the 
@@ -163,6 +164,20 @@ public class ReliableProtocolMessage extends Message {
      */
     public String getDestination() {
         return destination;
+    }
+
+    /**
+     * Set when an acknowledgement has been received for this message
+     */
+    public void signalAcked() {
+        acked = true;
+    }
+
+    /**
+     * @return true if an acknowledgement has been received for this message, as set by signalAcked
+     */
+    public boolean isAcked() {
+        return acked;
     }
 
 }
