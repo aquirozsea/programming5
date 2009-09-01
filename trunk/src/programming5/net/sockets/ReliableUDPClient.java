@@ -59,7 +59,7 @@ import programming5.net.Subscriber;
  *@see programming5.net.ReliableProtocolMessage
  *@see programming5.net.ReliableMessageArrivedListener
  *@author Andres Quiroz Hernandez
- *@version 6.1
+ *@version 6.11
  */
 public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements MessagingClient, MessageArrivedListener {
     
@@ -270,9 +270,17 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
      */
     @Override
     public void send(byte[] bytesMessage, String uri) throws NetworkException {
-        ReliableProtocolMessage[] rmsgs = this.createMessage(bytesMessage, uri);
-        for (ReliableProtocolMessage rmsg : rmsgs) {
-            client.send(rmsg.getMessageBytes(), uri);
+        if (bytesMessage == null) {
+            throw new NetworkException("ReliableUDPClient: Cannot send message: Message is null");
+        }
+        else if (bytesMessage.length == 0) {
+            throw new NetworkException("ReliableUDPClient: Cannot send message: No message to send");
+        }
+        else {
+            ReliableProtocolMessage[] rmsgs = this.createMessage(bytesMessage, uri);
+            for (ReliableProtocolMessage rmsg : rmsgs) {
+                client.send(rmsg.getMessageBytes(), uri);
+            }
         }
     }
 
@@ -379,7 +387,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                 if (rcvdMsg.isAcknowledge()) {
                     Debug.println("RUDP Ack received for " + rcvdMsg.getSequence() + " at " + rcvdMsg.getIndex(), "programming5.net.sockets.ReliableUDPClient");
                     synchronized (messageTable) {
-                        messageTable.get(rcvdMsg.getSequence())[rcvdMsg.getIndex()-1] = null;
+                        messageTable.get(rcvdMsg.getSequence())[rcvdMsg.getIndex()-1].signalAcked();
                     }
                 }
                 else {
@@ -545,8 +553,10 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                 unackedMessages = new Vector<ReliableProtocolMessage[]>(messageTable.values());
             }
             for (ReliableProtocolMessage[] message : unackedMessages) {
+                boolean allAcked = true;
                 for (ReliableProtocolMessage messagePart : message) {
-                    if (messagePart != null) {
+                    if (!messagePart.isAcked()) {
+                        allAcked = false;
                         try {
                             Debug.println("Resending unacked message from sequence " + messagePart.getSequence() + " at index " + messagePart.getIndex(), "programming5.net.sockets.ReliableUDPClient");
                             if (messagePart.getSendCount() < maxResend) {
@@ -567,6 +577,19 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                         }
                         catch (MalformedMessageException mme) {
                             Debug.printStackTrace(mme);
+                        }
+                    }
+                }
+                if (allAcked) {
+                    synchronized (messageTable) {
+                        try {
+                            messageTable.remove(message[0].getSequence());
+                        }
+                        catch (MalformedMessageException mme) {
+                            Debug.printStackTrace(mme, "programming5.net.sockets.ReliableUDPClient");
+                        }
+                        catch (NullPointerException npe) {
+                            Debug.printStackTrace(npe, "programming5.net.sockets.ReliableUDPClient");
                         }
                     }
                 }
