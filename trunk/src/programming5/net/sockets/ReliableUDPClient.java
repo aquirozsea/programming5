@@ -404,8 +404,11 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                         boolean messageComplete = depacketize(rcvdMsg, streamID);
                         if (messageComplete) {
                             receivedMessages.add(streamID);
-                            byte[][] toAssemble = assembly.get(streamID);
-                            assembly.remove(streamID);
+                            byte[][] toAssemble;
+                            synchronized (assembly) {
+                                toAssemble = assembly.get(streamID);
+                                assembly.remove(streamID);
+                            }
                             byte[] bytesMessage = assemble(toAssemble);
                             AsynchMessageArrivedEvent messageEvent = new AsynchMessageArrivedEvent(bytesMessage, ((AsynchMessageArrivedEvent) protocolEvent).getSourceURL());
                             this.fireEvent(messageEvent);
@@ -509,22 +512,38 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
 
     private boolean depacketize(ReliableProtocolMessage rpm, String streamID) throws MalformedMessageException {
         boolean ret = false;
-        byte[][] parts = assembly.get(streamID);
-        if (parts == null) {
-            int total = rpm.getTotal();
-            parts = new byte[total][];
-            assembly.put(streamID, parts);
-            boolean[] counter = new boolean[total];
-            ArrayOperations.initialize(counter, false);
-            assemblyCounter.put(streamID, counter);
-        }
-        int index = rpm.getIndex();
-        parts[index-1] = rpm.getPayload();
-        boolean[] progress = assemblyCounter.get(streamID);
-        progress[index-1] = true;
-        if (ArrayOperations.tautology(progress)) {
-            ret = true;
-            assemblyCounter.remove(streamID);
+        byte[][] parts;
+        synchronized (assembly) {
+            parts = assembly.get(streamID);
+            if (parts == null) {
+                int total = rpm.getTotal();
+                parts = new byte[total][];
+                assembly.put(streamID, parts);
+                boolean[] counter = new boolean[total];
+                ArrayOperations.initialize(counter, false);
+                assemblyCounter.put(streamID, counter);
+            }
+            int index = rpm.getIndex();
+            parts[index-1] = rpm.getPayload();
+            boolean[] progress = assemblyCounter.get(streamID);
+            if (progress != null) {
+                progress[index-1] = true;
+            }
+            else {
+                progress = new boolean[parts.length];
+                for (int i = 0; i < parts.length; i++) {
+                    if (parts[i] != null) {
+                        progress[i] = true;
+                    }
+                    else {
+                        progress[i] = false;
+                    }
+                }
+            }
+            if (ArrayOperations.tautology(progress)) {
+                ret = true;
+                assemblyCounter.remove(streamID);
+            }
         }
         return ret;
     }
