@@ -29,7 +29,7 @@ import programming5.arrays.ArrayOperations;
 /**
  * Generates real-valued points (coordinates) in a multidimensional space around fixed geometries with random noise.
  * @author Andres Quiroz Hernandez
- * @version 6.0
+ * @version 6.01
  */
 public class RandomPointGenerator {
     
@@ -50,7 +50,9 @@ public class RandomPointGenerator {
     protected Vector<double[][]> pointWidthDistributions = new Vector<double[][]>();
     // Line specs
     protected Vector<double[]> lineCoefficients = new Vector<double[]>();
-    protected Vector<double[][][]> lineDistributions = new Vector<double[][][]>();
+//    protected Vector<double[][][]> lineDistributions = new Vector<double[][][]>();
+    protected Vector<double[][][]> lineDomainDistributions = new Vector<double[][][]>();
+    protected Vector<double[][][]> lineWidthDistributions = new Vector<double[][][]>();
     // Area specs
     protected Vector<double[][][]> areaDistributions = new Vector<double[][][]>();
     
@@ -135,26 +137,51 @@ public class RandomPointGenerator {
         int lineIndex = lineCoefficients.size();
         newDeclaration(lineIndex, proportion, DistType.LINE);
         lineCoefficients.add(Arrays.copyOf(coefficients, dimensions));
-        lineDistributions.add(new double[dimensions][][]);
+//        lineDistributions.add(new double[dimensions][][]);
+        lineDomainDistributions.add(new double[dimensions-1][][]);
+        lineWidthDistributions.add(new double[dimensions][][]);
         return lineIndex;
     }
     
     /**
-     *Specifies a distribution of points in width ranges around a declared line for each dimension (e.g. 50% of points 
-     *between 0 and 75 units from the line on X and 25% between 90 and 95 units from the line on Y) --> (index, 0, {{0.5, 0, 75}}) (index, 1, {{0.25, 90, 95}}).
+     *Specifies a distribution of points along each of the independent dimensions for a declared line (e.g.
+     *100% of points between 50 and 100 on X, and 50% of points between 205 and 250 and 50% between 250 and
+     *255 on Y, for a line in three dimensions). The dependent dimension is completely determined by the
+     *line equation in the declaration.
      *<p> Any proportion not specified will be generated uniformly.
-     *@param lineIndex the line declaration to which the distribution applies (in the order of declaration from 0, not counting declarations 
+     *@param lineIndex the line declaration to which the distribution applies (in the order of declaration from 0, not counting declarations
      *of other geometries)
-     *@param distribution list of distribution triples of the form (proportion, min, max), which indicates that the given proportion 
-     *of points (of the total for this declaration) should be generated within the limits given by [min, max], relative to the line for the 
-     *dimension given
+     *@param dimension the coordinate dimension to which the distribution applies for the given line declaration
+     *@param distribution list of distribution triples of the form (proportion, min, max), which indicates that
+     *the given proportion of points (of the total for this declaration) should be generated within the limits
+     *given by [min, max].
      */
-    public void setLineDistribution(int lineIndex, int dimension, double[]... distribution) {
-        double[][] lineDistribution = new double[distribution.length][];
+    public void setLineDomainDistribution(int lineIndex, int dimension, double[]... distribution) {
+        double[][] lineDomainDistribution = new double[distribution.length][];
         for (int i = 0; i < distribution.length; i++) {
-            lineDistribution[i] = Arrays.copyOf(distribution[i], 3);
+            lineDomainDistribution[i] = Arrays.copyOf(distribution[i], 3);
         }
-        lineDistributions.elementAt(lineIndex)[dimension] = lineDistribution;
+        lineDomainDistributions.elementAt(lineIndex)[dimension] = lineDomainDistribution;
+    }
+
+    /**
+     *Specifies a distribution of points with respect to a declared line (e.g.
+     *100% of points between 0 and 10 from the line on X, and 50% of points between 5 and 15 and 50% between
+     *15 and 20 from the line on Y, for a line in two dimensions).
+     *<p> Any proportion not specified will be generated uniformly
+     *@param lineIndex the line declaration to which the distribution applies (in the order of declaration from 0, not counting declarations
+     *of other geometries)
+     *@param dimension the coordinate dimension to which the distribution applies for the given line declaration
+     *@param distribution list of distribution triples of the form (proportion, min, max), which indicates that
+     *the given proportion of points (of the total for this declaration) should be generated within the limits
+     *given by [min, max], relative to the declared line.
+     */
+    public void setLineWidthDistribution(int lineIndex, int dimension, double[]... distribution) {
+        double[][] lineWidthDistribution = new double[distribution.length][];
+        for (int i = 0; i < distribution.length; i++) {
+            lineWidthDistribution[i] = Arrays.copyOf(distribution[i], 3);
+        }
+        lineWidthDistributions.elementAt(lineIndex)[dimension] = lineWidthDistribution;
     }
     
     /**
@@ -232,11 +259,12 @@ public class RandomPointGenerator {
                     break;
                 }
                 case LINE: {
+                    // Set line point
                     nextPoint = new double[dimensions];
                     double[] coefficients = lineCoefficients.elementAt(correspondence[declaration]);
                     nextPoint[dimensions-1] = 0;
                     for (int dim = 0; dim < dimensions-1; dim++) {
-                        double[][] coordDistribution = lineDistributions.elementAt(correspondence[declaration])[dim];
+                        double[][] coordDistribution = lineDomainDistributions.elementAt(correspondence[declaration])[dim];
                         if (coordDistribution != null) {
                             nextPoint[dim] = applyDistribution(coordDistribution);
                         }
@@ -246,19 +274,14 @@ public class RandomPointGenerator {
                         nextPoint[dimensions-1] += coefficients[dim] * nextPoint[dim];
                     }
                     nextPoint[dimensions-1] += coefficients[dimensions-1];
-                    double[][] widthDistribution = lineDistributions.elementAt(correspondence[declaration])[dimensions-1];
-                    double width;
-                    if (widthDistribution != null) {
-                        width = applyDistribution(widthDistribution);
-                    }
-                    else {
-                        width = random.nextFloat() * Double.MAX_VALUE;
-                    }
-                    for (int dim = 0; dim < dimensions-1; dim++) {
-                        double angle = 360 * random.nextFloat();
-                        nextPoint[dim] += width * Math.sin(angle);
-                        if (dim == dimensions - 2) {
-                            nextPoint[dimensions-1] += width * Math.cos(angle);
+                    // Perturb line point
+                    for (int dim = 0; dim < dimensions; dim++) {
+                        double[][] widthDistribution = lineWidthDistributions.elementAt(correspondence[declaration])[dim];
+                        if (widthDistribution != null) {
+                            nextPoint[dim] += applyDistribution(widthDistribution);
+                        }
+                        else {
+                            nextPoint[dim] += random.nextFloat() * (range[dim] - nextPoint[dim]);
                         }
                     }
                     break;
