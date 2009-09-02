@@ -387,7 +387,10 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                 if (rcvdMsg.isAcknowledge()) {
                     Debug.println("RUDP Ack received for " + rcvdMsg.getSequence() + " at " + rcvdMsg.getIndex(), "programming5.net.sockets.ReliableUDPClient");
                     synchronized (messageTable) {
-                        messageTable.get(rcvdMsg.getSequence())[rcvdMsg.getIndex()-1].signalAcked();
+                        ReliableProtocolMessage[] sentSequence = messageTable.get(rcvdMsg.getSequence());
+                        if (sentSequence != null) {
+                            sentSequence[rcvdMsg.getIndex()-1].signalAcked();
+                        }
                     }
                 }
                 else {
@@ -401,14 +404,9 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                     }
                     String streamID = ((AsynchMessageArrivedEvent) protocolEvent).getSourceURL() + "/" + Long.toString(rcvdMsg.getSequence());
                     if (!receivedMessages.contains(streamID)) {
-                        boolean messageComplete = depacketize(rcvdMsg, streamID);
-                        if (messageComplete) {
+                        byte[][] toAssemble = depacketize(rcvdMsg, streamID);
+                        if (toAssemble != null) {
                             receivedMessages.add(streamID);
-                            byte[][] toAssemble;
-                            synchronized (assembly) {
-                                toAssemble = assembly.get(streamID);
-                                assembly.remove(streamID);
-                            }
                             byte[] bytesMessage = assemble(toAssemble);
                             AsynchMessageArrivedEvent messageEvent = new AsynchMessageArrivedEvent(bytesMessage, ((AsynchMessageArrivedEvent) protocolEvent).getSourceURL());
                             this.fireEvent(messageEvent);
@@ -510,8 +508,8 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
         return ret;
     }
 
-    private boolean depacketize(ReliableProtocolMessage rpm, String streamID) throws MalformedMessageException {
-        boolean ret = false;
+    private byte[][] depacketize(ReliableProtocolMessage rpm, String streamID) throws MalformedMessageException {
+        byte[][] ret = null;
         byte[][] parts;
         synchronized (assembly) {
             parts = assembly.get(streamID);
@@ -541,7 +539,8 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                 }
             }
             if (ArrayOperations.tautology(progress)) {
-                ret = true;
+                ret = parts;
+                assembly.remove(streamID);
                 assemblyCounter.remove(streamID);
             }
         }
