@@ -251,9 +251,9 @@ public class RandomPointGenerator {
                         else {
                             angle = 360 * random.nextFloat();
                         }
-                        nextPoint[dim] += width * Math.sin(angle);
+                        nextPoint[dim] += width * Math.sin(Math.toRadians(angle));
                         if (dim == dimensions - 2) {
-                            nextPoint[dimensions-1] += width * Math.cos(angle);
+                            nextPoint[dimensions-1] += width * Math.cos(Math.toRadians(angle));
                         }
                     }
                     break;
