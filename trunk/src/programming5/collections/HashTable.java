@@ -22,16 +22,31 @@
 package programming5.collections;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
- * This extension of a java Hashtable implements the programming5 PMap interface to provide a method that
- * passes a default value to the get method in case the return value of the original get method would have
- * been null. The use of this method avoids having to test the result of the get method for a null value and
- * automatically inserts the default value with the given key.
+ * This extension of a java Hashtable implements the programming5 PMap interface.
+ * @see programming5.collections.PMap
  * @author Andres Quiroz Hernandez
  * @version 6.0
  */
 public class HashTable<E, D> extends Hashtable<E, D> implements PMap<E, D> {
+
+    public HashTable() {
+        super();
+    }
+
+    public HashTable(Map<? extends E, ? extends D> baseMap) {
+        super(baseMap);
+    }
+
+    public HashTable(int initialSize) {
+        super(initialSize);
+    }
+
+    public HashTable(int initialSize, float loadFactor) {
+        super(initialSize, loadFactor);
+    }
 
     /**
      * Implementation of the safeGet method from the PMap interface.
@@ -41,12 +56,48 @@ public class HashTable<E, D> extends Hashtable<E, D> implements PMap<E, D> {
      * @return this.get(key) if it is not null; otherwise, defaultValue
      * @see programming5.collections.PMap#safeGet(java.lang.Object, java.lang.Object)
      */
+    @Override
     public D safeGet(E key, D defaultValue) {
         D ret = this.get(key);
         if (ret == null) {
             this.put(key, defaultValue);
             ret = defaultValue;
         }
+        return ret;
+    }
+
+    /**
+     * Implementation of the safePut method of the PMap interface.
+     * @param key the tentative insertion key
+     * @param value the value to insert
+     * @param keyGenerator the generator to be used for alternative keys in case of collisions
+     * @return the key actually used to insert the value
+     * @see programming5.collections.PMap#safePut(java.lang.Object, java.lang.Object, programming5.collections.MapKeyGenerator) 
+     */
+    @Override
+    public E safePut(E key, D value, MapKeyGenerator<E> keyGenerator) {
+        E retKey = key;
+        while (this.get(retKey) != null) {
+            retKey = keyGenerator.generateKey();
+        }
+        this.put(retKey, value);
+        return retKey;
+    }
+
+    /**
+     * Implementation of the randomPut method of the PMap interface
+     * @param value the value to insert
+     * @param keyGenerator the generator to be used for generating the key to use for the insertion
+     * @return the key used to insert the value
+     * @see programming5.collections.PMap#randomPut(java.lang.Object, programming5.collections.MapKeyGenerator) 
+     */
+    @Override
+    public E randomPut(D value, MapKeyGenerator<E> keyGenerator) {
+        E ret = keyGenerator.generateKey();
+        while (this.get(ret) != null) {
+            ret = keyGenerator.generateKey();
+        }
+        this.put(ret, value);
         return ret;
     }
 

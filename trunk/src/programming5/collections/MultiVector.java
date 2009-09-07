@@ -726,6 +726,41 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
     }
 
     /**
+     * Implementation of the safePut method of the PMap interface.
+     * @param key the tentative insertion key
+     * @param value the value to insert
+     * @param keyGenerator the generator to be used for alternative keys in case of collisions
+     * @return the key actually used to insert the value
+     * @see programming5.collections.PMap#safePut(java.lang.Object, java.lang.Object, programming5.collections.MapKeyGenerator)
+     */
+    @Override
+    public E safePut(E key, D value, MapKeyGenerator<E> keyGenerator) {
+        E retKey = key;
+        while (this.get(retKey) != null) {
+            retKey = keyGenerator.generateKey();
+        }
+        this.put(retKey, value);
+        return retKey;
+    }
+
+    /**
+     * Implementation of the randomPut method of the PMap interface
+     * @param value the value to insert
+     * @param keyGenerator the generator to be used for generating the key to use for the insertion
+     * @return the key used to insert the value
+     * @see programming5.collections.PMap#randomPut(java.lang.Object, programming5.collections.MapKeyGenerator)
+     */
+    @Override
+    public E randomPut(D value, MapKeyGenerator<E> keyGenerator) {
+        E ret = keyGenerator.generateKey();
+        while (this.get(ret) != null) {
+            ret = keyGenerator.generateKey();
+        }
+        this.put(ret, value);
+        return ret;
+    }
+
+    /**
      * Implementation of the Map.Entry interface
      */
     public class MultiVectorEntry<E, D> implements Map.Entry<E, D> {
