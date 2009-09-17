@@ -50,8 +50,9 @@ public class RandomPointGenerator {
     protected Vector<double[][]> pointWidthDistributions = new Vector<double[][]>();
     // Line specs
     protected Vector<double[]> lineCoefficients = new Vector<double[]>();
+    protected Vector<double[]> lineIntercepts = new Vector<double[]>();
 //    protected Vector<double[][][]> lineDistributions = new Vector<double[][][]>();
-    protected Vector<double[][][]> lineDomainDistributions = new Vector<double[][][]>();
+    protected Vector<double[][]> lineDomainDistributions = new Vector<double[][]>();
     protected Vector<double[][][]> lineWidthDistributions = new Vector<double[][][]>();
     // Area specs
     protected Vector<double[][][]> areaDistributions = new Vector<double[][][]>();
@@ -133,12 +134,13 @@ public class RandomPointGenerator {
      *description (set of coefficients in a canonical line equation).
      *@throws IllegalArgumentException if the sum of all proportions declared exceeds 1.
      */
-    public int declareLine(float proportion, double[] coefficients) throws IllegalArgumentException {
+    public int declareLine(float proportion, double[] coefficients, double[] intercepts) throws IllegalArgumentException {
         int lineIndex = lineCoefficients.size();
         newDeclaration(lineIndex, proportion, DistType.LINE);
-        lineCoefficients.add(Arrays.copyOf(coefficients, dimensions));
+        lineCoefficients.add(Arrays.copyOf(coefficients, dimensions-1));
+        lineIntercepts.add(Arrays.copyOf(intercepts, dimensions-1));
 //        lineDistributions.add(new double[dimensions][][]);
-        lineDomainDistributions.add(new double[dimensions-1][][]);
+        lineDomainDistributions.add(null);
         lineWidthDistributions.add(new double[dimensions][][]);
         return lineIndex;
     }
@@ -156,12 +158,12 @@ public class RandomPointGenerator {
      *the given proportion of points (of the total for this declaration) should be generated within the limits
      *given by [min, max].
      */
-    public void setLineDomainDistribution(int lineIndex, int dimension, double[]... distribution) {
+    public void setLineDomainDistribution(int lineIndex, double[]... distribution) {
         double[][] lineDomainDistribution = new double[distribution.length][];
         for (int i = 0; i < distribution.length; i++) {
             lineDomainDistribution[i] = Arrays.copyOf(distribution[i], 3);
         }
-        lineDomainDistributions.elementAt(lineIndex)[dimension] = lineDomainDistribution;
+        lineDomainDistributions.setElementAt(lineDomainDistribution, lineIndex);
     }
 
     /**
@@ -261,19 +263,18 @@ public class RandomPointGenerator {
                 case LINE: {
                     // Set line point
                     nextPoint = new double[dimensions];
-                    double[] coefficients = lineCoefficients.elementAt(correspondence[declaration]);
-                    nextPoint[dimensions-1] = 0;
-                    for (int dim = 0; dim < dimensions-1; dim++) {
-                        double[][] coordDistribution = lineDomainDistributions.elementAt(correspondence[declaration])[dim];
-                        if (coordDistribution != null) {
-                            nextPoint[dim] = applyDistribution(coordDistribution);
-                        }
-                        else {
-                            nextPoint[dim] = range[dim] * random.nextFloat();
-                        }
-                        nextPoint[dimensions-1] += coefficients[dim] * nextPoint[dim];
+                    double[][] coordDistribution = lineDomainDistributions.elementAt(correspondence[declaration]);
+                    if (coordDistribution != null) {
+                        nextPoint[0] = applyDistribution(coordDistribution);
                     }
-                    nextPoint[dimensions-1] += coefficients[dimensions-1];
+                    else {
+                        nextPoint[0] = range[0] * random.nextFloat();
+                    }
+                    double[] coefficients = lineCoefficients.elementAt(correspondence[declaration]);
+                    double[] intercepts = lineIntercepts.elementAt(correspondence[declaration]);
+                    for (int dim = 1; dim < dimensions; dim++) {
+                        nextPoint[dim] = coefficients[dim-1] * nextPoint[0] + intercepts[dim-1];
+                    }
                     // Perturb line point
                     for (int dim = 0; dim < dimensions; dim++) {
                         double[][] widthDistribution = lineWidthDistributions.elementAt(correspondence[declaration])[dim];
