@@ -47,7 +47,7 @@ public class RandomPointGenerator {
     // Point specs
     protected Vector<double[]> pointCenters = new Vector<double[]>();
     protected Vector<double[][][]> pointAngleDistributions = new Vector<double[][][]>();
-    protected Vector<double[][]> pointWidthDistributions = new Vector<double[][]>();
+    protected Vector<double[][][]> pointWidthDistributions = new Vector<double[][][]>();
     // Line specs
     protected Vector<double[]> lineCoefficients = new Vector<double[]>();
     protected Vector<double[]> lineIntercepts = new Vector<double[]>();
@@ -88,7 +88,7 @@ public class RandomPointGenerator {
         double[] pointCenter = Arrays.copyOf(center, dimensions);
         pointCenters.add(pointCenter);
         pointAngleDistributions.add(new double[dimensions-1][][]);
-        pointWidthDistributions.add(null);
+        pointWidthDistributions.add(new double[dimensions][][]);
         return pointIndex;
     }
     
@@ -121,12 +121,12 @@ public class RandomPointGenerator {
      *of points (of the total for this declaration) should be generated within the limits given by [min, max], relative to the point 
      *center
      */
-    public void setPointWidthDistribution(int pointIndex, double[]... widthDistribution) {
+    public void setPointWidthDistribution(int pointIndex, int dimension, double[]... widthDistribution) {
         double[][] pointDistribution = new double[widthDistribution.length][];
         for (int i = 0; i < widthDistribution.length; i++) {
             pointDistribution[i] = Arrays.copyOf(widthDistribution[i], 3);
         }
-        pointWidthDistributions.setElementAt(pointDistribution, pointIndex);
+        pointWidthDistributions.elementAt(pointIndex)[dimension] = pointDistribution;
     }
     
     /**
@@ -236,15 +236,15 @@ public class RandomPointGenerator {
             switch (distType) {
                 case POINT: {
                     nextPoint = Arrays.copyOf(pointCenters.elementAt(correspondence[declaration]), dimensions);
-                    double[][] widthDistribution = pointWidthDistributions.elementAt(correspondence[declaration]);
-                    double width;
-                    if (widthDistribution != null) {
-                        width = applyDistribution(widthDistribution);
-                    }
-                    else {
-                        width = random.nextFloat() * range[0];
-                    }
                     for (int dim = 0; dim < dimensions-1; dim++) {
+                        double[][] widthDistribution = pointWidthDistributions.elementAt(correspondence[declaration])[dim];
+                        double width;
+                        if (widthDistribution != null) {
+                            width = applyDistribution(widthDistribution);
+                        }
+                        else {
+                            width = random.nextFloat() * range[0];
+                        }
                         double[][] angleDistribution = pointAngleDistributions.elementAt(correspondence[declaration])[dim];
                         double angle;
                         if (angleDistribution != null) {
