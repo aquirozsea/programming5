@@ -33,6 +33,7 @@ import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import programming5.arrays.ArrayOperations;
 import programming5.collections.MultiVector;
+import programming5.io.Debug;
 import programming5.net.MessageArrivedEvent;
 import programming5.net.MessagingClient;
 import programming5.net.NetworkException;
@@ -353,16 +354,17 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
         super.fireEvent(event);
         synchronized (receiveRequests) {
             for (ReceiveRequest request : receiveRequests) {
-                request.setMessage(event.getMessageBytes());
+                request.setMessage(event.getContentBytes());
             }
             receiveRequests.clear();
         }
     }
     
     private void signalConnectionError(String host) {
-        System.out.println("Ending connections");
+        Debug.println("Ending connections", "programming5.net.sockets.TCPClient");
         try {outStreams.remove(host)/*.close()*/;} catch (Exception e) {e.printStackTrace();}
         try {connections.remove(host)/*.close()*/;} catch (Exception e) {e.printStackTrace();}
+        this.terminateAllSubscriptions();
     }
     
     private void sendTerminationMessage(String host) {
@@ -444,7 +446,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
                                     msgStart = msgEnd;
                                 }
                                 catch (ArrayIndexOutOfBoundsException iobe) {
-                                    System.out.println("TCPReceiver: Bad message received");
+                                    Debug.println("TCPReceiver: Bad message received");
                                     bytesRead = -1;
                                 }
                                 catch (Exception e) {
@@ -453,12 +455,12 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
                             else {
                                 listening = false;
                                 bytesRead = 0;
-                                System.out.println("Termination message received at " + hostname);
+                                Debug.println("Termination message received at " + hostname, "programming5.net.sockets.TCPClient");
                                 signalConnectionError(hostname);
                             }
                         }
                         catch (Exception e) {
-                            System.out.println("TCPReceiver: Bad message received");
+                            Debug.println("TCPReceiver: Bad message received");
                             bytesRead = -1;
                         }
                     }
@@ -466,7 +468,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
                 end();
             } 
             catch (IOException io) {
-                System.err.println("TCPReceiver: Exception while receiving: " + io.getMessage());
+                Debug.println("TCPReceiver: Exception while receiving: " + io.getMessage());
                 signalConnectionError(hostname);
             }
         }
@@ -477,7 +479,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
                 listening = false;
             }
             catch (IOException ioe) {
-                System.out.println("Exception closing: " + ioe.getMessage());
+                Debug.printStackTrace(ioe);
             }
         }
         
@@ -505,7 +507,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
                 end();
             } 
             catch (IOException io) {
-                System.err.println("TCPReceiver: Exception while receiving: " + io.getMessage());
+                Debug.println("TCPReceiver: Exception while receiving: " + io.getMessage());
                 signalConnectionError(hostname);
             }
         }
