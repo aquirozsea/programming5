@@ -23,6 +23,7 @@ package programming5.io;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Vector;
 import programming5.math.NumberRange;
 import programming5.arrays.ArrayOperations;
 
@@ -720,6 +721,122 @@ public class ArgHandler {
      */
     public boolean getSwitchArg(String tag) {
         return (ArrayOperations.seqFind(tag, args) != -1);
+    }
+
+    /**
+     * Finds zero or more occurrences of a string argument, each preceded by the given tag
+     * @return a possibly empty vector of strings that follow each occurrence of the given tag
+     */
+    public Vector<String> getMultipleStringArg(String tag) {
+        Vector<String> ret = new Vector<String>();
+        int index = ArrayOperations.seqFind(tag, args);
+        while (index >= 0) {
+            try {
+                ret.add(args[index+1]);
+            }
+            catch (Exception e) {
+            }
+            index = ArrayOperations.seqFind(tag, args, index+1);
+        }
+        return ret;
+    }
+
+    /**
+     * Finds at least the given number of occurrences of a string argument, each preceded by the given tag
+     * @param tag the identifier for the argument
+     * @param minOccurrences the minimum number of occurrences of the given tag
+     * @return a possibly empty vector of strings that follow each occurrence of the given tag
+     */
+    public Vector<String> getMultipleStringArg(String tag, int minOccurrences) {
+        Vector<String> ret = new Vector<String>();
+        int index = ArrayOperations.seqFind(tag, args);
+        while (index >= 0) {
+            try {
+                ret.add(args[index+1]);
+            }
+            catch (Exception e) {
+            }
+            index = ArrayOperations.seqFind(tag, args, index+1);
+        }
+        while (ret.size() < minOccurrences) {
+            switch (strategy) {
+                case EXIT:
+                    if (usage != null) {
+                        throw new IllegalArgumentException(usage);
+                    }
+                    else {
+                        throw new IllegalArgumentException("ArgHandler: Expected " + Integer.toString(minOccurrences) + " of : " + tag);
+                    }
+
+                case PROMPT:
+                    System.out.print("ArgHandler: Enter string value for " + tag + " (" + Integer.toString(minOccurrences-ret.size()) + " left): ");
+                    System.out.flush();
+                    try {
+                        ret.add(in.readLine());
+                    }
+                    catch (Exception e) {}
+                    break;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Finds zero or more occurrences of an integer argument, each preceded by the given tag
+     * @return a possibly empty vector of integers that follow each occurrence of the given tag
+     */
+    public Vector<Integer> getMultipleIntegerArg(String tag) {
+        Vector<Integer> ret = new Vector<Integer>();
+        int index = ArrayOperations.seqFind(tag, args);
+        while (index >= 0) {
+            try {
+                ret.add(Integer.parseInt(args[index+1]));
+            }
+            catch (Exception e) {
+            }
+            index = ArrayOperations.seqFind(tag, args, index+1);
+        }
+        return ret;
+    }
+
+    /**
+     * Finds at least the given number of occurrences of an integer argument, each preceded by the given tag
+     * @param tag the identifier for the argument
+     * @param minOccurrences the minimum number of occurrences of the given tag
+     * @return a possibly empty vector of inetegers that follow each occurrence of the given tag
+     */
+    public Vector<Integer> getMultipleIntegerArg(String tag, int minOccurrences) {
+        Vector<Integer> ret = new Vector<Integer>();
+        int index = ArrayOperations.seqFind(tag, args);
+        while (index >= 0) {
+            try {
+                ret.add(Integer.parseInt(args[index+1]));
+            }
+            catch (Exception e) {
+            }
+            index = ArrayOperations.seqFind(tag, args, index+1);
+        }
+        while (ret.size() < minOccurrences) {
+            switch (strategy) {
+                case EXIT:
+                    if (usage != null) {
+                        throw new IllegalArgumentException(usage);
+                    }
+                    else {
+                        throw new IllegalArgumentException("ArgHandler: Expected " + Integer.toString(minOccurrences) + " of : " + tag);
+                    }
+
+                case PROMPT:
+                    System.out.print("ArgHandler: Enter string value for " + tag + " (" + Integer.toString(minOccurrences-ret.size()) + " left): ");
+                    System.out.flush();
+                    try {
+                        ret.add(Integer.parseInt(in.readLine()));
+                    }
+                    catch (Exception e) {}
+                    break;
+            }
+        }
+        return ret;
     }
     
     /**
