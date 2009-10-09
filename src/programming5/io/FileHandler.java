@@ -22,6 +22,8 @@
 package programming5.io;
 
 import java.io.*;
+import java.util.EmptyStackException;
+import java.util.Stack;
 import programming5.arrays.ArrayOperations;
 
 /**
@@ -1166,4 +1168,47 @@ public class FileHandler {
 		File checkFile = new File(path);
 		return checkFile.isFile();
 	}
+
+        public static void fileTreeTraversal(String rootPath, FileProcessor processor) {
+            Stack<File> preStack = new Stack<File>();
+            Stack<File> postStack = new Stack<File>();
+            File rootNode = new File(rootPath);
+            if (rootNode.exists()) {
+                if (rootNode.isFile()) {
+                    processor.fileProcess(rootNode);
+                }
+                else if (rootNode.isDirectory()) {
+                    preStack.push(rootNode);
+                    while (!preStack.isEmpty()) {
+                        File node = preStack.peek();
+                        processor.directoryPreProcess(node);
+                        postStack.push(node);
+                        File[] children = node.listFiles();
+                        for (File child : children) {
+                            if (child.isFile()) {
+                                processor.fileProcess(child);
+                            }
+                            else if (child.isDirectory()) {
+                                preStack.push(child);
+                            }
+                        }
+                        try {
+                            while (preStack.peek() == postStack.peek()) {
+                                preStack.pop();
+                                processor.directoryPostProcess(postStack.pop());
+                            }
+                        }
+                        catch (EmptyStackException ese) {
+                            Debug.println("Done");
+                        }
+                    }
+                }
+                else {
+                    Debug.println("Other file type");
+                }
+            }
+            else {
+                throw new IllegalArgumentException("FileHandler: Cannot traverse given tree: Root path does not exist or is not reachable from current directory");
+            }
+        }
 }
