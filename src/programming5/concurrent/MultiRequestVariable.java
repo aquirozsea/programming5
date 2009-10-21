@@ -35,7 +35,7 @@ import java.util.Vector;
  */
 public class MultiRequestVariable<E> extends ConditionVariable {
     
-    protected Vector<E> result = new Vector<E>();
+    protected final Vector<E> result = new Vector<E>();
     
     private int targetSize;
     private boolean exact = false; 
@@ -47,6 +47,9 @@ public class MultiRequestVariable<E> extends ConditionVariable {
     public MultiRequestVariable(int expectedSize) {
         super();
         targetSize = expectedSize;
+        if (targetSize == 0) {
+            this.evaluateCondition(true);
+        }
     }
     
     /**
@@ -60,6 +63,9 @@ public class MultiRequestVariable<E> extends ConditionVariable {
         super();
         targetSize = expectedSize;
         exact = enforceExactly;
+        if (targetSize == 0) {
+            this.evaluateCondition(true);
+        }
     }
     
     /**
