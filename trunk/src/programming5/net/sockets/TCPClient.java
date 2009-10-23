@@ -337,7 +337,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *Implementation of the PluggableClient interface. Stops the receiver threads and
      *closes open sockets.
      */
-    public void endConnection() {
+    public synchronized void endConnection() {
         for (String host : outStreams.keySet()) {
             sendTerminationMessage(host);
         }
@@ -360,7 +360,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
         }
     }
     
-    private void signalConnectionError(String host) {
+    private synchronized void signalConnectionError(String host) {
         Debug.println("Ending connections", "programming5.net.sockets.TCPClient");
         try {outStreams.remove(host)/*.close()*/;} catch (Exception e) {e.printStackTrace();}
         try {connections.remove(host)/*.close()*/;} catch (Exception e) {e.printStackTrace();}
