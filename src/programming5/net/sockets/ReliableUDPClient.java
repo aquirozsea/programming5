@@ -55,6 +55,16 @@ import programming5.net.Subscriber;
  *<p>It uses a special message object that creates messages with the following syntax:<p>
  *<p>"RPM:seq_number::payload"<p>
  *"ACK:seq_number"
+ *<p>Unacknowledged messages are resent every 50 msec, up to 50 times. This configuration has been tested
+ *effective for the order of under 1000 small consecutive messages (in a for loop). Higher order streams
+ *require resetting the timeout and resend limit configuration parameters with the methods provided. The
+ *following settings have been found effective for small message streams of the following orders:
+ *<p>1000 messages: timeout=100
+ *<p>10000 messages: timeout=200; resendLimit=125
+ *<p>100000 messages: timeout=800; resendLimit=1000 (upper bound)
+ *<p>The use of this class is not recommended for larger message streams. As the sizes of the streams
+ *increase, the receive memory size (default 1000 messages) should also be increased, but the correct
+ *settings have not been tested.
  *@see programming5.net.sockets.UDPClient
  *@see programming5.net.ReliableProtocolMessage
  *@see programming5.net.ReliableMessageArrivedListener
@@ -75,9 +85,9 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     private Random random = new Random(System.currentTimeMillis());
     private Timer timer = new Timer();
     
-    public static final long DEF_TIMEOUT = 2000;
-    public static final int DEF_RESEND = 5;
-    public static final int DEF_RCV_MEMORY = 100;
+    public static final long DEF_TIMEOUT = 50;
+    public static final int DEF_RESEND = 50;
+    public static final int DEF_RCV_MEMORY = 1000;
     protected static final int MAX_SIZE = 65400;
     protected static final String SEPARATOR = ":";
     protected static final String SLASH = "/";
@@ -278,6 +288,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
         }
         else {
             ReliableProtocolMessage[] rmsgs = this.createMessage(bytesMessage, uri);
+            Debug.println("Sending " + rmsgs.length + " reliable messages", "programming5.net.sockets.ReliableUDPClient");
             for (ReliableProtocolMessage rmsg : rmsgs) {
                 client.send(rmsg.getMessageBytes(), uri);
             }
