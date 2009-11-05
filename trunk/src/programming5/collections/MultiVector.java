@@ -164,6 +164,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@return a new multi-vector, using the Vector class clone method
      *@see java.util.Vector#clone
      */
+    @Override
     public MultiVector<E, D> clone() {
         return new MultiVector<E, D>((Vector<E>) vector1.clone(), (Vector<D>) vector2.clone());
     }
@@ -290,6 +291,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         return vector2.firstElement();
     }
     
+    @Override
     public int hashCode() {
         return vector1.hashCode() + vector2.hashCode();
     }
@@ -590,6 +592,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         return (D[]) vector2.toArray();
     }
     
+    @Override
     public String toString() {
         String ret = vector1.get(0).toString() + ", " + vector2.get(0).toString();
         for (int i = 1; i < this.size(); i++) {
@@ -649,7 +652,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      */
     public D put(E key, D value) {
         D ret = getInSecond(key);
-        if (ret == null) {
+        if (ret != null) {
             setInSecond(key, value);
         }
         else {
@@ -676,7 +679,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      */
     public void putAll(Map<? extends E, ? extends D> map) {
         for (Object key : map.keySet()) {
-            this.put((E) key, (D) map.get(key));
+            this.put((E) key, (D) map.get((E) key));
         }
     }
 
