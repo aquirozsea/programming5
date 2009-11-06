@@ -22,6 +22,7 @@
 package programming5.net;
 
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 /**
@@ -35,13 +36,18 @@ import java.util.Vector;
 public class Publisher<E extends programming5.net.Event> implements IPublisher<E> {
     
     protected Vector<Subscriber<E>> listeners = new Vector<Subscriber<E>>();
+    protected ReentrantReadWriteLock listenerLock = new ReentrantReadWriteLock();
     
     public void addListener(Subscriber<E> s) {
+        listenerLock.writeLock().lock();
         listeners.add(s);
+        listenerLock.writeLock().unlock();
     }
     
     public void removeListener(Subscriber<E> s) {
+        listenerLock.writeLock().lock();
         listeners.remove(s);
+        listenerLock.writeLock().unlock();
     }
     
     /**
@@ -49,13 +55,19 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
      */
     public <T extends E> void fireEvent(T event) {
         final T auxEvent = event;
-        for (Subscriber<E> listener : listeners) {
-            final Subscriber<E> auxListener = listener;
-            new Thread(new Runnable() {
-                public void run() {
-                    auxListener.signalEvent(auxEvent);
-                }
-            }).start();
+        listenerLock.readLock().lock();
+        try {
+            for (Subscriber<E> listener : listeners) {
+                final Subscriber<E> auxListener = listener;
+                new Thread(new Runnable() {
+                    public void run() {
+                        auxListener.signalEvent(auxEvent);
+                    }
+                }).start();
+            }
+        }
+        finally {
+            listenerLock.readLock().unlock();
         }
     }
     
@@ -64,10 +76,16 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
      *@see programming5.net.TerminationAwareSubscriber
      */
     public void announceNoMoreEvents() {
-        for (Subscriber<E> listener : listeners) {
-            if (listener instanceof TerminationAwareSubscriber) {
-                ((TerminationAwareSubscriber) listener).noMoreEvents();
+        listenerLock.readLock().lock();
+        try {
+            for (Subscriber<E> listener : listeners) {
+                if (listener instanceof TerminationAwareSubscriber) {
+                    ((TerminationAwareSubscriber) listener).noMoreEvents();
+                }
             }
+        }
+        finally {
+            listenerLock.readLock().unlock();
         }
     }
     
@@ -76,11 +94,19 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
      *@see programming5.net.TerminationAwareSubscriber
      */
     public void terminateAllSubscriptions() {
-        for (Subscriber<E> listener : listeners) {
-            if (listener instanceof TerminationAwareSubscriber) {
-                ((TerminationAwareSubscriber) listener).subscriptionTerminated();
+        listenerLock.readLock().lock();
+        try {
+            for (Subscriber<E> listener : listeners) {
+                if (listener instanceof TerminationAwareSubscriber) {
+                    ((TerminationAwareSubscriber) listener).subscriptionTerminated();
+                }
             }
         }
+        finally {
+            listenerLock.readLock().unlock();
+        }
+        listenerLock.writeLock().lock();
         listeners.removeAllElements();
+        listenerLock.writeLock().unlock();
     }
 }
