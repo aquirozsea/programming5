@@ -22,8 +22,6 @@
 package programming5.net;
 
 import java.util.Vector;
-import programming5.net.PluggableClient;
-import programming5.net.ServiceObject;
 
 /**
  *This is a base class for server implementations in a client/server system. A concrete subclass of this class must 
