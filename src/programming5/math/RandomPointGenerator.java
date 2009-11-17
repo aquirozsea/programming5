@@ -301,6 +301,14 @@ public class RandomPointGenerator {
                     break;
                 }
             }
+            for (int dim = 0; dim < dimensions; dim++) {
+                if (nextPoint[dim] < 0) {
+                    nextPoint[dim] = 0;
+                }
+                else if (nextPoint[dim] > range[dim]) {
+                    nextPoint[dim] = range[dim];
+                }
+            }
             points.add(nextPoint);
         }
         return points;
