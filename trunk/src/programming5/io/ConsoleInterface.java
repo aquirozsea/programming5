@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.LinkedList;
+import programming5.arrays.ArrayOperations;
 
 /**
  *This class allows executing OS commands from java applications. The command is passed as a string to the execute method 
@@ -32,7 +33,7 @@ import java.util.LinkedList;
  *If the command has output or throws an error, it can be retrieved with the appropriate commands.
  *WARNING: Some commands do not execute properly when executed in this way.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
 public class ConsoleInterface {
 	
@@ -106,4 +107,8 @@ public class ConsoleInterface {
 	public String getCommandError() {
 		return commandError;
 	}
+
+        public static void printList(Object... list) {
+            ArrayOperations.printHorizontal(list);
+        }
 }
