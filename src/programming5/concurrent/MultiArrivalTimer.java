@@ -33,15 +33,14 @@ public class MultiArrivalTimer {
     protected ConditionVariable exponentialCondition = new ConditionVariable();
 
     private Thread linearWaitThread = null;
-    private Thread exponentialWaitThread;
+    private Thread exponentialWaitThread = null;
 
-    private long linearWaitTime;
-    private long exponentialWaitTime;
+    private long interarrivalTime;
     private long lastArrivalTime = -1;
+    private int exponentialMultiplier = 2;
 
     public MultiArrivalTimer(long expectedIATime) {
-        linearWaitTime = expectedIATime;
-        exponentialWaitTime = expectedIATime;
+        interarrivalTime = expectedIATime;
     }
 
     public void startLinearTimer() {
@@ -50,7 +49,7 @@ public class MultiArrivalTimer {
                 public void run() {
                     boolean through = false;
                     while (!through) {
-                        long toSleep = 2 * linearWaitTime;
+                        long toSleep = 2 * interarrivalTime;
                         while (toSleep > 0) {
                             try {
                                 Thread.sleep(toSleep);
@@ -58,16 +57,16 @@ public class MultiArrivalTimer {
                                     toSleep = 0;
                                 }
                                 else {
-                                    toSleep = 2 * linearWaitTime;
+                                    toSleep = 2 * interarrivalTime;
                                     through = (lastArrivalTime > 0);
                                 }
                             }
                             catch (InterruptedException ie) {
                                 if (lastArrivalTime > 0) {
-                                    linearWaitTime = (long) (0.7f*linearWaitTime + 0.3f*(System.currentTimeMillis()-lastArrivalTime)) + 1;
+                                    interarrivalTime = (long) (0.7f*interarrivalTime + 0.3f*(System.currentTimeMillis()-lastArrivalTime)) + 1;
                                 }
                                 lastArrivalTime = System.currentTimeMillis();
-                                toSleep = linearWaitTime;
+                                toSleep = 2 * interarrivalTime;
                                 through = false;
                             }
                         }
@@ -79,14 +78,59 @@ public class MultiArrivalTimer {
         }
     }
 
+    public void startExponentialTimer() {
+        if (exponentialWaitThread == null) {
+            exponentialWaitThread = new Thread() {
+                public void run() {
+                    boolean through = false;
+                    while (!through) {
+                        long toSleep = exponentialMultiplier * interarrivalTime;
+                        while (toSleep > 0) {
+                            try {
+                                Thread.sleep(toSleep);
+                                if (through && lastArrivalTime > 0) {
+                                    toSleep = 0;
+                                }
+                                else {
+                                    toSleep = exponentialMultiplier * interarrivalTime;
+                                    through = (lastArrivalTime > 0);
+                                }
+                            }
+                            catch (InterruptedException ie) {
+                                if (lastArrivalTime > 0) {
+                                    interarrivalTime = (long) (0.7f*interarrivalTime + 0.3f*(System.currentTimeMillis()-lastArrivalTime)) + 1;
+                                }
+                                lastArrivalTime = System.currentTimeMillis();
+                                if (through) {
+                                    exponentialMultiplier++;
+                                }
+                                toSleep = exponentialMultiplier * interarrivalTime;
+                                through = false;
+                            }
+                        }
+                    }
+                    exponentialCondition.signalAll();
+                }
+            };
+            exponentialWaitThread.start();
+        }
+    }
+
     public void signalArrival() {
         if (linearWaitThread != null) {
             linearWaitThread.interrupt();
+        }
+        if (exponentialWaitThread != null) {
+            exponentialWaitThread.interrupt();
         }
     }
 
     public void waitOnLinearCondition() {
         linearCondition.awaitUninterruptibly();
+    }
+
+    public void waitOnExponentialCondition() {
+        exponentialCondition.awaitUninterruptibly();
     }
 
 }
