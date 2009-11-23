@@ -63,7 +63,10 @@ public class MultiArrivalTimer {
                             }
                             catch (InterruptedException ie) {
                                 if (lastArrivalTime > 0) {
-                                    interarrivalTime = (long) (0.7f*interarrivalTime + 0.3f*(System.currentTimeMillis()-lastArrivalTime)) + 1;
+                                    long newIAT = System.currentTimeMillis()-lastArrivalTime;
+                                    if (newIAT > interarrivalTime) {
+                                        interarrivalTime = (long) (0.5f*interarrivalTime + 0.5f*newIAT) + 1;
+                                    }
                                 }
                                 lastArrivalTime = System.currentTimeMillis();
                                 toSleep = 2 * interarrivalTime;
@@ -98,7 +101,10 @@ public class MultiArrivalTimer {
                             }
                             catch (InterruptedException ie) {
                                 if (lastArrivalTime > 0) {
-                                    interarrivalTime = (long) (0.7f*interarrivalTime + 0.3f*(System.currentTimeMillis()-lastArrivalTime)) + 1;
+                                    long newIAT = System.currentTimeMillis()-lastArrivalTime;
+                                    if (newIAT > interarrivalTime) {
+                                        interarrivalTime = (long) (0.5f*interarrivalTime + 0.5f*newIAT) + 1;
+                                    }
                                 }
                                 lastArrivalTime = System.currentTimeMillis();
                                 if (through) {
