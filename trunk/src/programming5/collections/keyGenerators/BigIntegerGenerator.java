@@ -47,9 +47,16 @@ public class BigIntegerGenerator implements MapKeyGenerator<BigInteger> {
         bits = bitLength;
     }
 
+    /**
+     * @return a non-zero big integer (zero is reserved for special-case indicator)
+     */
     @Override
     public BigInteger generateKey() {
-        return new BigInteger(bits, random);
+        BigInteger ret = new BigInteger(bits, random);
+        while (ret.equals(BigInteger.ZERO)) {
+            ret = new BigInteger(bits, random);
+        }
+        return ret;
     }
 
 }
