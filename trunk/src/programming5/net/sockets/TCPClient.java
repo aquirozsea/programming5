@@ -266,7 +266,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
             }
         }
         catch (Exception e) {
-            throw new NetworkException("TCPClient: Could not send message to given host: " + e.getMessage());
+            throw new NetworkException("TCPClient: Could not send message to " + url + ": " + e.getMessage());
         }
     }
     
