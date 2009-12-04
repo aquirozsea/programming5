@@ -578,49 +578,77 @@ public abstract class ArrayOperations {
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
     public static final byte[] subArray(byte[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
-        return suffix(prefix(array, until), from);
+        byte[] ret = new byte[until-from];
+        for (int i = from; i < until; i++) {
+            ret[i-from] = array[i];
+        }
+        return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
     public static final int[] subArray(int[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
-        return suffix(prefix(array, until), from);
+        int[] ret = new int[until-from];
+        for (int i = from; i < until; i++) {
+            ret[i-from] = array[i];
+        }
+        return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
     public static final float[] subArray(float[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
-        return suffix(prefix(array, until), from);
+        float[] ret = new float[until-from];
+        for (int i = from; i < until; i++) {
+            ret[i-from] = array[i];
+        }
+        return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
     public static final double[] subArray(double[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
-        return suffix(prefix(array, until), from);
+        double[] ret = new double[until-from];
+        for (int i = from; i < until; i++) {
+            ret[i-from] = array[i];
+        }
+        return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
     public static final char[] subArray(char[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
-        return suffix(prefix(array, until), from);
+        char[] ret = new char[until-from];
+        for (int i = from; i < until; i++) {
+            ret[i-from] = array[i];
+        }
+        return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
     public static final String[] subArray(String[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
-        return suffix(prefix(array, until), from);
+        String[] ret = new String[until-from];
+        for (int i = from; i < until; i++) {
+            ret[i-from] = array[i];
+        }
+        return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1. Caution: Does not replicate objects!
      */
     public static final Object[] subArray(Object[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
-        return suffix(prefix(array, until), from);
+        Object[] ret = new Object[until-from];
+        for (int i = from; i < until; i++) {
+            ret[i-from] = array[i];
+        }
+        return ret;
     }
     
     /**
@@ -706,6 +734,24 @@ public abstract class ArrayOperations {
         char[] ret = new char[totalLength];
         int pos = 0;
         for (char[] array : arrays) {
+            for (int i = 0; i < array.length; i++) {
+                ret[pos++] = array[i];
+            }
+        }
+        return ret;
+    }
+
+    /**
+     *@return a new array containing the elements of all arrays in sequential order
+     */
+    public static final boolean[] join(boolean[]... arrays) {
+        int totalLength = 0;
+        for (boolean[] array : arrays) {
+            totalLength += array.length;
+        }
+        boolean[] ret = new boolean[totalLength];
+        int pos = 0;
+        for (boolean[] array : arrays) {
             for (int i = 0; i < array.length; i++) {
                 ret[pos++] = array[i];
             }
