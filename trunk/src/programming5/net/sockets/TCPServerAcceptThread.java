@@ -40,6 +40,9 @@ public class TCPServerAcceptThread extends ServerAcceptThread {
     
     protected ServerSocket accepter;
     private boolean listening = true;
+
+    private int acceptFailCount = 0;
+    private static final int ACCEPT_FAIL_LIMIT = 10;
     
     /**
      *Creates an accept thread that listens on an available port (which can be retrieved with the getLocalPort method).
@@ -86,6 +89,7 @@ public class TCPServerAcceptThread extends ServerAcceptThread {
         while (listening) {
             try {
                 final Socket socket = accepter.accept();
+                acceptFailReset();
                 new Thread(new Runnable() {
                     public void run() {
                         try {
@@ -100,6 +104,7 @@ public class TCPServerAcceptThread extends ServerAcceptThread {
             catch (IOException ioe) {
                 if (listening) {
                     System.err.println("TCPServerAcceptThread: Couldn't accept connection: " + ioe.getMessage());
+                    acceptFailTest();
                 }
             }
         }
@@ -116,6 +121,16 @@ public class TCPServerAcceptThread extends ServerAcceptThread {
         catch (IOException ioe) {
             throw new RuntimeException("TCPServerAcceptThread: Couldn't close server socket");
         }
+    }
+
+    private void acceptFailTest() {
+        if (++acceptFailCount > ACCEPT_FAIL_LIMIT) {
+            this.end();
+        }
+    }
+
+    private void acceptFailReset() {
+        acceptFailCount = 0;
     }
     
 }
