@@ -139,4 +139,8 @@ public class MultiArrivalTimer {
         exponentialCondition.awaitUninterruptibly();
     }
 
+    public long getInterarrivalTime() {
+        return interarrivalTime;
+    }
+
 }
