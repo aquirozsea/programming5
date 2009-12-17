@@ -23,6 +23,7 @@ package programming5.net;
 
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import programming5.concurrent.ThreadPool;
 
 
 /**
@@ -59,11 +60,16 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
         try {
             for (Subscriber<E> listener : listeners) {
                 final Subscriber<E> auxListener = listener;
-                new Thread(new Runnable() {
+//                new Thread(new Runnable() {
+//                    public void run() {
+//                        auxListener.signalEvent(auxEvent);
+//                    }
+//                }).start();
+                ThreadPool.memSafeThreadStart(new Runnable() {
                     public void run() {
                         auxListener.signalEvent(auxEvent);
                     }
-                }).start();
+                });
             }
         }
         finally {
