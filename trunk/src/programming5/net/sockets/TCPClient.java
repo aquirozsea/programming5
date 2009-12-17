@@ -413,6 +413,8 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
             try {
                 while (listening) {
                     msgStart = 0;
+                    msgLength = -1;
+                    msgEnd = -1;
                     headerPos = -1;
                     bytesRead = in.read(fromServer);
                     if (bytesRead > 0) {
@@ -458,6 +460,16 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
                                 Debug.println("Termination message received at " + hostname, "programming5.net.sockets.TCPClient");
                                 signalConnectionError(hostname);
                             }
+                        }
+                        catch (OutOfMemoryError oome) {
+                            Runtime.getRuntime().gc();
+                            Debug.println("Out of memory after reading:");
+                            Debug.println("Bytes msg length: " + bytesMsg.length);
+                            Debug.println("Bytes read: " + bytesRead);
+                            Debug.println("Header pos: " + headerPos);
+                            Debug.println("Msg start: " + msgStart);
+                            Debug.println("Msg length: " + msgLength);
+                            Debug.println("Msg end: " + msgEnd);
                         }
                         catch (Exception e) {
                             Debug.println("TCPReceiver: Bad message received");
