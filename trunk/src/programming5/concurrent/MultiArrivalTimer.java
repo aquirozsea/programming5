@@ -22,13 +22,22 @@
 package programming5.concurrent;
 
 /**
- *
- * @author Andres Quiroz
+ * A MultiArrivalTimer is used for waiting on a set of events expected to occur in a burst of unspecified
+ * duration. A thread waiting on a MultiArrivalTimer will return when a sufficiently large amount of
+ * time elapses after the last arrival, which is taken to mean that the last event from the burst has
+ * been received. A different instance of the MultiArrivalTimer class should be used for waiting on
+ * separate event bursts.
+ * <p>There are two types of waiting conditions. The linear condition expects bursts where events have
+ * linearly increasing interarrival times toward the end of the burst. The timer will measure this increase
+ * in time and wait for a constant multiple of this time before signaling a waiting thread. The
+ * exponential condition, on the other hand, expects bursts with geometrically increasing interarrival
+ * times between the last events. Wait times between events increase exponentially if events with increasing
+ * interarrival times are received.
+ * @author Andres Quiroz Hernandez
+ * @version 6.0
  */
 public class MultiArrivalTimer {
 
-//    protected Vector<Thread> waitingThreadsLinear = new Vector<Thread>();
-//    protected Vector<Thread> waitingThreadsExponential = new Vector<Thread>();
     protected ConditionVariable linearCondition = new ConditionVariable();
     protected ConditionVariable exponentialCondition = new ConditionVariable();
 
@@ -39,10 +48,24 @@ public class MultiArrivalTimer {
     private long lastArrivalTime = -1;
     private int exponentialMultiplier = 2;
 
+    /**
+     * Creates an instance of MultiArrivalTimer with an initial estimate or average interarrival time
+     * @param expectedIATime the reference time used to calculate the wait time between arrivals
+     */
     public MultiArrivalTimer(long expectedIATime) {
         interarrivalTime = expectedIATime;
     }
 
+    /**
+     * Starts a thread that measures the time between events (determined by calls to signalArrival) and 
+     * signals waiting threads when enough time since the last arrival. A linear timer waits two times 
+     * for twice the expected interarrival time before signaling waiting threads. If the interarrival 
+     * time increases after the first wait period, a new interarrival time is calculated as an average 
+     * with the current expected IA time.
+     * <p>This method should only be called once per instance and excludes calls to startExponentialTimer
+     * @see #signalArrival() 
+     * @see #startExponentialTimer() 
+     */
     public void startLinearTimer() {
         if (linearWaitThread == null) {
             linearWaitThread = new Thread() {
@@ -81,6 +104,16 @@ public class MultiArrivalTimer {
         }
     }
 
+    /**
+     * Starts a thread that measures the time between events (determined by calls to signalArrival) and
+     * signals waiting threads when enough time since the last arrival. An exponential timer waits two times
+     * for an increasing multiple of the expected interarrival time before signaling waiting threads. If
+     * the interarrival time increases after the first wait period, a new interarrival time is
+     * calculated as an average with the current expected IA time.
+     * <p>This method should only be called once per instance and excludes calls to startLinearTimer
+     * @see #signalArrival()
+     * @see #startLinearTimer()
+     */
     public void startExponentialTimer() {
         if (exponentialWaitThread == null) {
             exponentialWaitThread = new Thread() {
@@ -122,6 +155,9 @@ public class MultiArrivalTimer {
         }
     }
 
+    /**
+     * Should be called for every event (arrival), after starting the appropriate timer thread
+     */
     public void signalArrival() {
         if (linearWaitThread != null) {
             linearWaitThread.interrupt();
@@ -131,14 +167,28 @@ public class MultiArrivalTimer {
         }
     }
 
+    /**
+     * Called by threads that want to block until the linear condition is reached (after a call to 
+     * startLinearTimer.
+     * @see #startLinearTimer() 
+     */
     public void waitOnLinearCondition() {
         linearCondition.awaitUninterruptibly();
     }
 
+    /**
+     * Called by threads that want to block until the exponential condition is reached (after a call to
+     * startExponentialTimer.
+     * @see #startExponentialTimer()
+     */
     public void waitOnExponentialCondition() {
         exponentialCondition.awaitUninterruptibly();
     }
 
+    /**
+     * @return the current average event interarrival time, based on the expected IA time and measured 
+     * by subsequent calls to signalArrival.
+     */
     public long getInterarrivalTime() {
         return interarrivalTime;
     }
