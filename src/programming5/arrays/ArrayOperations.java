@@ -2686,4 +2686,14 @@ public abstract class ArrayOperations {
         return ret;
     }
 
+    public static final int countTrue(boolean[] array) {
+        int ret = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i]) {
+                ret++;
+            }
+        }
+        return ret;
+    }
+
 }
