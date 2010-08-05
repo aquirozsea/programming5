@@ -21,6 +21,7 @@
 
 package programming5.collections;
 
+import java.util.Collection;
 import java.util.Vector;
 
 /**
@@ -93,6 +94,28 @@ public abstract class CollectionUtils {
         Vector<U> ret = new Vector<U>();
         for (T element : vector) {
             ret.add((U) element);
+        }
+        return ret;
+    }
+
+    public static boolean tautology(Collection<Boolean> collection) {
+        boolean ret = true;
+        for (Boolean value : collection) {
+            if (!value) {
+                ret = false;
+                break;
+            }
+        }
+        return ret;
+    }
+
+    public static boolean contradiction(Collection<Boolean> collection) {
+        boolean ret = true;
+        for (Boolean value : collection) {
+            if (value) {
+                ret = false;
+                break;
+            }
         }
         return ret;
     }
