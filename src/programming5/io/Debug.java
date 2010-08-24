@@ -23,14 +23,13 @@ package programming5.io;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
 /**
  * This class simply provides a static wrapper for conditionally printing to System.out for debugging purposes.
  * (This class is incompatible with the Debug class up until release 18)
- * Added functionality for hierarchical debug sets, so that groups of debug statements can be enabled using class
+ * <p>Release 93: Added functionality for hierarchical debug sets, so that groups of debug statements can be enabled using class
  * hierarchy names. The semantics of the default print methods (those which do not specify a set name) changes from
  * previous releases in that they are assigned to a debug set equal to a concatenation of the class and method
  * name from which the debug print is called (auto-detected). These statements can still be enabled with
