@@ -93,23 +93,28 @@ public abstract class Debug {
      * @return whether printing is enabled for the given debug set, either explicitly or for some prefix
      */
     public static boolean isEnabled(String setName) {
-        String[] levels = setName.split("\\.");
-        String prefix = levels[0];
-        boolean found = activeSet.contains(prefix);
-        int i = 1;
-        while (!found && i < levels.length) {
-            prefix += "." + levels[i++];
-            found = activeSet.contains(prefix);
-        }
-        boolean disabled = false;
-        if (found && i < levels.length) {
-            do {
+        if (!activeSet.isEmpty()) {
+            String[] levels = setName.split("\\.");
+            String prefix = levels[0];
+            boolean found = activeSet.contains(prefix);
+            int i = 1;
+            while (!found && i < levels.length) {
                 prefix += "." + levels[i++];
-                disabled = disabledSet.contains(prefix);
+                found = activeSet.contains(prefix);
             }
-            while (!disabled && i < levels.length);
+            boolean disabled = false;
+            if (found && i < levels.length) {
+                do {
+                    prefix += "." + levels[i++];
+                    disabled = disabledSet.contains(prefix);
+                }
+                while (!disabled && i < levels.length);
+            }
+            return (found && !disabled);
         }
-        return (found && !disabled);
+        else {
+            return false;
+        }
     }
 
     /**
