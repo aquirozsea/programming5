@@ -21,78 +21,176 @@
 
 package programming5.io;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 /**
  * This class simply provides a static wrapper for conditionally printing to System.out for debugging purposes.
  * (This class is incompatible with the Debug class up until release 18)
+ * Added functionality for hierarchical debug sets, so that groups of debug statements can be enabled using class
+ * hierarchy names. The semantics of the default print methods (those which do not specify a set name) changes from
+ * previous releases in that they are assigned to a debug set equal to a concatenation of the class and method
+ * name from which the debug print is called (auto-detected). These statements can still be enabled with
+ * enableDefault, so programs that relied on the previous semantics may remain the same. The convenience of the
+ * new semantics is that set names do not have to be assigned unless the class hierarchy grouping is not desirable
+ * or sufficient, and that enabling of debug prints can be managed at the package, class or method level by enabling
+ * the appropriate set prefix.
  *@author Andres Quiroz Hernandez
  *@version 6.1
  */
 public abstract class Debug {
 
-    private static Set<String> activeSet = new HashSet<String>();
+    protected static Set<String> activeSet = new HashSet<String>();
+    protected static Set<String> disabledSet = new HashSet<String>();
+    protected static boolean autodetectPath = true;
 
     /**
      * Identifies the default debug set
      */
     public static final String DEFAULT_SET = "Default";
 
+    private static final int DISABLED = 0;
+    private static final int ENABLED = 1;
+    private static final String ALT_PATH = "#";
+
     /**
-     * Enables debug printing for debug statements identified with the given name
+     * Enables debug printing for debug statements identified with the given name or derived names
      * @param setName the identifier of the debug set
      */
     public static void enable(String setName) {
-        activeSet.add(setName);
+        if (!isEnabled(setName)) {
+            activeSet.add(setName);
+        }
+        List<String> toRemove = new ArrayList<String>();
+        for (String disabled : disabledSet) {
+            if (disabled.startsWith(setName) || setName.startsWith(disabled)) {
+                toRemove.add(disabled);
+            }
+        }
+        disabledSet.removeAll(toRemove);
     }
 
     /**
-     * Enables debug printing for debug statements using the default print methods
+     * Enables debug printing for debug statements in the given class, unless they explicitly identify a different
+     * debug set.
+     * @param classObject the class object
+     */
+    public static void enable(Class classObject) {
+        enable(classObject.getName());
+    }
+
+    /**
+     * Enables printing of all debug statements that do not explicitly identify a debug set.
      */
     public static void enableDefault() {
-        activeSet.add(DEFAULT_SET);
+        autodetectPath = false;
     }
 
     /**
      * @param setName the identifier of the debug set
-     * @return whether printing is enabled for the given debug set
+     * @return whether printing is enabled for the given debug set, either explicitly or for some prefix
      */
     public static boolean isEnabled(String setName) {
-        return activeSet.contains(setName);
+        String[] levels = setName.split("\\.");
+        String prefix = levels[0];
+        boolean found = activeSet.contains(prefix);
+        int i = 1;
+        while (!found && i < levels.length) {
+            prefix += "." + levels[i++];
+            found = activeSet.contains(prefix);
+        }
+        boolean disabled = false;
+        if (found && i < levels.length) {
+            do {
+                prefix += "." + levels[i++];
+                disabled = disabledSet.contains(prefix);
+            }
+            while (!disabled && i < levels.length);
+        }
+        return (found && !disabled);
+    }
+
+    /**
+     * @param classObject the class object
+     * @return whether printing is enabled for the given class, either explicitly or for its package hierarchy
+     */
+    public static boolean isEnabled(Class classObject) {
+        return isEnabled(classObject.getName());
     }
     
     /**
-     * @return whether printing is enabled for the default debug set
+     * @return whether printing is enabled for the calling method, class, or package; also returns true is default
+     * printing is enabled
      */
     public static boolean isEnabled() {
-        return isEnabled(DEFAULT_SET);
+        boolean isEnabled = true;
+        if (autodetectPath) {
+            isEnabled = isEnabled(detectCallPath());
+        }
+        return isEnabled;
     }
 
     /**
-     * Disables debug printing for the given debug set
+     * Disables debug printing for the given debug set and all derived sets
      * @param setName the identifier of the debug set
      */
     public static void disable(String setName) {
-        activeSet.remove(setName);
+        String[] levels = setName.split("\\.");
+        String prefix = levels[0];
+        boolean found = activeSet.contains(prefix);
+        int i = 1;
+        while (!found && i < levels.length) {
+            prefix += "." + levels[i++];
+            found = activeSet.contains(prefix);
+        }
+        if (found) {
+            if (i < levels.length) {
+                disabledSet.add(setName);
+            }
+            else {
+                activeSet.remove(setName);
+            }
+        }
+        else {
+            List<String> toRemove = new ArrayList<String>();
+            for (String active : activeSet) {
+                if (active.startsWith(setName)) {
+                    toRemove.add(active);
+                }
+            }
+            activeSet.removeAll(toRemove);
+        }
     }
 
     /**
-     * Disables printing for the default debug set
+     * Disables debug printing for the given class
+     * @param classObject the class object
+     */
+    public static void disable(Class classObject) {
+        disable(classObject.getName());
+    }
+
+    /**
+     * Disables printing by default. Explicitly and hierarchically enabled statements will still print.
      */
     public static void disableDefault() {
-        activeSet.remove(DEFAULT_SET);
+        autodetectPath = true;
     }
 
     /**
      * Disables printing for all currently enabled debug sets
      */
     public static void disableAll() {
+        autodetectPath = true;
         activeSet.clear();
+        disabledSet.clear();
     }
 
     /**
-     * Sets the state of the given debug set to the state given by the indicator
+     * Sets the state of the given debug set and derived sets to the state given by the indicator
      * @param setName the identifier of the debug set
      * @param enable true to enable the given set, and false to disable it
      */
@@ -106,26 +204,58 @@ public abstract class Debug {
     }
 
     /**
-     * Sets the state of the default debug set to the state given by the indicator
-     * @param enable true to enable the given set, and false to disable it
+     * Sets the state of the given class to the state given by the indicator
+     * @param classObject the class object
+     * @param enable true to enable the given class, and false to disable it
      */
-    public static void setEnabledDefault(boolean enable) {
-        setEnabled(DEFAULT_SET, enable);
+    public static void setEnabled(Class classObject, boolean enable) {
+        if (enable) {
+            enable(classObject);
+        }
+        else {
+            disable(classObject);
+        }
     }
 
     /**
-     * Changes the current behavior of the debug object for the given debug set
+     * Enables or disables default printing according to the indicator
+     * @param enable true to enable default printing, and false to disable it
+     */
+    public static void setEnabledDefault(boolean enable) {
+        autodetectPath = enable;
+    }
+
+    /**
+     * Changes the current behavior of the debug object for the given debug set and derived sets
      * @param setName the identifier of the debug set
      * @return true if the set is now enabled; false if it was previously enabled
      */
     public static boolean toggleActive(String setName) {
         boolean ret;
-        if (activeSet.contains(setName)) {
-            activeSet.remove(setName);
+        if (isEnabled(setName)) {
+            disable(setName);
             ret = false;
         }
         else {
-            activeSet.add(setName);
+            enable(setName);
+            ret = true;
+        }
+        return ret;
+    }
+
+    /**
+     * Changes the current behavior of the debug object for the given class
+     * @param classObject the class object
+     * @return true if the class is now enabled; false if it was previously enabled
+     */
+    public static boolean toggleActive(Class classObject) {
+        boolean ret;
+        if (isEnabled(classObject.getName())) {
+            disable(classObject.getName());
+            ret = false;
+        }
+        else {
+            enable(classObject.getName());
             ret = true;
         }
         return ret;
@@ -134,13 +264,25 @@ public abstract class Debug {
     /**
      * Changes the current behavior of the debug object for the default debug set
      * @return true if the set is now enabled; false if it was previously enabled
+     * @deprecated changes in semantics do not apply to this method, which uses the previous default set semantics.
+     * Use toggleDefault method instead.
      */
+    @Deprecated
     public static boolean toggleActive() {
         return toggleActive(DEFAULT_SET);
     }
 
     /**
-     * Prints the given message if the given set is enabled
+     * Enables or disables default printing depending on its current state
+     * @return true if the default printing is now enabled; false if it was previously enabled
+     */
+    public static boolean toggleDefault() {
+        autodetectPath = !autodetectPath;
+        return !autodetectPath;
+    }
+
+    /**
+     * Prints the given message if the given set or prefix is enabled
      * @param setName the identifier of the debug set
      * @param message the message to print (uses System.out.print())
      */
@@ -151,7 +293,8 @@ public abstract class Debug {
     }
 
     /**
-     * Prints the given message if the default set is enabled
+     * Prints the given message if the encapsulating method, class, or package names have been enabled, either
+     * explicitly or with default printing.
      * @param message the message to print (uses System.out.print())
      */
     public static void print(Object message) {
@@ -161,7 +304,8 @@ public abstract class Debug {
     }
 
     /**
-     * Prints the given message if the default set is enabled
+     * Prints the given message if the encapsulating method, class, or package names have been enabled, either
+     * explicitly or with default printing.
      * @param message the message to print (uses System.out.println())
      */
     public static void println(Object message) {
@@ -171,7 +315,7 @@ public abstract class Debug {
     }
 
     /**
-     * Prints the given message if the given set is enabled
+     * Prints the given message if the given set or prefix is enabled
      * @param message the message to print (uses System.out.println())
      * @param setName the identifier of the debug set
      */
@@ -182,7 +326,8 @@ public abstract class Debug {
     }
 
     /**
-     * Prints the stack trace of the given exception if the default set is active
+     * Prints the stack trace of the given exception if the encapsulating method, class, or package names have been
+     * enabled, either explicitly or with default printing.
      * @param ex the exception on which printStackTrace is called
      */
     public static void printStackTrace(Exception ex) {
@@ -192,7 +337,7 @@ public abstract class Debug {
     }
 
     /**
-     * Prints the stack trace of the given exception if the given set is active
+     * Prints the stack trace of the given exception if the given set or prefix is active
      * @param ex the exception on which printStackTrace is called
      * @param setName the identifier of the debug set
      */
@@ -200,6 +345,15 @@ public abstract class Debug {
         if (isEnabled(setName)) {
             ex.printStackTrace();
         }
+    }
+
+    private static String detectCallPath() {
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+        int i = 0;
+        while (trace[i].getClassName().equals(Debug.class.getName()) || trace[i].getClassName().equals(Thread.class.getName())) {
+            i++;
+        }
+        return trace[i].getClassName() + "." + trace[i].getMethodName();
     }
 
 }
