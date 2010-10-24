@@ -23,6 +23,7 @@ package programming5.io;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Vector;
 import programming5.math.NumberRange;
 import programming5.arrays.ArrayOperations;
@@ -837,6 +838,51 @@ public class ArgHandler {
             }
         }
         return ret;
+    }
+
+    public String getChoiceArg(String... options) {
+        if (options.length > 0) {
+            boolean error = false;
+            String choice = null;
+            for (String option : options) {
+                if (ArrayOperations.seqFind(option, args) >= 0) {
+                    if (choice == null) {
+                        choice = option;
+                    }
+                    else {
+                        error = true;
+                    }
+                }
+            }
+            if (choice == null || error) {
+                switch (strategy) {
+                    case EXIT:
+                        if (usage != null) {
+                            throw new IllegalArgumentException(usage);
+                        }
+                        else {
+                            throw new IllegalArgumentException("ArgHandler: Expected a single choice between " + Arrays.toString(options));
+                        }
+
+                    case PROMPT:
+                        boolean invChoice = true;
+                        while (invChoice) {
+                            System.out.print("ArgHandler: Please choose one of " + Arrays.toString(options) + ": ");
+                            System.out.flush();
+                            try {
+                                choice = in.readLine();
+                                invChoice = (ArrayOperations.seqFind(choice, options) < 0);
+                            }
+                            catch (Exception e) {}
+                        }
+                        break;
+                }
+            }
+            return choice;
+        }
+        else {
+            throw new IllegalArgumentException("ArgHandler: Invalid parameter for getChoiceArg: Must specify at least one option");
+        }
     }
     
     /**
