@@ -21,6 +21,8 @@
 
 package programming5.math;
 
+import java.math.BigInteger;
+
 /**
  * This class provides useful math functions, additional to those found in the java.lang.MathOperations class
  */
@@ -137,6 +139,76 @@ public final class MathOperations {
             }
         }
         return angle;
+    }
+
+    public static int compare(Number n, Number m) {
+        if (extractValue(n) < extractValue(m)) {
+            return -1;
+        }
+        else if (extractValue(n) > extractValue(m)) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    public static Number add(Number... nArray) {
+        Number ret;
+        double sum = 0;
+        for (Number n : nArray) {
+            sum += extractValue(n);
+        }
+        byte byteSum = (byte) sum;
+        short shortSum = (short) sum;
+        int intSum = (int) sum;
+        long longSum = (long) sum;
+        float floatSum = (float) sum;
+        if (byteSum == sum) {
+            ret = new Byte(byteSum);
+        }
+        else if (shortSum == sum) {
+            ret = new Short(shortSum);
+        }
+        else if(intSum == sum) {
+            ret = new Integer(intSum);
+        }
+        else if (longSum == sum) {
+            ret = new Long(longSum);
+        }
+        else if (floatSum == sum) {
+            ret = new Float(floatSum);
+        }
+        else {
+            ret = new Double(sum);
+        }
+        return ret;
+    }
+
+    public static double extractValue(Number n) {
+        double ret;
+        if (n instanceof Integer) {
+            ret = n.intValue();
+        }
+        else if (n instanceof Long) {
+            ret = n.longValue();
+        }
+        else if (n instanceof Float) {
+            ret = n.floatValue();
+        }
+        else if (n instanceof Double) {
+            ret = n.doubleValue();
+        }
+        else if (n instanceof Short) {
+            ret = n.shortValue();
+        }
+        else if (n instanceof Byte) {
+            ret = n.byteValue();
+        }
+        else {
+            ret = Double.NaN;
+        }
+        return ret;
     }
     
 }
