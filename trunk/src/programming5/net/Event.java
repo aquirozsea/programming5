@@ -132,6 +132,6 @@ public class Event extends Message {
      */
     @Override
     public String toString() {
-        return this.toString();
+        return super.toString();
     }
 }
