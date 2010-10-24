@@ -21,12 +21,13 @@
 
 package programming5.arrays;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 /**
  *This class provides additional array manipulation operations to those in java.util.Arrays.
  *@author Andres Quiroz Hernandez
- *@version 6.0.1
+ *@version 6.1
  */
 public abstract class ArrayOperations {
     
@@ -1350,40 +1351,52 @@ public abstract class ArrayOperations {
      *@return the element of a sorted array that is closest to value
      */
     public static final int findClosestInOrder(int[] array, int value) {
-        int ret = array[0];
-        int minDiff = Math.abs(value - array[0]);
-        int diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) > minDiff) {
-                ret = array[i-1];
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                int diffLeft = value - array[position-1];
+                int diffRight = array[position] - value;
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
-        if (i == array.length) {
-            ret = array[i-1];
-        }
-        return ret;
+        return array[ret];
     }
     
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
     public static final int findClosestIndexInOrder(int[] array, int value) {
-        int ret = 0;
-        int minDiff = Math.abs(value - array[0]);
-        int diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) > minDiff) {
-                ret = i - 1;
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
-        }
-        if (i == array.length) {
-            ret = i - 1;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                int diffLeft = value - array[position-1];
+                int diffRight = array[position] - value;
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
         return ret;
     }
@@ -1392,40 +1405,52 @@ public abstract class ArrayOperations {
      *@return the element of a sorted array that is closest to value
      */
     public static final double findClosestInOrder(double[] array, double value) {
-        double ret = array[0];
-        double minDiff = Math.abs(value - array[0]);
-        double diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) > minDiff) {
-                ret = array[i-1];
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                double diffLeft = value - array[position-1];
+                double diffRight = array[position] - value;
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
-        if (i == array.length) {
-            ret = array[i-1];
-        }
-        return ret;
+        return array[ret];
     }
     
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
     public static final int findClosestIndexInOrder(double[] array, double value) {
-        int ret = 0;
-        double minDiff = Math.abs(value - array[0]);
-        double diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) > minDiff) {
-                ret = i - 1;
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
-        }
-        if (i == array.length) {
-            ret = i - 1;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                double diffLeft = value - array[position-1];
+                double diffRight = array[position] - value;
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
         return ret;
     }
@@ -1434,40 +1459,52 @@ public abstract class ArrayOperations {
      *@return the element of a sorted array that is closest to value
      */
     public static final float findClosestInOrder(float[] array, float value) {
-        float ret = array[0];
-        float minDiff = Math.abs(value - array[0]);
-        float diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) > minDiff) {
-                ret = array[i-1];
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                float diffLeft = value - array[position-1];
+                float diffRight = array[position] - value;
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
-        if (i == array.length) {
-            ret = array[i-1];
-        }
-        return ret;
+        return array[ret];
     }
     
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
     public static final int findClosestIndexInOrder(float[] array, float value) {
-        int ret = 0;
-        float minDiff = Math.abs(value - array[0]);
-        float diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) > minDiff) {
-                ret = i - 1;
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
-        }
-        if (i == array.length) {
-            ret = i - 1;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                float diffLeft = value - array[position-1];
+                float diffRight = array[position] - value;
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
         return ret;
     }
@@ -1476,40 +1513,52 @@ public abstract class ArrayOperations {
      *@return the element of a sorted array that is closest to value
      */
     public static final char findClosestInOrder(char[] array, char value) {
-        char ret = array[0];
-        int minDiff = Math.abs(value - array[0]);
-        int diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) > minDiff) {
-                ret = array[i-1];
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                int diffLeft = value - array[position-1];
+                int diffRight = array[position] - value;
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
-        if (i == array.length) {
-            ret = array[i-1];
-        }
-        return ret;
+        return array[ret];
     }
     
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
     public static final int findClosestIndexInOrder(char[] array, char value) {
-        int ret = 0;
-        int minDiff = Math.abs(value - array[0]);
-        int diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) > minDiff) {
-                ret = i - 1;
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
-        }
-        if (i == array.length) {
-            ret = i - 1;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                int diffLeft = value - array[position-1];
+                int diffRight = array[position] - value;
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
         return ret;
     }
@@ -1518,40 +1567,52 @@ public abstract class ArrayOperations {
      *@return the element of a sorted array that is closest to value
      */
     public static final String findClosestInOrder(String[] array, String value) {
-        String ret = array[0];
-        int minDiff = Math.abs(value.compareTo(array[0]));
-        int diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value.compareTo(array[i]))) > minDiff) {
-                ret = array[i-1];
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                int diffLeft = value.compareTo(array[position-1]);
+                int diffRight = array[position].compareTo(value);
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
-        if (i == array.length) {
-            ret = array[i-1];
-        }
-        return new String(ret);
+        return array[ret];
     }
     
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
     public static final int findClosestIndexInOrder(String[] array, String value) {
-        int ret = 0;
-        int minDiff = Math.abs(value.compareTo(array[0]));
-        int diff;
-        int i = 1;
-        for (; i < array.length; i++) {
-            if ((diff = Math.abs(value.compareTo(array[i]))) > minDiff) {
-                ret = i - 1;
-                break;
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            int position = -ret - 1;
+            if (position == 0) {
+                ret = position;
             }
-            minDiff = diff;
-        }
-        if (i == array.length) {
-            ret = i - 1;
+            else if (position == array.length) {
+                ret = position - 1;
+            }
+            else {
+                int diffLeft = value.compareTo(array[position-1]);
+                int diffRight = array[position].compareTo(value);
+                if (diffLeft <= diffRight) {
+                    ret = position - 1;
+                }
+                else {
+                    ret = position;
+                }
+            }
         }
         return ret;
     }
@@ -2216,10 +2277,24 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     *@return a new array of numElements, from start and increasing by step
+     */
+    public static final int[] generateEnumeration(int start, int numElements, int step) {
+        int[] ret = new int[numElements];
+        ret[0] = start;
+        for (int i = 1; i < numElements; i++) {
+            ret[i] = ret[i-1] + step;
+        }
+        return ret;
+    }
     
     /**
      *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
      */
+    @Deprecated
     public static final int[] initialize(int[] array, int initValue) {
         for (int i = 0; i < array.length; i++) {
             array[i] = initValue;
@@ -2229,7 +2304,9 @@ public abstract class ArrayOperations {
     
     /**
      *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
      */
+    @Deprecated
     public static final float[] initialize(float[] array, float initValue) {
         for (int i = 0; i < array.length; i++) {
             array[i] = initValue;
@@ -2239,7 +2316,9 @@ public abstract class ArrayOperations {
     
     /**
      *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
      */
+    @Deprecated
     public static final double[] initialize(double[] array, double initValue) {
         for (int i = 0; i < array.length; i++) {
             array[i] = initValue;
@@ -2249,7 +2328,9 @@ public abstract class ArrayOperations {
     
     /**
      *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
      */
+    @Deprecated
     public static final char[] initialize(char[] array, char initValue) {
         for (int i = 0; i < array.length; i++) {
             array[i] = initValue;
@@ -2259,7 +2340,9 @@ public abstract class ArrayOperations {
     
     /**
      *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
      */
+    @Deprecated
     public static final boolean[] initialize(boolean[] array, boolean initValue) {
         for (int i = 0; i < array.length; i++) {
             array[i] = initValue;
@@ -2268,8 +2351,10 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return el arreglo dado con todos sus valores iguales al valor dado
+     *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
      */
+    @Deprecated
     public static final String[] initialize(String[] array, String initValue) {
         for (int i = 0; i < array.length; i++) {
             array[i] = initValue;
@@ -2686,6 +2771,9 @@ public abstract class ArrayOperations {
         return ret;
     }
 
+    /**
+     * @return the number of true elements in the given array
+     */
     public static final int countTrue(boolean[] array) {
         int ret = 0;
         for (int i = 0; i < array.length; i++) {
