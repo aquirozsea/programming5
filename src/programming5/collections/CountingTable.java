@@ -25,8 +25,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- *
- * @author usx19576
+ * Wrapper class for a hashtable with an integer value that can be used to keep track of counts for its key elements
+ * of a given type.
+ * @author aquirozh
+ * @version 6.0
  */
 public class CountingTable<E> {
 
@@ -48,22 +50,48 @@ public class CountingTable<E> {
         baseTable = new HashTable<E, Integer>(initialSize, loadFactor);
     }
 
+    /**
+     * Adds one to the current value stored for the given key, or adds the key with a value of 1 if it was not 
+     * previously in the table.
+     * @param key the key of the item to increase
+     */
     public void increaseCount(E key) {
         baseTable.put(key, baseTable.safeGet(key, 0) + 1);
     }
 
+    /**
+     * Adds the given value to the current value stored for the given key, or adds the key with the given value if
+     * it was not previously in the table.
+     * @param key the key of the item to increase
+     * @param value the value to add to the current value for the key
+     */
     public void increaseCount(E key, int value) {
         baseTable.put(key, baseTable.safeGet(key, 0) + value);
     }
 
+    /**
+     * Subtracts one from the current value stored for the given key, or adds the key with a value of -1 if it was not
+     * previously in the table.
+     * @param key the key of the item to decrease
+     */
     public void decreaseCount(E key) {
         baseTable.put(key, baseTable.safeGet(key, 0) - 1);
     }
 
+    /**
+     * Subtracts the given value from the current value stored for the given key, or adds the key with a value of
+     * -value if it was not previously in the table.
+     * @param key the key of the item to decrease
+     * @param value the value to subtract from the current value for the key
+     */
     public void decreaseCount(E key, int value) {
         baseTable.put(key, baseTable.safeGet(key, 0) - value);
     }
 
+    /**
+     * @return the key of the item with the highest count. If there are multiple items with the highest count, 
+     * only one will be returned
+     */
     public E getMostFrequent() {
         E mostFrequent = null;
         int maxCount = 0;
@@ -76,6 +104,9 @@ public class CountingTable<E> {
         return mostFrequent;
     }
 
+    /**
+     * @return the highest count value stored in the table
+     */
     public int getMaxCount() {
         return CollectionUtils.max(baseTable.values());
     }
