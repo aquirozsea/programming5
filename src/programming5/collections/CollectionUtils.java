@@ -423,6 +423,11 @@ public abstract class CollectionUtils {
         return ret;
     }
 
+    /**
+     * Finds the smallest item in the given sorted collection that is larger or equal to the given value
+     * @param collection the sorted collection
+     * @param value the value for the search
+     */
     public static <T extends Comparable<T>, S extends T> T findNextInOrder(List<T> collection, S value) {
         int position = Collections.binarySearch(collection, value);
         T ret = null;
@@ -435,6 +440,11 @@ public abstract class CollectionUtils {
         return ret;
     }
 
+    /**
+     * Finds the index of the smallest item in the given sorted collection that is larger or equal to the given value
+     * @param collection the sorted collection
+     * @param value the value for the search
+     */
     public static <T extends Comparable<T>, S extends T> int findPositionInOrder(List<T> collection, S value) {
         int position = Collections.binarySearch(collection, value);
         if (position < 0) {
@@ -443,6 +453,13 @@ public abstract class CollectionUtils {
         return position;
     }
 
+    /**
+     * Finds the smallest item in the given sorted collection that is larger or equal to the given value, according to
+     * the given comparator.
+     * @param collection the sorted collection
+     * @param value the value for the search
+     * @param comp the comparator to compare values in the collection
+     */
     public static <T, S extends T, U extends T> S findNextInOrder(List<S> collection, U value, Comparator<T> comp) {
         S ret;
         if (comp.compare(value, collection.get(0)) <= 0) {
@@ -470,6 +487,13 @@ public abstract class CollectionUtils {
         return ret;
     }
 
+    /**
+     * Finds the index of the smallest item in the given sorted collection that is larger or equal to the given value,
+     * according to the given comparator.
+     * @param collection the sorted collection
+     * @param value the value for the search
+     * @param comp the comparator to compare values in the collection
+     */
     public static final <T, S extends T, U extends T> int findPositionInOrder(List<S> collection, U value, Comparator<T> comp) {
         int position;
         if (comp.compare(value, collection.get(0)) <= 0) {
@@ -497,6 +521,9 @@ public abstract class CollectionUtils {
         return position;
     }
 
+    /**
+     * Inserts the given element in the given list at the given position
+     */
     public static <T, U extends T> void insert(List<T> list, U element, int position) {
         list.add(list.get(list.size()-1));
         for (int i = list.size() - 2; i > position; i--) {
@@ -505,6 +532,9 @@ public abstract class CollectionUtils {
         list.set(position, element);
     }
 
+    /**
+     * Inserts the given element in the given sorted list of comparable elements in its corresponding position
+     */
     public static <T extends Comparable<T>, S extends T> void insertSorted(List<T> collection, S value) {
         int position = findPositionInOrder(collection, value);
         collection.add(value);
@@ -515,6 +545,9 @@ public abstract class CollectionUtils {
         }
     }
 
+    /**
+     * Inserts the given element in the given sorted list in its corresponding position, according to the given comparator
+     */
     public static final <T, S extends T> void insertSorted(List<T> collection, S value, Comparator<T> comp) {
         int position = findPositionInOrder(collection, value, comp);
         collection.add(value);
@@ -534,6 +567,9 @@ public abstract class CollectionUtils {
         }
     }
 
+    /**
+     * Constructs an array from the given collection, with no guarantee of the ordering of the elements in the array
+     */
     public static int[] toIntArray(Collection<Integer> c) {
         int[] ret = new int[c.size()];
         int i = 0;
@@ -543,6 +579,69 @@ public abstract class CollectionUtils {
         return ret;
     }
 
+    /**
+     * Constructs an array from the given collection, with no guarantee of the ordering of the elements in the array
+     */
+    public static float[] toFloatArray(Collection<Float> c) {
+        float[] ret = new float[c.size()];
+        int i = 0;
+        for (Float element : c) {
+            ret[i++] = element;
+        }
+        return ret;
+    }
+
+    /**
+     * Constructs an array from the given collection, with no guarantee of the ordering of the elements in the array
+     */
+    public static long[] toLongArray(Collection<Long> c) {
+        long[] ret = new long[c.size()];
+        int i = 0;
+        for (Long element : c) {
+            ret[i++] = element;
+        }
+        return ret;
+    }
+
+    /**
+     * Constructs an array from the given collection, with no guarantee of the ordering of the elements in the array
+     */
+    public static double[] toDoubleArray(Collection<Double> c) {
+        double[] ret = new double[c.size()];
+        int i = 0;
+        for (Double element : c) {
+            ret[i++] = element;
+        }
+        return ret;
+    }
+
+    /**
+     * Constructs an array from the given collection, with no guarantee of the ordering of the elements in the array
+     */
+    public static boolean[] toBooleanArray(Collection<Boolean> c) {
+        boolean[] ret = new boolean[c.size()];
+        int i = 0;
+        for (Boolean element : c) {
+            ret[i++] = element;
+        }
+        return ret;
+    }
+
+    /**
+     * Constructs an array from the given collection, with no guarantee of the ordering of the elements in the array
+     */
+    public static String[] toStringArray(Collection<String> c) {
+        String[] ret = new String[c.size()];
+        int i = 0;
+        for (String element : c) {
+            ret[i++] = element;
+        }
+        return ret;
+    }
+
+    /**
+     * Creates a new sublist from the given list, with elements from 0, inclusive, to until, exclusive.
+     */
     public static <T> List<T> prefix(List<T> list, int until) {
         if (until <= list.size()) {
             List<T> ret = new ArrayList<T>();
@@ -556,6 +655,9 @@ public abstract class CollectionUtils {
         }
     }
 
+    /**
+     * Creates a new sublist from the given list, with elements from from, inclusive, to the last list element.
+     */
     public static <T> List<T> suffix(List<T> list, int from) {
         if (from < list.size()) {
             List<T> ret = new ArrayList<T>();
@@ -569,6 +671,9 @@ public abstract class CollectionUtils {
         }
     }
 
+    /**
+     * Creates a new sublist from the given list, with elements from from, inclusive, to until, exclusive.
+     */
     public static <T> List<T> subList(List<T> list, int from, int until) {
         if (from < until) {
             return suffix(prefix(list, until), from);
