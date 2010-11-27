@@ -21,14 +21,13 @@
 
 package programming5.collections;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import programming5.math.MathOperations;
-import programming5.math.NumberComparator;
 
 /**
  *Provides utility methods to use with/for collections classes
@@ -498,6 +497,14 @@ public abstract class CollectionUtils {
         return position;
     }
 
+    public static <T, U extends T> void insert(List<T> list, U element, int position) {
+        list.add(list.get(list.size()-1));
+        for (int i = list.size() - 2; i > position; i--) {
+            list.set(i, list.get(i-1));
+        }
+        list.set(position, element);
+    }
+
     public static <T extends Comparable<T>, S extends T> void insertSorted(List<T> collection, S value) {
         int position = findPositionInOrder(collection, value);
         collection.add(value);
@@ -534,6 +541,41 @@ public abstract class CollectionUtils {
             ret[i++] = element;
         }
         return ret;
+    }
+
+    public static <T> List<T> prefix(List<T> list, int until) {
+        if (until <= list.size()) {
+            List<T> ret = new ArrayList<T>();
+            for (int i = 0; i < until; i++) {
+                ret.add(list.get(i));
+            }
+            return ret;
+        }
+        else {
+            throw new IllegalArgumentException("CollectionUtils: Illegal limit for prefix: Must be less than or equal to the list size");
+        }
+    }
+
+    public static <T> List<T> suffix(List<T> list, int from) {
+        if (from < list.size()) {
+            List<T> ret = new ArrayList<T>();
+            for (int i = from; i < list.size(); i++) {
+                ret.add(list.get(i));
+            }
+            return ret;
+        }
+        else {
+            throw new IllegalArgumentException("CollectionUtils: Illegal limit for suffix: Must be less than the list size");
+        }
+    }
+
+    public static <T> List<T> subList(List<T> list, int from, int until) {
+        if (from < until) {
+            return suffix(prefix(list, until), from);
+        }
+        else {
+            throw new IllegalArgumentException("CollectionUtils: Illegal limits for subList: From must be less than until");
+        }
     }
 
 }
