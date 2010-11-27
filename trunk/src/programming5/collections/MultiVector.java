@@ -22,12 +22,16 @@
 package programming5.collections;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import programming5.arrays.ArrayOperations;
+import programming5.strings.StringOperations;
 
 /**
  *Wrapper class that links the elements of two vectors, so that the elements of one can be indexed with the elements 
@@ -40,6 +44,11 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
     
     protected Vector<E> vector1;
     protected Vector<D> vector2;
+
+    protected int[] sortedOrder1 = null;
+    protected int[] sortedOrder2 = null;
+    protected boolean isSorted1 = false;
+    protected boolean isSorted2 = false;
     
     /**
      *Creates an empty MultiVector
@@ -98,6 +107,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
             if (!modified) {
                 vector1.remove(obj1);
             }
+            else {
+                isSorted1 = false;
+                isSorted2 = false;
+            }
         }
         return modified;
     }
@@ -108,6 +121,8 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
     public void add(int index, E element1, D element2) {
         vector1.add(index, element1);
         vector2.add(index, element2);
+        isSorted1 = false;
+        isSorted2 = false;
     }
     
     /**
@@ -121,6 +136,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
                 modified = vector2.addAll(c2);
                 if (!modified) {
                     vector1.removeAll(c1);
+                }
+                else {
+                    isSorted1 = false;
+                    isSorted2 = false;
                 }
             }
         }
@@ -140,6 +159,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
                 if (!modified) {
                     vector1.removeAll(c1);
                 }
+                else {
+                    isSorted1 = false;
+                    isSorted2 = false;
+                }
             }
         }
         return modified;
@@ -158,6 +181,8 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
     public void clear() {
         vector1.clear();
         vector2.clear();
+        isSorted1 = false;
+        isSorted2 = false;
     }
     
     /**
@@ -166,7 +191,16 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      */
     @Override
     public MultiVector<E, D> clone() {
-        return new MultiVector<E, D>((Vector<E>) vector1.clone(), (Vector<D>) vector2.clone());
+        MultiVector<E, D> ret = new MultiVector<E, D>((Vector<E>) vector1.clone(), (Vector<D>) vector2.clone());
+        if (this.isSorted1) {
+            ret.sortedOrder1 = ArrayOperations.replicate(this.sortedOrder1);
+            ret.isSorted1 = true;
+        }
+        if (this.isSorted2) {
+            ret.sortedOrder2 = ArrayOperations.replicate(this.sortedOrder2);
+            ret.isSorted2 = true;
+        }
+        return ret;
     }
     
     /**
@@ -230,14 +264,50 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@return the first component of the element pair at the given position in the multi-vector
      */
     public E getInFirstAt(int index) {
-        return vector1.elementAt(index);
+        E ret;
+        if (isSorted1) {
+            ret = vector1.get(sortedOrder1[index]);
+        }
+        else {
+            ret = vector1.elementAt(index);
+        }
+        return ret;
+    }
+
+    public E getInFirstAtSecond(int index) {
+        E ret;
+        if (isSorted2) {
+            ret = vector1.get(sortedOrder2[index]);
+        }
+        else {
+            ret = vector1.get(index);
+        }
+        return ret;
     }
     
     /**
      *@return the second component of the element pair at the given position in the multi-vector
      */
     public D getInSecondAt(int index) {
-        return vector2.elementAt(index);
+        D ret;
+        if (isSorted2) {
+            ret = vector2.get(sortedOrder2[index]);
+        }
+        else {
+            ret = vector2.elementAt(index);
+        }
+        return ret;
+    }
+
+    public D getInSecondAtFirst(int index) {
+        D ret;
+        if (isSorted1) {
+            ret = vector2.get(sortedOrder1[index]);
+        }
+        else {
+            ret = vector2.get(index);
+        }
+        return ret;
     }
     
     /**
@@ -252,7 +322,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         }
         return ret;
     }
-    
+
     /**
      *@return the second component in the multi-vector of the element pair that contains the given first component 
      */
@@ -264,6 +334,14 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         catch (ArrayIndexOutOfBoundsException iobe) {
         }
         return ret;
+    }
+
+    public Entry<E, D> getEntry(int index) {
+        return new MultiVectorEntry<E, D>(this.getInFirstAt(index), this.getInSecondAtFirst(index));
+    }
+
+    public Entry<E, D> getEntryAtSecond(int index) {
+        return new MultiVectorEntry<E, D>(this.getInFirstAtSecond(index), this.getInSecondAt(index));
     }
 
     /**
@@ -280,7 +358,14 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@see java.util.Vector#firstElement
      */
     public E firstElementFromFirst() {
-        return vector1.firstElement();
+        E ret;
+        if (isSorted1) {
+            ret = vector1.get(sortedOrder1[0]);
+        }
+        else {
+            ret = vector1.firstElement();
+        }
+        return ret;
     }
     
     /**
@@ -288,7 +373,14 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@see java.util.Vector#firstElement
      */
     public D firstElementFromSecond() {
-        return vector2.firstElement();
+        D ret;
+        if (isSorted2) {
+            ret = vector2.get(sortedOrder2[0]);
+        }
+        else {
+            ret = vector2.firstElement();
+        }
+        return ret;
     }
     
     @Override
@@ -301,7 +393,15 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@see java.util.Vector#indexOf
      */
     public int indexOfInFirst(E element) {
-        return vector1.indexOf(element);
+        int ret;
+        if (isSorted1) {
+            int unsortedIndex = vector1.indexOf(element);
+            ret = ArrayOperations.seqFind(unsortedIndex, sortedOrder1);
+        }
+        else {
+            ret = vector1.indexOf(element);
+        }
+        return ret;
     }
     
     /**
@@ -309,7 +409,15 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@see java.util.Vector#indexOf
      */
     public int indexOfInSecond(D element) {
-        return vector2.indexOf(element);
+        int ret;
+        if (isSorted2) {
+            int unsortedIndex = vector2.indexOf(element);
+            ret = ArrayOperations.seqFind(unsortedIndex, sortedOrder2);
+        }
+        else {
+            ret = vector2.indexOf(element);
+        }
+        return ret;
     }
     
     /**
@@ -317,7 +425,27 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@see java.util.Vector#indexOf
      */
     public int indexOfInFirst(E element, int startIndex) {
-        return vector1.indexOf(element, startIndex);
+        int ret;
+        if (isSorted1) {
+            int firstIndex = this.indexOfInFirst(element);
+            if (startIndex <= firstIndex) {
+                ret = firstIndex;
+            }
+            else {
+                Comparable start = (Comparable) vector1.get(sortedOrder1[startIndex]);
+                Comparable compElement = (Comparable) element;
+                if (start.compareTo(compElement) == 0) {
+                    ret = startIndex;
+                }
+                else {
+                    ret = -1;
+                }
+            }
+        }
+        else {
+            ret = vector1.indexOf(element, startIndex);
+        }
+        return ret;
     }
     
     /**
@@ -325,7 +453,27 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@see java.util.Vector#indexOf
      */
     public int indexOfInSecond(D element, int startIndex) {
-        return vector2.indexOf(element, startIndex);
+        int ret;
+        if (isSorted2) {
+            int firstIndex = this.indexOfInSecond(element);
+            if (startIndex <= firstIndex) {
+                ret = firstIndex;
+            }
+            else {
+                Comparable start = (Comparable) vector2.get(sortedOrder2[startIndex]);
+                Comparable compElement = (Comparable) element;
+                if (start.compareTo(compElement) == 0) {
+                    ret = startIndex;
+                }
+                else {
+                    ret = -1;
+                }
+            }
+        }
+        else {
+            ret = vector2.indexOf(element, startIndex);
+        }
+        return ret;
     }
     
     /**
@@ -333,7 +481,34 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@see java.util.Vector#lastIndexOf
      */
     public int lastIndexOfInFirst(E element) {
-        return vector1.lastIndexOf(element);
+        int ret;
+        if (isSorted1) {
+            int index = this.indexOfInFirst(element);
+            if (index >= 0) {
+                Comparable compElement = (Comparable) element;
+                boolean repeats;
+                do {
+                    if (index < vector1.size()) {
+                        Comparable next = (Comparable) vector1.get(sortedOrder1[index + 1]);
+                        if (next.compareTo(compElement) == 0) {
+                            repeats = true;
+                            index++;
+                        }
+                        else {
+                            repeats = false;
+                        }
+                    }
+                    else {
+                        repeats = false;
+                    }
+                } while (repeats);
+            }
+            ret = index;
+        }
+        else {
+            ret = vector1.lastIndexOf(element);
+        }
+        return ret;
     }
     
     /**
@@ -341,7 +516,34 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@see java.util.Vector#lastIndexOf
      */
     public int lastIndexOfInSecond(D element) {
-        return vector2.lastIndexOf(element);
+        int ret;
+        if (isSorted2) {
+            int index = this.indexOfInSecond(element);
+            if (index >= 0) {
+                Comparable compElement = (Comparable) element;
+                boolean repeats;
+                do {
+                    if (index < vector2.size()) {
+                        Comparable next = (Comparable) vector2.get(sortedOrder2[index + 1]);
+                        if (next.compareTo(compElement) == 0) {
+                            repeats = true;
+                            index++;
+                        }
+                        else {
+                            repeats = false;
+                        }
+                    }
+                    else {
+                        repeats = false;
+                    }
+                } while (repeats);
+            }
+            ret = index;
+        }
+        else {
+            ret = vector2.lastIndexOf(element);
+        }
+        return ret;
     }
     
     /**
@@ -355,22 +557,49 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@return the first component of the last element pair
      */
     public E lastElementFromFirst() {
-        return vector1.lastElement();
+        E ret;
+        if (isSorted1) {
+            ret = vector1.get(sortedOrder1[vector1.size()-1]);
+        }
+        else {
+            ret = vector1.lastElement();
+        }
+        return ret;
     }
     
     /**
      *@return the second component of the last element pair
      */
     public D lastElementFromSecond() {
-        return vector2.lastElement();
+        D ret;
+        if (isSorted2) {
+            ret = vector2.get(sortedOrder2[vector2.size()-1]);
+        }
+        else {
+            ret = vector2.lastElement();
+        }
+        return ret;
     }
     
     /**
      *Removes the element pair at the given index
      */
     public void remove(int index) {
-        vector1.remove(index);
-        vector2.remove(index);
+        if (isSorted1) {
+            int vector1Pos = sortedOrder1[index]; 
+            vector1.remove(vector1Pos);
+            vector2.remove(vector1Pos);
+            ArrayOperations.delete(sortedOrder1, index);
+            if (isSorted2) {
+                int vector2Pos = ArrayOperations.seqFind(vector1Pos, sortedOrder2);
+                ArrayOperations.delete(sortedOrder2, vector2Pos);
+            }
+        }
+        else {
+            vector1.remove(index);
+            vector2.remove(index);
+        }
+
     }
     
     /**
@@ -382,7 +611,15 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         int index = vector1.indexOf(object);
         if (index >= 0) {
             vector1.remove(index);
+            if (isSorted1) {
+                int sortedPos = ArrayOperations.seqFind(index, sortedOrder1);
+                ArrayOperations.delete(sortedOrder1, sortedPos);
+            }
             vector2.remove(index);
+            if (isSorted2) {
+                int sortedPos = ArrayOperations.seqFind(index, sortedOrder2);
+                ArrayOperations.delete(sortedOrder2, sortedPos);
+            }
             removed = true;
         }
         return removed;
@@ -397,7 +634,15 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         int index = vector2.indexOf(object);
         if (index >= 0) {
             vector1.remove(index);
+            if (isSorted1) {
+                int sortedPos = ArrayOperations.seqFind(index, sortedOrder1);
+                ArrayOperations.delete(sortedOrder1, sortedPos);
+            }
             vector2.remove(index);
+            if (isSorted2) {
+                int sortedPos = ArrayOperations.seqFind(index, sortedOrder2);
+                ArrayOperations.delete(sortedOrder2, sortedPos);
+            }
             removed = true;
         }
         return removed;
@@ -475,6 +720,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
     public void set(int index, E obj1, D obj2) {
         vector1.set(index, obj1);
         vector2.set(index, obj2);
+        isSorted1 = false;
+        sortedOrder1 = null;
+        isSorted2 = false;
+        sortedOrder2 = null;
     }
     
     /**
@@ -490,6 +739,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         catch (ArrayIndexOutOfBoundsException iobe) {
             modified = false;
         }
+        if (modified && isSorted1) {
+            isSorted1 = false;
+            sortedOrder1 = null;
+        }
         return modified;
     }
     
@@ -498,6 +751,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      */
     public void setInFirstAt(int index, E object) {
         vector1.set(index, object);
+        if (isSorted1) {
+            isSorted1 = false;
+            sortedOrder1 = null;
+        }
     }
     
     /**
@@ -513,6 +770,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         catch (ArrayIndexOutOfBoundsException iobe) {
             modified = false;
         }
+        if (modified && isSorted2) {
+            isSorted2 = false;
+            sortedOrder2 = null;
+        }
         return modified;
     }
     
@@ -521,6 +782,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      */
     public void setInSecondAt(int index, D object) {
         vector2.set(index, object);
+        if (isSorted2) {
+            isSorted2 = false;
+            sortedOrder2 = null;
+        }
     }
     
     /**
@@ -543,14 +808,28 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@return an iterator to traverse all first components of element pairs
      */
     public Iterator<E> firstIterator() {
-        return vector1.iterator();
+        Iterator<E> ret;
+        if (isSorted1) {
+            ret = new SortedIterator<E>(vector1, sortedOrder1);
+        }
+        else {
+            ret = vector1.iterator();
+        }
+        return ret;
     }
 
     /**
      *@return an iterator to traverse all second components of element pairs
      */
     public Iterator<D> secondIterator() {
-        return vector2.iterator();
+        Iterator<D> ret;
+        if (isSorted2) {
+            ret = new SortedIterator<D>(vector2, sortedOrder2);
+        }
+        else {
+            ret = vector2.iterator();
+        }
+        return ret;
     }
     
     /**
@@ -561,12 +840,32 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         all.addAll((Vector) vector2.clone());
         return all.iterator();
     }
+
+    public Iterator<Entry<E, D>> entryIterator() {
+        Iterator<Entry<E, D>> ret;
+        if (isSorted1) {
+            ret = new SortedIterator<Entry<E, D>>(new ArrayList<Entry<E, D>>(this.entrySet()), sortedOrder1);
+        }
+        else {
+            ret = this.entrySet().iterator();
+        }
+        return ret;
+    }
     
     /**
      *@return a clone of the vector of first components of element pairs
      */
     public Vector<E> first() {
-        Vector<E> ret = (Vector<E>) vector1.clone();
+        Vector<E> ret;
+        if (isSorted1) {
+            ret = new Vector<E>();
+            for (int i = 0; i < sortedOrder1.length; i++) {
+                ret.add(vector1.get(sortedOrder1[i]));
+            }
+        }
+        else {
+            ret = (Vector<E>) vector1.clone();
+        }
         return ret;
     }
     
@@ -574,7 +873,16 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@return a clone of the vector of second components of element pairs
      */
     public Vector<D> second() {
-        Vector<D> ret = (Vector<D>) vector2.clone();
+        Vector<D> ret;
+        if (isSorted2) {
+            ret = new Vector<D>();
+            for (int i = 0; i < sortedOrder2.length; i++) {
+                ret.add(vector2.get(sortedOrder2[i]));
+            }
+        }
+        else {
+            ret = (Vector<D>) vector2.clone();
+        }
         return ret;
     }
 
@@ -582,21 +890,22 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@return an array with all first components of element pairs
      */
     public E[] toArrayFirst() {
-        return (E[]) vector1.toArray();
+        return (E[]) first().toArray();
     }
 
     /**
      *@return an array with all second components of element pairs
      */
     public D[] toArraySecond() {
-        return (D[]) vector2.toArray();
+        return (D[]) second().toArray();
     }
     
     @Override
     public String toString() {
-        String ret = vector1.get(0).toString() + ", " + vector2.get(0).toString();
-        for (int i = 1; i < this.size(); i++) {
-            ret += "; " + vector1.get(i).toString() + ", " + vector2.get(i).toString();
+        String ret = "";
+        Iterator<Entry<E, D>> entryIterator = this.entryIterator();
+        while (entryIterator.hasNext()) {
+            StringOperations.addToList(ret, entryIterator.next().toString());
         }
         return ret;
     }
@@ -605,9 +914,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *A string in which element pairs are separated by the given separator string
      */
     public String toString(String separator) {
-        String ret = vector1.get(0).toString() + ", " + vector2.get(0).toString();
-        for (int i = 1; i < this.size(); i++) {
-            ret += separator + vector1.get(i).toString() + ", " + vector2.get(i).toString();
+        String ret = "";
+        Iterator<Entry<E, D>> entryIterator = this.entryIterator();
+        while (entryIterator.hasNext()) {
+            StringOperations.addToList(ret, separator, entryIterator.next().toString());
         }
         return ret;
     }
@@ -688,7 +998,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@return a set with the first components of element pairs
      */
     public Set<E> keySet() {
-        return new HashSet(first());
+        return new HashSet(vector1);
     }
 
     /**
@@ -763,6 +1073,73 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         return ret;
     }
 
+    public void sortFirst() {
+        if (!isSorted1) {
+            if (sortedOrder1 == null) {
+                sortedOrder1 = new int[vector1.size()]; // TODO: Apply sorted order method
+            }
+            else {
+                reSortFirst();
+            }
+            isSorted1 = true;
+        }
+    }
+
+    public void sortSecond() {
+        if (!isSorted2) {
+            if (sortedOrder2 == null) {
+                sortedOrder2 = new int[vector2.size()]; // TODO: Apply sorted order method
+            }
+            else {
+                reSortSecond();
+            }
+            isSorted2 = true;
+        }
+    }
+
+    public void sort() {
+        sortFirst();
+        sortSecond();
+    }
+
+    public boolean isSortedFirst() {
+        return isSorted1;
+    }
+
+    public boolean isSortedSecond() {
+        return isSorted2;
+    }
+
+    public boolean isSorted() {
+        return (isSortedFirst() || isSortedSecond());
+    }
+
+    private void reSortFirst() {
+        int unsortedStart = sortedOrder1.length;
+        List<Comparable> sortedVector = new ArrayList<Comparable>();
+        for (int i = 0; i < unsortedStart; i++) {
+            sortedVector.add((Comparable) vector1.get(sortedOrder1[i]));
+        }
+        for (int i = unsortedStart; i < vector1.size(); i++) {
+            int sortedPos = CollectionUtils.findPositionInOrder(sortedVector, (Comparable) vector1.get(i));
+            ArrayOperations.insert(i, sortedOrder1, sortedPos);
+            CollectionUtils.insert(sortedVector, (Comparable) vector1.get(i), sortedPos);
+        }
+    }
+
+    private void reSortSecond() {
+        int unsortedStart = sortedOrder2.length;
+        List<Comparable> sortedVector = new ArrayList<Comparable>();
+        for (int i = 0; i < unsortedStart; i++) {
+            sortedVector.add((Comparable) vector2.get(sortedOrder2[i]));
+        }
+        for (int i = unsortedStart; i < vector2.size(); i++) {
+            int sortedPos = CollectionUtils.findPositionInOrder(sortedVector, (Comparable) vector2.get(i));
+            ArrayOperations.insert(i, sortedOrder2, sortedPos);
+            CollectionUtils.insert(sortedVector, (Comparable) vector2.get(i), sortedPos);
+        }
+    }
+
     /**
      * Implementation of the Map.Entry interface
      */
@@ -790,6 +1167,39 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         public D setValue(D newValue) {
             secondElement = newValue;
             return secondElement;
+        }
+
+        @Override
+        public String toString() {
+            return "[" + firstElement.toString() + ", " + secondElement.toString() + "]";
+        }
+
+    }
+
+    public class SortedIterator<T> implements Iterator<T> {
+
+        int[] sortedOrder;
+        List<T> list;
+        int current = 0;
+
+        public SortedIterator(List<T> myList, int[] mySortedOrder) {
+            sortedOrder = mySortedOrder;
+            list = myList;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return (current < sortedOrder.length);
+        }
+
+        @Override
+        public T next() {
+            return list.get(sortedOrder[current++]);
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
     }
