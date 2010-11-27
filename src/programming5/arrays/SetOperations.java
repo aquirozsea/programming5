@@ -225,7 +225,7 @@ public abstract class SetOperations {
 	}
 	
 	/**
-	 *@return the intersection of the two sets or null if they are disjoint
+	 *@return the intersection of the two sets or a zero length array if they are disjoint
 	 */
 	public static final int[] intersect(int[] set1, int[] set2) {
 		int[] inter;
@@ -250,7 +250,7 @@ public abstract class SetOperations {
 		}
 		if (interCount < base.length) {
 			if (interCount == 0) {
-				inter = null;
+				inter = new int[0];
 			}
 			else {
 				inter = ArrayOperations.prefix(inter, interCount);
@@ -260,7 +260,7 @@ public abstract class SetOperations {
 	}
 	
 	/**
-	 *@return the intersection of the two sets or null if they are disjoint
+	 *@return the intersection of the two sets or a zero length array if they are disjoint
 	 */
 	public static final float[] intersect(float[] set1, float[] set2) {
 		float[] inter;
@@ -285,7 +285,7 @@ public abstract class SetOperations {
 		}
 		if (interCount < base.length) {
 			if (interCount == 0) {
-				inter = null;
+				inter = new float[0];
 			}
 			else {
 				inter = ArrayOperations.prefix(inter, interCount);
@@ -295,7 +295,7 @@ public abstract class SetOperations {
 	}
 	
 	/**
-	 *@return the intersection of the two sets or null if they are disjoint
+	 *@return the intersection of the two sets or a zero length array if they are disjoint
 	 */
 	public static final double[] intersect(double[] set1, double[] set2) {
 		double[] inter;
@@ -320,7 +320,7 @@ public abstract class SetOperations {
 		}
 		if (interCount < base.length) {
 			if (interCount == 0) {
-				inter = null;
+				inter = new double[0];
 			}
 			else {
 				inter = ArrayOperations.prefix(inter, interCount);
@@ -330,7 +330,7 @@ public abstract class SetOperations {
 	}
 	
 	/**
-	 *@return the intersection of the two sets or null if they are disjoint
+	 *@return the intersection of the two sets or a zero length array if they are disjoint
 	 */
 	public static final char[] intersect(char[] set1, char[] set2) {
 		char[] inter;
@@ -355,7 +355,7 @@ public abstract class SetOperations {
 		}
 		if (interCount < base.length) {
 			if (interCount == 0) {
-				inter = null;
+				inter = new char[0];
 			}
 			else {
 				inter = ArrayOperations.prefix(inter, interCount);
@@ -365,7 +365,43 @@ public abstract class SetOperations {
 	}
 	
 	/**
-	 *@return the intersection of the two sets or null if they are disjoint, where the equality of objects is given by 
+	 *@return the intersection of the two sets or a zero length array if they are disjoint, where the equality of objects is given by 
+	 *the implementation of the equals method (same object if not implemented?)
+	 */
+	public static final String[] intersect(String[] set1, String[] set2) {
+		String[] inter;
+		String[] seek, base;
+		if (set1.length < set2.length) {
+			seek = set2;
+			base = set1;
+		}
+		else {
+			seek = set1;
+			base = set2;
+		}
+		inter = new String[base.length];
+		int interCount = 0;
+		for (String bElem : base) {
+			for (String sElem : seek) {
+				if (bElem.equals(sElem)) {
+					inter[interCount++] = bElem;
+					break;
+				}
+			}
+		}
+		if (interCount < base.length) {
+			if (interCount == 0) {
+				inter = new String[0];
+			}
+			else {
+				inter = ArrayOperations.prefix(inter, interCount);
+			}
+		}
+		return inter;
+	}
+
+        /**
+	 *@return the intersection of the two sets or a zero length array if they are disjoint, where the equality of objects is given by
 	 *the implementation of the equals method (same object if not implemented?)
 	 */
 	public static final Object[] intersect(Object[] set1, Object[] set2) {
@@ -391,7 +427,7 @@ public abstract class SetOperations {
 		}
 		if (interCount < base.length) {
 			if (interCount == 0) {
-				inter = null;
+				inter = new Object[0];
 			}
 			else {
 				inter = ArrayOperations.prefix(inter, interCount);
@@ -401,7 +437,7 @@ public abstract class SetOperations {
 	}
 	
 	/**
-	 *@return a new array with the difference between set1 and set2 or null if set1 is a subset of set2
+	 *@return a new array with the difference between set1 and set2, which can be a zero length array if set1 is a subset of set2
 	 */
 	public static final int[] difference(int[] set1, int[] set2) {
 		int[] diff = new int[set1.length];
@@ -428,14 +464,14 @@ public abstract class SetOperations {
 				diff = ArrayOperations.prefix(diff, base.length-intersect);
 			}
 			else {
-				diff = null;
+				diff = new int[0];
 			}
 		}
 		return diff;
 	}
 	
 	/**
-	 *@return a new array with the difference between set1 and set2 or null if set1 is a subset of set2
+	 *@return a new array with the difference between set1 and set2, which can be a zero length array if set1 is a subset of set2
 	 */
 	public static final float[] difference(float[] set1, float[] set2) {
 		float[] diff = new float[set1.length];
@@ -462,14 +498,14 @@ public abstract class SetOperations {
 				diff = ArrayOperations.prefix(diff, base.length-intersect);
 			}
 			else {
-				diff = null;
+				diff = new float[0];
 			}
 		}
 		return diff;
 	}
 	
 	/**
-	 *@return a new array with the difference between set1 and set2 or null if set1 is a subset of set2
+	 *@return a new array with the difference between set1 and set2, which can be a zero length array if set1 is a subset of set2
 	 */
 	public static final double[] difference(double[] set1, double[] set2) {
 		double[] diff = new double[set1.length];
@@ -496,14 +532,14 @@ public abstract class SetOperations {
 				diff = ArrayOperations.prefix(diff, base.length-intersect);
 			}
 			else {
-				diff = null;
+				diff = new double[0];
 			}
 		}
 		return diff;
 	}
 	
 	/**
-	 *@return a new array with the difference between set1 and set2 or null if set1 is a subset of set2
+	 *@return a new array with the difference between set1 and set2, which can be a zero length array if set1 is a subset of set2
 	 */
 	public static final char[] difference(char[] set1, char[] set2) {
 		char[] diff = new char[set1.length];
@@ -530,14 +566,48 @@ public abstract class SetOperations {
 				diff = ArrayOperations.prefix(diff, base.length-intersect);
 			}
 			else {
-				diff = null;
+				diff = new char[0];
+			}
+		}
+		return diff;
+	}
+
+        /**
+	 *@return a new array with the difference between set1 and set2, which can be a zero length array if set1 is a subset of set2
+	 */
+	public static final String[] difference(String[] set1, String[] set2) {
+		String[] diff = new String[set1.length];
+		String[] base = set1;
+		String[] seek = set2;
+		int intersect = 0;
+		int di = 0;
+		boolean found;
+		for (String bElem : base) {
+			found = false;
+			for (String sElem : seek) {
+				if (bElem.equals(sElem)) {
+					intersect++;
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				diff[di++] = bElem;
+			}
+		}
+		if (intersect > 0) {
+			if (intersect < base.length) {
+				diff = ArrayOperations.prefix(diff, base.length-intersect);
+			}
+			else {
+				diff = new String[0];
 			}
 		}
 		return diff;
 	}
 	
 	/**
-	 *@return a new array with the difference between set1 and set2 or null if set1 is a subset of set2
+	 *@return a new array with the difference between set1 and set2, which can be a zero length array if set1 is a subset of set2
 	 */
 	public static final Object[] difference(Object[] set1, Object[] set2) {
 		Object[] diff = new Object[set1.length];
@@ -564,7 +634,7 @@ public abstract class SetOperations {
 				diff = ArrayOperations.prefix(diff, base.length-intersect);
 			}
 			else {
-				diff = null;
+				diff = new Object[0];
 			}
 		}
 		return diff;
