@@ -21,10 +21,9 @@
 
 package programming5.math;
 
-import java.math.BigInteger;
-
 /**
  * This class provides useful math functions, additional to those found in the java.lang.MathOperations class
+ * TODO: Complete for BigInteger class
  */
 public final class MathOperations {
     
@@ -141,6 +140,11 @@ public final class MathOperations {
         return angle;
     }
 
+    /**
+     * Method to compare two number objects, regardless of their type. Has the overhead of determining the number 
+     * types.
+     * @return -1, 0, and 1 if the first number is less than, equal to, or greater than the second number, respectively.
+     */
     public static int compare(Number n, Number m) {
         if (extractValue(n) < extractValue(m)) {
             return -1;
@@ -153,6 +157,10 @@ public final class MathOperations {
         }
     }
 
+    /**
+     * Method to add the given number list, regardless of type.
+     * @return the sum of the given numbers, in an object of the smallest type that can hold the result.
+     */
     public static Number add(Number... nArray) {
         Number ret;
         double sum = 0;
@@ -185,6 +193,10 @@ public final class MathOperations {
         return ret;
     }
 
+    /**
+     * Method to extract the value in the given number subtype. 
+     * @return a double floating point value holding the number
+     */
     public static double extractValue(Number n) {
         double ret;
         if (n instanceof Integer) {
