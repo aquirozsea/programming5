@@ -102,11 +102,7 @@ public class MathSet<E> extends HashSet<E> {
 		E[] set1 = (E[])this.toArray();
 		E[] set2 = (E[])set.toArray();
 		E[] result = (E[])SetOperations.intersect(set1, set2);
-		MathSet<E> ret = null;
-		if (result != null) {
-			ret = new MathSet<E>(result);
-		}
-		return ret;
+		return new MathSet<E>(result);
 	}
 
 	/**
@@ -146,13 +142,9 @@ public class MathSet<E> extends HashSet<E> {
 		E[] set1 = (E[])this.toArray();
 		E[] set2 = (E[])set.toArray();
 		E[] result = (E[])SetOperations.difference(set1, set2);
-		MathSet<E> ret = null;
-		if (result != null) {
-			ret = new MathSet<E>(result);
-		}
-		return ret;
+		return new MathSet<E>(result);
 	}
-
+        
 	/**
          *@return a new MathSet that is the difference of the two given sets
          */
