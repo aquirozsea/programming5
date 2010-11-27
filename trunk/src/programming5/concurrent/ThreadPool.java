@@ -22,11 +22,16 @@
 package programming5.concurrent;
 
 /**
- *
+ * Abstract class that defines utility methods for thread pool management
  * @author aquirozh
+ * @version 6.0
  */
 public abstract class ThreadPool {
 
+    /**
+     * Creates a new thread with the given Runnable instance. If there is not enough memory to create the thread, 
+     * will invoke garbage collection and keep trying until the thread can be created.
+     */
     public static Thread memSafeThreadStart(Runnable threadObject) {
         boolean success = false;
         Thread ret = null;
