@@ -50,6 +50,14 @@ public abstract class CollectionUtils {
         return ret;
     }
 
+    public static Vector<Integer> vectorFromIntArray(int[] array) {
+        Vector<Integer> ret = new Vector<Integer>();
+        for (int element : array) {
+            ret.add(element);
+        }
+        return ret;
+    }
+
     /**
      * To create a vector initialized to contain the given element, for which there is surprisingly no constructor
      * in the Vector class.
