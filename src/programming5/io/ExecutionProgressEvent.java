@@ -36,23 +36,26 @@ public class ExecutionProgressEvent extends programming5.net.Event {
     
     public static final String TYPE = "EPE";
 
+    public static enum ExecutionAction {START, PROGRESS, COMPLETE};
+
     /** 
      * Creates a new instance of ExecutionProgressEvent with the current progress percentage and a total
      * value (when other that 100pct is used)
      */
-    public ExecutionProgressEvent(float currentProgress, int referenceTotal) {
+    public ExecutionProgressEvent(String operation, ExecutionAction action, float executionParameter) {
         super(TYPE);
-        this.addMessageItem(currentProgress);
-        this.addMessageItem(referenceTotal);
+        this.addMessageItem(operation);
+        this.addMessageItem(action.toString());
+        this.addMessageItem(executionParameter);
     }
     
     /** 
      * Creates a new instance of ExecutionProgressEvent with the current progress percentage
      */
-    public ExecutionProgressEvent(float currentProgress) {
+    public ExecutionProgressEvent(String operation, ExecutionAction action) {
         super(TYPE);
-        this.addMessageItem(currentProgress);
-        this.addMessageItem(1);
+        this.addMessageItem(operation);
+        this.addMessageItem(action.toString());
     }
     
     /**
@@ -68,82 +71,91 @@ public class ExecutionProgressEvent extends programming5.net.Event {
      * Creates an execution progress event by decoding the given byte array
      * @param eventBytes the encoded event message, which must follow the Message class syntax
      * @throws programming5.net.MalformedMessageException if the encoded message does not follow the correct
-     * syntax or is of an incorrect type
+     * syntax
      */
     public ExecutionProgressEvent(byte[] eventBytes) throws MalformedMessageException {
         super(eventBytes);
-        if (!this.getType().equals(TYPE)) {
-            throw new IllegalArgumentException("ExecutionProgressEvent: Cannot create from byte array: Incorrect type (found " + this.getType() + ")");
-        }
-        if (this.getMessageSize() != 2) {
-            throw new MalformedMessageException("ExecutionProgressEvent: Cannot create from byte array: Incorrect number of items");
+        if (!checkFormat()) {
+            throw new MalformedMessageException("ExecutionProgressEvent: Event of incorrect type or payload format");
         }
     }
 
     @Override
     public boolean assertFormat() {
-        boolean ret = true;
-        try {
-            this.getItemAsFloat(0);
-            this.getItemAsInt(1);
-        }
-        catch (MalformedMessageException mme) {
-            ret = false;
+        return checkFormat();
+    }
+    
+    private boolean checkFormat() {
+        boolean ret = this.getType().equals(TYPE) && (this.getMessageSize() == 2 || this.getMessageSize() == 3);
+        if (ret) {
+            try {
+                ExecutionAction.valueOf(this.getMessageItem(1));
+            }
+            catch (Exception mme) {
+                ret = false;
+            }
         }
         return ret;
+    }
+
+    public String getOperation() {
+        return this.getMessageItem(0);
+    }
+
+    public boolean isExecutionStartEvent() {
+        return ExecutionAction.valueOf(this.getMessageItem(1)).equals(ExecutionAction.START);
+    }
+
+    public boolean isExecutionProgressReport() {
+        return ExecutionAction.valueOf(this.getMessageItem(1)).equals(ExecutionAction.PROGRESS);
+    }
+
+    public boolean isExecutionCompleteEvent() {
+        return ExecutionAction.valueOf(this.getMessageItem(1)).equals(ExecutionAction.COMPLETE);
+    }
+
+    public ExecutionAction getActionType() {
+        return ExecutionAction.valueOf(this.getMessageItem(1));
+    }
+
+    public boolean hasExecutionParameter() {
+        return (this.getMessageSize() == 3);
+    }
+
+    public float getExecutionParameter() {
+        try {
+            return this.getItemAsFloat(2);
+        }
+        catch (MalformedMessageException mme) {
+            throw new UnsupportedOperationException("ExecutionProgressEvent: getExecutionParameter not supported for this event type (" + this.getMessageItem(1) + ")");
+        }
     }
     
     /**
      *@return the progress value contained in this event
      */
     public float getProgress() {
-        float ret = 0f;
-        try {
-            ret = this.getItemAsFloat(0);
-        }
-        catch (MalformedMessageException mme) {
-            Debug.printStackTrace(mme, "programming5.io.ExecutionProgressEvent");
-        }
-        finally {
-            return ret;
-        }
+        return getExecutionParameter();
     }
     
     /**
      *@return the total with respect to which the progress is measured (default = 1)
      */
-    public int getReferenceTotal() {
-        int total = 1;
-        try {
-            total = this.getItemAsInt(1);
-        }
-        catch (MalformedMessageException mme) {
-            Debug.printStackTrace(mme, "programming5.io.ExecutionProgressEvent");
-        }
-        finally {
-            return total;
-        }
+    public float getReferenceTotal() {
+        return getExecutionParameter();
     }
     
     /**
      *@return a percentage or ratio as represented by the event values
      */
     public String getProgressString() {
-        String currentProgress = this.getMessageItem(0);
-        int total = 1;
-        try {
-            total = this.getItemAsInt(1);
+        ExecutionAction action = this.getActionType();
+        switch (action) {
+            case START: return this.getOperation() + " started";
+            case PROGRESS: return this.getOperation() + " executing " + Float.toString(this.getProgress()) + "%";
+            case COMPLETE: return this.getOperation() + " completed";
+            default: return "Undefined";
         }
-        catch (MalformedMessageException mme) {
-            Debug.printStackTrace(mme, "programming5.io.ExecutionProgressEvent");
-        }
-        if (total != 1) {
-            currentProgress = currentProgress + "/" + Integer.toString(total);
-        }
-        else {
-            currentProgress = currentProgress + "%";
-        }
-        return currentProgress;
     }
     
 }
