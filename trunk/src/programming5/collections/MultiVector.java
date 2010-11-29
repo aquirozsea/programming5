@@ -843,11 +843,16 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
 
     public Iterator<Entry<E, D>> entryIterator() {
         Iterator<Entry<E, D>> ret;
+        List<Map.Entry<E, D>> entryList = new ArrayList<Map.Entry<E, D>>();
+        for (int i = 0; i < this.size(); i++) {
+            Map.Entry<E, D> entry = new MultiVectorEntry<E, D>(vector1.elementAt(i), vector2.elementAt(i));
+            entryList.add(entry);
+        }
         if (isSorted1) {
-            ret = new SortedIterator<Entry<E, D>>(new ArrayList<Entry<E, D>>(this.entrySet()), sortedOrder1);
+            ret = new SortedIterator<Entry<E, D>>(entryList, sortedOrder1);
         }
         else {
-            ret = this.entrySet().iterator();
+            ret = entryList.iterator();
         }
         return ret;
     }
@@ -905,7 +910,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         String ret = "";
         Iterator<Entry<E, D>> entryIterator = this.entryIterator();
         while (entryIterator.hasNext()) {
-            StringOperations.addToList(ret, entryIterator.next().toString());
+            ret = StringOperations.addToList(ret, entryIterator.next().toString());
         }
         return ret;
     }
@@ -917,7 +922,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         String ret = "";
         Iterator<Entry<E, D>> entryIterator = this.entryIterator();
         while (entryIterator.hasNext()) {
-            StringOperations.addToList(ret, separator, entryIterator.next().toString());
+            ret = StringOperations.addToList(ret, separator, entryIterator.next().toString());
         }
         return ret;
     }
@@ -1076,7 +1081,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
     public void sortFirst() {
         if (!isSorted1) {
             if (sortedOrder1 == null) {
-                sortedOrder1 = new int[vector1.size()]; // TODO: Apply sorted order method
+                sortedOrder1 = ArrayOperations.sortedOrder(vector1.toArray(new Comparable[] {}));
             }
             else {
                 reSortFirst();
@@ -1088,7 +1093,7 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
     public void sortSecond() {
         if (!isSorted2) {
             if (sortedOrder2 == null) {
-                sortedOrder2 = new int[vector2.size()]; // TODO: Apply sorted order method
+                sortedOrder2 = ArrayOperations.sortedOrder(vector2.toArray(new Comparable[] {}));
             }
             else {
                 reSortSecond();
