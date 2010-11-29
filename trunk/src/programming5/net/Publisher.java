@@ -40,15 +40,23 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
     protected ReentrantReadWriteLock listenerLock = new ReentrantReadWriteLock();
     
     public void addListener(Subscriber<E> s) {
-        listenerLock.writeLock().lock();
-        listeners.add(s);
-        listenerLock.writeLock().unlock();
+        try {
+            listenerLock.writeLock().lock();
+            listeners.add(s);
+        }
+        finally {
+            listenerLock.writeLock().unlock();
+        }
     }
     
     public void removeListener(Subscriber<E> s) {
-        listenerLock.writeLock().lock();
-        listeners.remove(s);
-        listenerLock.writeLock().unlock();
+        try {
+            listenerLock.writeLock().lock();
+            listeners.remove(s);
+        }
+        finally {
+            listenerLock.writeLock().unlock();
+        }
     }
     
     /**
@@ -111,8 +119,12 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
         finally {
             listenerLock.readLock().unlock();
         }
-        listenerLock.writeLock().lock();
-        listeners.removeAllElements();
-        listenerLock.writeLock().unlock();
+        try {
+            listenerLock.writeLock().lock();
+            listeners.removeAllElements();
+        }
+        finally {
+            listenerLock.writeLock().unlock();
+        }
     }
 }
