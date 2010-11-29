@@ -96,6 +96,14 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    public static long[] replicate(long[] array) {
+        long[] ret = new long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        return ret;
+    }
     
     /**
      *@param source the array to be replicated
@@ -2782,6 +2790,306 @@ public abstract class ArrayOperations {
             }
         }
         return ret;
+    }
+    
+    public static int[] createArithSeries(int start, int step, int size) {
+        int[] ret = new int[size];
+        int value = start;
+        for (int i = 0; i < size; i++) {
+            ret[i] = value;
+            value += step;
+        }
+        return ret;
+    }
+    
+    public static int[] createEnumeration(int size) {
+        return createArithSeries(0, 1, size);
+    }
+
+    public static int findFirstIndexInOrder(int[] array, int element) {
+        int pos = Arrays.binarySearch(array, element);
+        if (pos > 0 && array[0] < element) {
+            if (array[pos-1] == array[pos]) {
+                int a = 0;
+                int b = pos;
+                while (b - a > 1) {
+                    pos = (a+b) / 2;
+                    if (array[pos] < element) {
+                        a = pos;
+                    }
+                    else {
+                        b = pos;
+                    }
+                }
+                pos = b;
+            }
+        }
+        else {
+            pos = 0;
+        }
+        return pos;
+    }
+
+    public static int findFirstIndexInOrder(float[] array, float element) {
+        int pos = Arrays.binarySearch(array, element);
+        if (pos > 0 && array[0] < element) {
+            if (array[pos-1] == array[pos]) {
+                int a = 0;
+                int b = pos;
+                while (b - a > 1) {
+                    pos = (a+b) / 2;
+                    if (array[pos] < element) {
+                        a = pos;
+                    }
+                    else {
+                        b = pos;
+                    }
+                }
+                pos = b;
+            }
+        }
+        else {
+            pos = 0;
+        }
+        return pos;
+    }
+
+    public static int findFirstIndexInOrder(long[] array, long element) {
+        int pos = Arrays.binarySearch(array, element);
+        if (pos > 0 && array[0] < element) {
+            if (array[pos-1] == array[pos]) {
+                int a = 0;
+                int b = pos;
+                while (b - a > 1) {
+                    pos = (a+b) / 2;
+                    if (array[pos] < element) {
+                        a = pos;
+                    }
+                    else {
+                        b = pos;
+                    }
+                }
+                pos = b;
+            }
+        }
+        else {
+            pos = 0;
+        }
+        return pos;
+    }
+
+    public static int findFirstIndexInOrder(double[] array, double element) {
+        int pos = Arrays.binarySearch(array, element);
+        if (pos > 0 && array[0] < element) {
+            if (array[pos-1] == array[pos]) {
+                int a = 0;
+                int b = pos;
+                while (b - a > 1) {
+                    pos = (a+b) / 2;
+                    if (array[pos] < element) {
+                        a = pos;
+                    }
+                    else {
+                        b = pos;
+                    }
+                }
+                pos = b;
+            }
+        }
+        else {
+            pos = 0;
+        }
+        return pos;
+    }
+
+    public static int findFirstIndexInOrder(Comparable[] array, Comparable element) {
+        int pos = Arrays.binarySearch(array, element);
+        if (pos > 0 && (array[0].compareTo(element) < 0)) {
+            if (array[pos-1].compareTo(array[pos]) == 0) {
+                int a = 0;
+                int b = pos;
+                while (b - a > 1) {
+                    pos = (a+b) / 2;
+                    if (array[pos].compareTo(element) < 0) {
+                        a = pos;
+                    }
+                    else {
+                        b = pos;
+                    }
+                }
+                pos = b;
+            }
+        }
+        else {
+            pos = 0;
+        }
+        return pos;
+    }
+
+    public static <T, U extends T> int findFirstIndexInOrder(T[] array, U element, Comparator<T> comp) {
+        int pos = Arrays.binarySearch(array, element);
+        if (pos > 0 && (comp.compare(array[0], element) < 0)) {
+            if (comp.compare(array[pos-1], array[pos]) == 0) {
+                int a = 0;
+                int b = pos;
+                while (b - a > 1) {
+                    pos = (a+b) / 2;
+                    if (comp.compare(array[pos], element) < 0) {
+                        a = pos;
+                    }
+                    else {
+                        b = pos;
+                    }
+                }
+                pos = b;
+            }
+        }
+        else {
+            pos = 0;
+        }
+        return pos;
+    }
+
+    public static int[] sort(int[] array) {
+        int[] sortedOrder = new int[array.length];
+        int[] original = ArrayOperations.replicate(array);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(array);
+        for (int i = 0; i < original.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
+    }
+
+    public static int[] sort(float[] array) {
+        int[] sortedOrder = new int[array.length];
+        float[] original = ArrayOperations.replicate(array);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(array);
+        for (int i = 0; i < original.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
+    }
+
+    public static int[] sort(long[] array) {
+        int[] sortedOrder = new int[array.length];
+        long[] original = ArrayOperations.replicate(array);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(array);
+        for (int i = 0; i < original.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
+    }
+
+    public static int[] sort(double[] array) {
+        int[] sortedOrder = new int[array.length];
+        double[] original = ArrayOperations.replicate(array);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(array);
+        for (int i = 0; i < original.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
+    }
+
+    public static int[] sort(Comparable[] array) {
+        int[] sortedOrder = new int[array.length];
+        Comparable[] original = new Comparable[array.length];
+        ArrayOperations.replicate(array, original);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(array);
+        for (int i = 0; i < original.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
+    }
+
+    public static int[] sortedOrder(int[] array) {
+        int[] sortedOrder = new int[array.length];
+        int[] sorted = ArrayOperations.replicate(array);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(sorted);
+        for (int i = 0; i < array.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
+    }
+
+    public static int[] sortedOrder(float[] array) {
+        int[] sortedOrder = new int[array.length];
+        float[] sorted = ArrayOperations.replicate(array);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(sorted);
+        for (int i = 0; i < array.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
+    }
+
+    public static int[] sortedOrder(long[] array) {
+        int[] sortedOrder = new int[array.length];
+        long[] sorted = ArrayOperations.replicate(array);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(sorted);
+        for (int i = 0; i < array.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
+    }
+
+    public static int[] sortedOrder(double[] array) {
+        int[] sortedOrder = new int[array.length];
+        double[] sorted = ArrayOperations.replicate(array);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(sorted);
+        for (int i = 0; i < array.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
+    }
+
+    public static int[] sortedOrder(Comparable[] array) {
+        int[] sortedOrder = new int[array.length];
+        Comparable[] sorted = new Comparable[array.length];
+        ArrayOperations.replicate(array, sorted);
+        int[] repetitions = new int[array.length];
+        Arrays.fill(repetitions, 0);
+        Arrays.sort(sorted);
+        for (int i = 0; i < array.length; i++) {
+            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
+            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            repetitions[firstIndex]++;
+        }
+        return sortedOrder;
     }
 
 }
