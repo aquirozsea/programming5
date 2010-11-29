@@ -885,6 +885,59 @@ public class ArgHandler {
         }
     }
     
+    public <E extends Enum<E>> E getEnumArg(Class<E> enumType) {
+        E[] enumSet = enumType.getEnumConstants();
+        String[] options = new String[enumSet.length];
+        for (int i = 0; i < enumSet.length; i++) {
+            options[i] = enumSet[i].toString();
+        }
+        return enumSet[0].valueOf(enumType, getChoiceArg(options));
+    }
+
+    public <E extends Enum<E>> E getEnumArg(String tag, Class<E> enumType) {
+        E ret = null;
+        String choice = getStringArg(tag);
+        try {
+            ret = enumType.getEnumConstants()[0].valueOf(enumType, choice);
+        }
+        catch (IllegalArgumentException iae) {
+            switch (strategy) {
+                case EXIT:
+                    if (usage != null) {
+                        throw new IllegalArgumentException(usage);
+                    }
+                    else {
+                        throw iae;
+                    }
+
+                case PROMPT:
+                    boolean invChoice = true;
+                    while (invChoice) {
+                        System.out.print("ArgHandler: Please choose one of " + Arrays.toString(enumType.getEnumConstants()) + " for " + tag + ": ");
+                        System.out.flush();
+                        try {
+                            ret = enumType.getEnumConstants()[0].valueOf(enumType, in.readLine());
+                            invChoice = false;
+                        }
+                        catch (Exception e) {}
+                    }
+                    break;
+            }
+        }
+        return ret;
+    }
+
+    public <E extends Enum<E>> E getEnumArg(String tag, E defaultValue) {
+        E ret;
+        try {
+            ret = defaultValue.valueOf(defaultValue.getDeclaringClass(), getStringArg(tag));
+        }
+        catch (IllegalArgumentException iae) {
+            ret = defaultValue;
+        }
+        return ret;
+    }
+
     /**
      *Sets the message for an IllegalArgumentException thrown for the EXIT exception strategy
      */
