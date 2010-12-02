@@ -6,7 +6,9 @@
 package programming5.strings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import programming5.arrays.ArrayOperations;
 import programming5.collections.CollectionUtils;
 
@@ -116,6 +118,31 @@ public abstract class StringOperations {
         }
         ret += bracket[0];
         return ArrayOperations.addElement(ret, matches.toArray(new String[] {}));
+    }
+
+    public static Map<String, String> decodePattern(String string, String regexPattern) {
+        Map<String, String> decodeElements = new HashMap<String, String>();
+        String[] fields = extractAndReplace(regexPattern, "<\\w+>", ".+");
+        String[] regexSeparators = regexPattern.split("<\\w+>", -1);
+        if (string.matches(fields[fields.length-1])) {
+//            List<String> decodeElements = new ArrayList<String>();
+            for (int i = 0; i < regexSeparators.length - 1; i++) {
+                if (regexSeparators[i].length() > 0) {
+                    string = string.replaceFirst(regexSeparators[i], "");
+                }
+                int next = regexSeparators[i+1].length() > 0 ?
+                    StringOperations.findFirstRegex(string, regexSeparators[i+1]) :
+                    string.length();
+                decodeElements.put(fields[i].substring(1, fields[i].length() - 1), string.substring(0, next));
+                if (next < string.length()) {
+                    string = string.substring(next);
+                }
+            }
+        }
+        else {
+            throw new IllegalArgumentException("StringOperations: Cannot decode string: Line does not match given pattern");
+        }
+        return decodeElements;
     }
 
     /**
