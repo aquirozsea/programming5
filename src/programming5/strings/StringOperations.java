@@ -174,6 +174,20 @@ public abstract class StringOperations {
     }
 
     /**
+     *
+     * @param items an input array of String
+     * @param separator separator string that goes between list elements
+     * @return a single string, with individual items separated by the given separator
+     */
+    public static String toList(String[] items, String separator) {
+        String ret = "";
+        for (String item : items) {
+            ret = addToList(ret, separator, item);
+        }
+        return ret;
+    }
+
+    /**
      * @param value a string representation of an integer
      * @return equivalent to Integer.toString(Integer.parseInt(value) + 1);
      */
