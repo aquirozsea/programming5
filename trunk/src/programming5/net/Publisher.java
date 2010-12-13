@@ -32,13 +32,14 @@ import programming5.concurrent.ThreadPool;
  *the publishing application.
  *@see Subscriber
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.11
  */
-public class Publisher<E extends programming5.net.Event> implements IPublisher<E> {
+public class Publisher<E extends programming5.net.Event> implements IThreadAwarePublisher<E> {
     
     protected Vector<Subscriber<E>> listeners = new Vector<Subscriber<E>>();
     protected ReentrantReadWriteLock listenerLock = new ReentrantReadWriteLock();
     
+    @Override
     public void addListener(Subscriber<E> s) {
         try {
             listenerLock.writeLock().lock();
@@ -49,6 +50,7 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
         }
     }
     
+    @Override
     public void removeListener(Subscriber<E> s) {
         try {
             listenerLock.writeLock().lock();
@@ -62,6 +64,7 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
     /**
      *Calls the signal event methods of all subscribers, each in a new thread.
      */
+    @Override
     public <T extends E> void fireEvent(T event) {
         final T auxEvent = event;
         listenerLock.readLock().lock();
@@ -78,6 +81,23 @@ public class Publisher<E extends programming5.net.Event> implements IPublisher<E
                         auxListener.signalEvent(auxEvent);
                     }
                 });
+            }
+        }
+        finally {
+            listenerLock.readLock().unlock();
+        }
+    }
+
+    /**
+     *Calls the signal event methods of all subscribers in the calling thread
+     */
+    @Override
+    public <T extends E> void synchronousFireEvent(T event) {
+        final T auxEvent = event;
+        listenerLock.readLock().lock();
+        try {
+            for (Subscriber<E> listener : listeners) {
+                listener.signalEvent(auxEvent);
             }
         }
         finally {
