@@ -840,6 +840,12 @@ public class ArgHandler {
         return ret;
     }
 
+    /**
+     * Looks for one (and only one) of a list of options in the argument string and returns the option found, or 
+     * executes the appropriate exception strategy if none or multiple options are found
+     * @param options the list of possible options, one of which should be in the argument string
+     * @return the option found
+     */
     public String getChoiceArg(String... options) {
         if (options.length > 0) {
             boolean error = false;
@@ -885,6 +891,12 @@ public class ArgHandler {
         }
     }
     
+    /**
+     * Equivalent to getChoiceArg, where the list of options is automatically obtained from an enum type definition,
+     * and the return value is automatically cast to the given enumeration type.
+     * @param enumType Class object for the enum type
+     * @return Enum instance corresponding to the choice in the argument string
+     */
     public <E extends Enum<E>> E getEnumArg(Class<E> enumType) {
         E[] enumSet = enumType.getEnumConstants();
         String[] options = new String[enumSet.length];
@@ -894,6 +906,13 @@ public class ArgHandler {
         return enumSet[0].valueOf(enumType, getChoiceArg(options));
     }
 
+    /**
+     * Looks for a value among options from an enumeration class following the given tag,
+     * so that the return value is automatically cast to the given enumeration type.
+     * @param tag the tag string that precedes the enumeration value sought
+     * @param enumType Class object for the enum type
+     * @return Enum instance corresponding to the choice in the argument string
+     */
     public <E extends Enum<E>> E getEnumArg(String tag, Class<E> enumType) {
         E ret = null;
         String choice = getStringArg(tag);
@@ -927,12 +946,38 @@ public class ArgHandler {
         return ret;
     }
 
+    /**
+     * Looks for a value among options from an enumeration class following the given tag,
+     * so that the return value is automatically cast to the given enumeration type. If the tag is not
+     * present, or its value does not correspond to an enumeration constant, the given default value
+     * is returned.
+     * @param tag the tag string that precedes the enumeration value sought
+     * @param defaultValue the value to return upon a fault
+     * @return Enum instance corresponding to the choice in the argument string or to the default value
+     */
     public <E extends Enum<E>> E getEnumArg(String tag, E defaultValue) {
         E ret;
         try {
             ret = defaultValue.valueOf(defaultValue.getDeclaringClass(), getStringArg(tag));
         }
         catch (IllegalArgumentException iae) {
+            ret = defaultValue;
+        }
+        return ret;
+    }
+
+    /**
+     * Equivalent to getChoiceArg, where the list of options is automatically obtained from an enum type definition,
+     * and the return value is automatically cast to the given enumeration type.
+     * @param defaultValue the value to return if no valid choice from the enumeration is found
+     * @return the enumeration value found, or the default value if none is found
+     */
+    public <E extends Enum<E>> E getEnumArg(E defaultValue) {
+        E ret;
+        try {
+            ret = getEnumArg(defaultValue.getDeclaringClass());
+        }
+        catch (Exception e) {
             ret = defaultValue;
         }
         return ret;
