@@ -6,13 +6,13 @@
 package programming5.io;
 
 import java.lang.reflect.Method;
-import programming5.net.SyncPublisher;
+import programming5.net.Publisher;
 
 /**
  *
  * @author aquirozh
  */
-public class ProgressReportingMethod extends SyncPublisher<ExecutionProgressEvent> implements Runnable {
+public class ProgressReportingMethod extends Publisher<ExecutionProgressEvent> implements Runnable {
 
     Object targetObject;
     Method targetMethod;
@@ -51,15 +51,15 @@ public class ProgressReportingMethod extends SyncPublisher<ExecutionProgressEven
 
     @Override
     public void run() {
-        this.fireEvent(new ExecutionProgressEvent(targetMethod.getName(), ExecutionProgressEvent.ExecutionAction.START));
+        this.synchronousFireEvent(new ExecutionProgressEvent(targetMethod.getName(), ExecutionProgressEvent.ExecutionAction.START));
         while (reporting) {
             ThreadUtils.sleep(reportingPeriod);
             if (reporting) {
                 System.out.println(reporting);
-                this.fireEvent(new ExecutionProgressEvent(targetMethod.getName(), ExecutionProgressEvent.ExecutionAction.PROGRESS));
+                this.synchronousFireEvent(new ExecutionProgressEvent(targetMethod.getName(), ExecutionProgressEvent.ExecutionAction.PROGRESS));
             }
         }
-        this.fireEvent(new ExecutionProgressEvent(targetMethod.getName(), ExecutionProgressEvent.ExecutionAction.COMPLETE));
+        this.synchronousFireEvent(new ExecutionProgressEvent(targetMethod.getName(), ExecutionProgressEvent.ExecutionAction.COMPLETE));
     }
 
 }
