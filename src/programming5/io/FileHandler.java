@@ -23,6 +23,8 @@ package programming5.io;
 
 import java.io.*;
 import java.util.EmptyStackException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 import programming5.arrays.ArrayOperations;
 
@@ -66,6 +68,8 @@ public class FileHandler {
 	String path = null;
 	String name = null;
 	long size = 0;
+
+        private LineIterator lineIterator = null;
 	
 	/**
 	 *Default constructor; a file must be set before any of the non-static methods can be used
@@ -957,6 +961,19 @@ public class FileHandler {
                 }
 		return ret;
 	}
+
+        /**
+         * Returns an iterator for reading lines of the file one by one (equivalent to calling readLine until 
+         * null is returned). The iterator is a singleton object, so multiple calls to this method will return 
+         * the same iterator. Using this iterator in conjunction with other read or write methods will cause 
+         * undefined behavior, so it should be the only way to access the file if used.
+         */
+        public Iterator<String> getLineIterator() {
+            if (lineIterator == null) {
+                lineIterator = new LineIterator();
+            }
+            return lineIterator;
+        }
 	
 	/**
 	 *Copies files or directories from the source path to the destination path. It will throw an exception if a file 
@@ -1160,6 +1177,43 @@ public class FileHandler {
 	public long getFileSize() {
 		return size;
 	}
+
+        protected class LineIterator implements Iterator<String> {
+
+            protected String next;
+
+            public LineIterator() {
+                try {
+                    next = readLine();
+                }
+                catch (IOException ioe) {
+                    throw new RuntimeException("File threw IOException: " + ioe.getMessage(), ioe);
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+                return (next != null);
+            }
+
+            @Override
+            public String next() {
+                String ret = next;
+                try {
+                    next = readLine();
+                }
+                catch (IOException ioe) {
+                    throw new RuntimeException("File threw IOException: " + ioe.getMessage(), ioe);
+                }
+                return ret;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+        }
 	
 	/**
          *@return true if the given path corresponds to an existing file
