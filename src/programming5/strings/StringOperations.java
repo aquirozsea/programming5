@@ -122,7 +122,7 @@ public abstract class StringOperations {
 
     public static Map<String, String> decodePattern(String string, String regexPattern) {
         Map<String, String> decodeElements = new HashMap<String, String>();
-        String[] fields = extractAndReplace(regexPattern, "<\\w+>", ".+");
+        String[] fields = extractAndReplace(regexPattern, "<\\w+>", ".*");
         String[] regexSeparators = regexPattern.split("<\\w+>", -1);
         if (string.matches(fields[fields.length-1])) {
 //            List<String> decodeElements = new ArrayList<String>();
