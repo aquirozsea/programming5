@@ -3092,4 +3092,10 @@ public abstract class ArrayOperations {
         return sortedOrder;
     }
 
+    public static <T, U> void castArray(U[] original, T[] dest) {
+        for (int i = 0; i < original.length; i++) {
+            dest[i] = (T) original[i];
+        }
+    }
+
 }
