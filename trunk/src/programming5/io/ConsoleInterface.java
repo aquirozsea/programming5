@@ -36,79 +36,86 @@ import programming5.arrays.ArrayOperations;
  *@version 6.1
  */
 public class ConsoleInterface {
-	
-	//private Runtime rt;
-	private String commandOutput = null;
-	private String commandError = null;
-	
-	/**
-	 *Executes the given OS command and reads the output or error code, if any.
-	 */
-	public int execute(String... command) {
-		Process p = null;
-		int ret = 0;
-		commandOutput = null;
-		commandError = null;
-		try {
-			//p = rt.exec(command);
-			List<String> commandChain = new LinkedList<String>();
-			for (String elem : command) {
-				commandChain.add(elem);
-			}
-			p = new ProcessBuilder(commandChain).start();
-			if (p != null) {
-				if (p.waitFor() == 0) {
-					ret = p.exitValue();
-					if (ret == 0) {
-						InputStream iStream = p.getInputStream();
-						StringBuffer sb = new StringBuffer();
-						int iout = 0;
-						while ((iout = iStream.read()) != -1)
-							sb.append((char)iout);
-						commandOutput = sb.toString();
-					}
-					else {
-						InputStream iStream = p.getErrorStream();
-						StringBuffer sb = new StringBuffer();
-						int iout = 0;
-						while ((iout = iStream.read()) != -1)
-							sb.append((char)iout);
-						commandError = sb.toString();
-					}
-				}
-				p.destroy();
-			}
-			else {
-				ret = -1;
-				commandError = "Invalid command";
-			}
-		}
-		catch (InterruptedException ie) {
-			ret = -2;
-			commandError = ie.getMessage();
-		}
-		catch (IOException ioe) {
-			ret = -3;
-			commandError = ioe.getMessage();
-		} 
-		return ret;
-	}
-	
-	/**
-	 *@return a string with the command's output, null if there is none
-	 */
-	public String getCommandOutput() {
-		return commandOutput;
-	}
-	
-	/**
-	 *@return a string with the command's error result, null if there is none.
-	 */
-	public String getCommandError() {
-		return commandError;
-	}
 
-        public static void printList(Object... list) {
-            ArrayOperations.printHorizontal(list);
+    public static enum Shell {BASH};
+
+    //private Runtime rt;
+    private String commandOutput = null;
+    private String commandError = null;
+
+    /**
+     *Executes the given OS command and reads the output or error code, if any.
+     */
+    public int execute(String... command) {
+        Process p = null;
+        int ret = 0;
+        commandOutput = null;
+        commandError = null;
+        try {
+            //p = rt.exec(command);
+            List<String> commandChain = new LinkedList<String>();
+            for (String elem : command) {
+                commandChain.add(elem);
+            }
+            p = new ProcessBuilder(commandChain).start();
+            if (p != null) {
+                if (p.waitFor() == 0) {
+                    ret = p.exitValue();
+                    if (ret == 0) {
+                        InputStream iStream = p.getInputStream();
+                        StringBuffer sb = new StringBuffer();
+                        int iout = 0;
+                        while ((iout = iStream.read()) != -1) {
+                            sb.append((char) iout);
+                        }
+                        commandOutput = sb.toString();
+                    }
+                    else {
+                        InputStream iStream = p.getErrorStream();
+                        StringBuffer sb = new StringBuffer();
+                        int iout = 0;
+                        while ((iout = iStream.read()) != -1) {
+                            sb.append((char) iout);
+                        }
+                        commandError = sb.toString();
+                    }
+                }
+                p.destroy();
+            }
+            else {
+                ret = -1;
+                commandError = "Invalid command";
+            }
         }
+        catch (InterruptedException ie) {
+            ret = -2;
+            commandError = ie.getMessage();
+        }
+        catch (IOException ioe) {
+            ret = -3;
+            commandError = ioe.getMessage();
+        }
+        return ret;
+    }
+
+    public int executeShell(String cmd, Shell shellType) {
+        switch (shellType) {
+            case BASH: return execute("bash", "-c", cmd);
+            default: return -1;
+        }
+    }
+
+    /**
+     *@return a string with the command's output, null if there is none
+     */
+    public String getCommandOutput() {
+        return commandOutput;
+    }
+
+    /**
+     *@return a string with the command's error result, null if there is none.
+     */
+    public String getCommandError() {
+        return commandError;
+    }
 }
