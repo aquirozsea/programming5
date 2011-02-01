@@ -23,9 +23,12 @@ package programming5.io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.LinkedList;
-import programming5.arrays.ArrayOperations;
+import java.util.Map;
+import programming5.concurrent.ConditionVariable;
 
 /**
  *This class allows executing OS commands from java applications. The command is passed as a string to the execute method 
@@ -43,42 +46,61 @@ public class ConsoleInterface {
     private String commandOutput = null;
     private String commandError = null;
 
-    /**
-     *Executes the given OS command and reads the output or error code, if any.
-     */
-    public int execute(String... command) {
+    private boolean redirectOutput = true;
+    private PrintStream redirectStream = System.out;
+
+    public ConsoleInterface() {
+    }
+
+    public ConsoleInterface(boolean doRedirectOutput) {
+        redirectOutput = doRedirectOutput;
+    }
+
+    public void setRedirectPrintStream(PrintStream printStream) {
+        redirectStream = printStream;
+    }
+
+    protected int runProcess(ProcessBuilder pb) {
         Process p = null;
         int ret = 0;
         commandOutput = null;
         commandError = null;
         try {
-            //p = rt.exec(command);
-            List<String> commandChain = new LinkedList<String>();
-            for (String elem : command) {
-                commandChain.add(elem);
-            }
-            p = new ProcessBuilder(commandChain).start();
+            p = pb.start();
             if (p != null) {
+                OutputRedirector redirector = null;
+                if (redirectOutput) {
+                    redirector = new OutputRedirector(p.getInputStream(), redirectStream);
+                    new Thread(redirector).start();
+                }
                 if (p.waitFor() == 0) {
                     ret = p.exitValue();
                     if (ret == 0) {
-                        InputStream iStream = p.getInputStream();
-                        StringBuffer sb = new StringBuffer();
-                        int iout = 0;
-                        while ((iout = iStream.read()) != -1) {
-                            sb.append((char) iout);
+                        if (redirectOutput) {
+                            redirector.end();
                         }
-                        commandOutput = sb.toString();
+                        else {
+                            InputStream iStream = p.getInputStream();
+                            StringBuilder sb = new StringBuilder();
+                            int iout = 0;
+                            while ((iout = iStream.read()) != -1) {
+                                sb.append((char) iout);
+                            }
+                            commandOutput = sb.toString();
+                        }
                     }
                     else {
                         InputStream iStream = p.getErrorStream();
-                        StringBuffer sb = new StringBuffer();
+                        StringBuilder sb = new StringBuilder();
                         int iout = 0;
                         while ((iout = iStream.read()) != -1) {
                             sb.append((char) iout);
                         }
                         commandError = sb.toString();
                     }
+                }
+                if (redirectOutput) {
+                    redirector.waitUntilDone();
                 }
                 p.destroy();
             }
@@ -96,6 +118,21 @@ public class ConsoleInterface {
             commandError = ioe.getMessage();
         }
         return ret;
+    }
+
+    /**
+     *Executes the given OS command and reads the output or error code, if any.
+     */
+    public int execute(String... command) {
+        List<String> commandChain = new LinkedList<String>();
+        commandChain.addAll(Arrays.asList(command));
+        return runProcess(new ProcessBuilder(commandChain));
+    }
+
+    public int execute(List<String> commandChain, Map<String, String> environment) {
+        ProcessBuilder pb = new ProcessBuilder(commandChain);
+        pb.environment().putAll(environment);
+        return runProcess(pb);
     }
 
     public int executeShell(String cmd, Shell shellType) {
@@ -117,5 +154,47 @@ public class ConsoleInterface {
      */
     public String getCommandError() {
         return commandError;
+    }
+
+    private class OutputRedirector implements Runnable {
+
+        boolean running = true;
+        ConditionVariable done = new ConditionVariable();
+        InputStream iStream;
+        PrintStream oStream;
+
+        public OutputRedirector(InputStream myInputStream, PrintStream myOutputStream) {
+            iStream = myInputStream;
+            oStream = myOutputStream;
+        }
+
+        public void end() {
+            running = false;
+        }
+
+        public void waitUntilDone() {
+            done.awaitUninterruptibly();
+        }
+
+        public void run() {
+            int iout = 0;
+            while (running || iout != -1) {
+                try {
+                    iout = iStream.read();
+                    if (iout != -1) {
+                        StringBuilder sb = new StringBuilder();
+                        while (iout != 10 && iout != 13 && iout != -1) {
+                            sb.append((char) iout);
+                            iout = iStream.read();
+                        }
+                        oStream.println(sb.toString());
+                    }
+                }
+                catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+            done.signalAll();
+        }
     }
 }
