@@ -5,22 +5,20 @@
 
 package programming5.collections;
 
-import java.util.Map.Entry;
-
 /**
  *
  * @author andresqh
  */
-public class StandaloneEntry<K, V> implements Entry<K, V> {
+public class EntryObject<K, V> implements java.util.Map.Entry<K, V> {
 
     protected final K key;
     protected V value;
 
-    public StandaloneEntry(K myKey) {
+    public EntryObject(K myKey) {
         key = myKey;
     }
 
-    public StandaloneEntry(K myKey, V myValue) {
+    public EntryObject(K myKey, V myValue) {
         key = myKey;
         value = myValue;
     }
