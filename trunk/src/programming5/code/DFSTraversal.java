@@ -21,6 +21,8 @@
 
 package programming5.code;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 import programming5.collections.GraphNode;
 import programming5.collections.HashTable;
@@ -46,6 +48,7 @@ public class DFSTraversal<T> {
 
     /**
      * Default operation (nop) for a node content after a child branch has been completely processed
+     * (note that inprocess is not called for leaf nodes)
      * @param parent the node whose downstream graph is currently being explored (parent node)
      * @param child the child node whose downstream graph has been processed
      * @param link the index of the child node within the adjacent nodes of the parent node
@@ -57,6 +60,12 @@ public class DFSTraversal<T> {
      * @param node the content object
      */
     public void postprocessNode(T node) {}
+
+    public void reProcessNode(T node, T from) {}
+
+    public Set<GraphNode<T>> getGraphNodes() {
+        return new HashSet<GraphNode<T>>(visited.keySet());
+    }
 
     /**
      * Invoked to execute the DFS completely
@@ -81,6 +90,9 @@ public class DFSTraversal<T> {
                     dfsNodeStack.push(nextNode);
                     dfsLinkStack.push(0);
                     visited.put(nextNode, Boolean.TRUE);
+                }
+                else {
+                    reProcessNode(nextNode.getContent(), currentNode.getContent());
                 }
             }
             else {
