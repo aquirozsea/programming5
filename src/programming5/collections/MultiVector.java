@@ -208,6 +208,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
      *@see java.util.Vector#contains
      */
     public boolean contains(Object object) {
+        boolean contains;
+        if (isSorted1) {
+
+        }
         return vector1.contains(object) || vector2.contains(object);
     }
     
