@@ -691,4 +691,14 @@ public abstract class CollectionUtils {
         }
     }
 
+    public static <T, U> List<T> findMatch(List<T> list, U feature, Comparator comp) {
+        List<T> matches = new ArrayList<T>();
+        for (T element : list) {
+            if (comp.compare(element, feature) == 0) {
+                matches.add(element);
+            }
+        }
+        return matches;
+    }
+
 }
