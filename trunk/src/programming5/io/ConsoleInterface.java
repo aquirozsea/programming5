@@ -75,7 +75,7 @@ public class ConsoleInterface {
                 }
                 if (p.waitFor() == 0) {
                     ret = p.exitValue();
-                    if (ret == 0) {
+//                    if (ret == 0) {
                         if (redirectOutput) {
                             redirector.end();
                         }
@@ -88,8 +88,8 @@ public class ConsoleInterface {
                             }
                             commandOutput = sb.toString();
                         }
-                    }
-                    else {
+//                    }
+//                    else {
                         InputStream iStream = p.getErrorStream();
                         StringBuilder sb = new StringBuilder();
                         int iout = 0;
@@ -97,7 +97,7 @@ public class ConsoleInterface {
                             sb.append((char) iout);
                         }
                         commandError = sb.toString();
-                    }
+//                    }
                 }
                 if (redirectOutput) {
                     redirector.waitUntilDone();
