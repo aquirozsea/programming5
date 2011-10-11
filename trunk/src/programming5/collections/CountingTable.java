@@ -23,6 +23,7 @@ package programming5.collections;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Wrapper class for a hashtable with an integer value that can be used to keep track of counts for its key elements
@@ -109,6 +110,28 @@ public class CountingTable<E> {
      */
     public int getMaxCount() {
         return CollectionUtils.max(baseTable.values());
+    }
+
+    public int getCount(E key) {
+        return baseTable.safeGet(key, 0);
+    }
+    
+    public Set<E> keySet() {
+        return baseTable.keySet();
+    }
+    
+    public Set<Entry<E, Integer>> entryIterator() {
+        return baseTable.entrySet();
+    }
+
+    public static <T> CountingTable<T> add(CountingTable<T>... tables) {
+        CountingTable<T> ret = new CountingTable<T>();
+        for (CountingTable<T> table : tables) {
+            for (T key : table.keySet()) {
+                ret.increaseCount(key, table.getCount(key));
+            }
+        }
+        return ret;
     }
 
 }
