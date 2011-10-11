@@ -3092,6 +3092,32 @@ public abstract class ArrayOperations {
         return sortedOrder;
     }
 
+    public static <T extends Comparable, S extends T> int binarySearch(T[] array, S value, int[] order) {
+        int ret;
+        if (value.compareTo(array[order[0]]) < 0) {
+            ret = -1;
+        }
+        else if (value.compareTo(array[order[array.length-1]]) > 0) {
+            ret = -1;
+        }
+        else {
+            int a = 0;
+            int b = array.length-1;
+            int middle;
+            while (b - a > 1) {
+                middle = (a+b) / 2;
+                if (value.compareTo(array[order[middle]]) > 0) {
+                    a = middle;
+                }
+                else {
+                    b = middle;
+                }
+            }
+            ret = (value.compareTo(array[order[b]]) == 0) ? order[b] : -1;
+        }
+        return ret;
+    }
+
     public static <T, U> void castArray(U[] original, T[] dest) {
         for (int i = 0; i < original.length; i++) {
             dest[i] = (T) original[i];
