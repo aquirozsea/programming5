@@ -73,6 +73,21 @@ public class GraphNode<T> {
     }
 
     /**
+     * Creates a directed adjacency link between the current node and the given node at the given position.
+     * All existing links after this position are shifted by one
+     */
+    public void addLink(GraphNode<T> adjacentNode, int position) {
+        CollectionUtils.insert(adjacent, adjacentNode, position);
+    }
+
+    /**
+     * Resets a directed adjacency link between the current node and the given node at the given position, if it exists
+     */
+    public void setLink(GraphNode<T> adjacentNode, int position) {
+        adjacent.set(position, adjacentNode);
+    }
+
+    /**
      * Creates an undirected adjacency link between the current node and the given node
      */
     public void addUndirectedLink(GraphNode<T> adjacentNode) {
