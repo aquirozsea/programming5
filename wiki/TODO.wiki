@@ -1,0 +1,5 @@
+#summary Contains pending programming efforts
+
+= TODO =
+
+  * Add decode date method in StringOperations interface
