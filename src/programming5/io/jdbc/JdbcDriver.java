@@ -33,7 +33,7 @@ import java.util.Properties;
 import programming5.io.Debug;
 
 /**
- *
+ * This class is a utility wrapper for a JDBC database connection, providing basic CRUD methods
  * @version 6.19
  */
 public class JdbcDriver {
