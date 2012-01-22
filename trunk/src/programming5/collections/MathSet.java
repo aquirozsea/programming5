@@ -21,10 +21,11 @@
 
 package programming5.collections;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Vector;
+import java.util.List;
 import java.util.Random;
 import programming5.arrays.RandomOrderGenerator;
 import programming5.arrays.SetOperations;
@@ -34,7 +35,7 @@ import programming5.arrays.SubsetGenerator;
  *This generic class is an extension of the java.util.HashSet collection that provides useful set manipulation 
  *operations, to be applied from an instance of the class or as static methods.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.09
  */
 public class MathSet<E> extends HashSet<E> {
     
@@ -156,11 +157,11 @@ public class MathSet<E> extends HashSet<E> {
 	/**
          *@return a new MathSet of two-element vectors that is the cartesian product of this set with the given set
          */
-        public MathSet<Vector<E>> product(Set<? extends E> set) {
-		MathSet<Vector<E>> result = new MathSet<Vector<E>>();
+        public MathSet<List<E>> product(Set<? extends E> set) {
+		MathSet<List<E>> result = new MathSet<List<E>>();
 		for (E e1 : this) {
 			for (E e2 : set) {
-				Vector<E> tuple = new Vector<E>();
+				List<E> tuple = new ArrayList<E>();
 				tuple.add(e1);
 				tuple.add(e2);
 				result.add(tuple);
@@ -172,8 +173,8 @@ public class MathSet<E> extends HashSet<E> {
 	/**
          *@return a new MathSet of two-element vectors that is the cartesian product of the given sets
          */
-        public static <T> Set<Vector<T>> product(Set<? extends T> set1, Set<? extends T>... sets) {
-		Set<Vector<T>> result = null;
+        public static <T> Set<List<T>> product(Set<? extends T> set1, Set<? extends T>... sets) {
+		Set<List<T>> result = null;
 		MathSet<T> mset1 = new MathSet<T>(set1);
 		for (Set<? extends T> set : sets) {
 			if (result == null) {
@@ -186,12 +187,12 @@ public class MathSet<E> extends HashSet<E> {
 		return result;
 	}
 	
-	private static <T> Set<Vector<T>> product(Set<Vector<T>> tupleSet, Set<? extends T> set) {
-		MathSet<Vector<T>> result = new MathSet<Vector<T>>();
-		for (Vector<T> tuple : tupleSet) {
-			Vector<T> tupleClone = null;
+	private static <T> Set<List<T>> product(Set<List<T>> tupleSet, Set<? extends T> set) {
+		MathSet<List<T>> result = new MathSet<List<T>>();
+		for (List<T> tuple : tupleSet) {
+			List<T> tupleClone = null;
 			for (T elem : set) {
-					tupleClone = (Vector<T>)tuple.clone();
+					tupleClone = new ArrayList<T>(tuple);
 					tupleClone.add(elem);
 					result.add(tupleClone);
 			}

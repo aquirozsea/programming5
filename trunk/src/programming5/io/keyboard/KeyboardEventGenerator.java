@@ -25,8 +25,8 @@ import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import programming5.net.Publisher;
 
 /**
@@ -40,7 +40,7 @@ import programming5.net.Publisher;
  *@see KeyboardEvent
  *@see java.awt.event.KeyListener
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.09
  */
 public class KeyboardEventGenerator extends Publisher<KeyboardEvent> implements KeyListener, Runnable {
     
@@ -95,7 +95,7 @@ public class KeyboardEventGenerator extends Publisher<KeyboardEvent> implements 
      *@see #enableKey(int)
      *@see #disableKey(int)
      */
-    public void setEnabledKeys(Vector<Integer> keyCodes) {
+    public void setEnabledKeys(List<Integer> keyCodes) {
         userKeys = new HashSet<Integer>();
         defKeyState = DefaultKeyState.DISABLED;
         for (Integer code : keyCodes) {
@@ -129,7 +129,7 @@ public class KeyboardEventGenerator extends Publisher<KeyboardEvent> implements 
      *@see #disableKey(int)
      *@see #enableKey(int)
      */
-    public void setDisabledKeys(Vector<Integer> keyCodes) {
+    public void setDisabledKeys(List<Integer> keyCodes) {
         userKeys = new HashSet<Integer>();
         defKeyState = DefaultKeyState.ENABLED;
         for (Integer code : keyCodes) {

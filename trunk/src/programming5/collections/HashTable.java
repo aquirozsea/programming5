@@ -21,16 +21,16 @@
 
 package programming5.collections;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * This extension of a java Hashtable implements the programming5 PMap interface.
  * @see programming5.collections.PMap
  * @author Andres Quiroz Hernandez
- * @version 6.0
+ * @version 6.19
  */
-public class HashTable<E, D> extends Hashtable<E, D> implements PMap<E, D> {
+public class HashTable<E, D> extends HashMap<E, D> implements PMap<E, D> {
 
     public HashTable() {
         super();

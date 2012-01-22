@@ -1,5 +1,5 @@
 /*
- * CollectionUtils.java
+ * DFSTraversal.java
  *
  * Copyright 2009 Andres Quiroz Hernandez
  *

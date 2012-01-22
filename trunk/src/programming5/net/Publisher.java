@@ -21,7 +21,8 @@
 
 package programming5.net;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import programming5.concurrent.ThreadPool;
 
@@ -32,11 +33,11 @@ import programming5.concurrent.ThreadPool;
  *the publishing application.
  *@see Subscriber
  *@author Andres Quiroz Hernandez
- *@version 6.11
+ *@version 6.19
  */
 public class Publisher<E extends programming5.net.Event> implements IThreadAwarePublisher<E> {
     
-    protected Vector<Subscriber<E>> listeners = new Vector<Subscriber<E>>();
+    protected List<Subscriber<E>> listeners = new ArrayList<Subscriber<E>>();
     protected ReentrantReadWriteLock listenerLock = new ReentrantReadWriteLock();
     
     @Override
@@ -141,7 +142,7 @@ public class Publisher<E extends programming5.net.Event> implements IThreadAware
         }
         try {
             listenerLock.writeLock().lock();
-            listeners.removeAllElements();
+            listeners.removeAll(listeners);
         }
         finally {
             listenerLock.writeLock().unlock();

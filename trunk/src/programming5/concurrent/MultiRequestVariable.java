@@ -21,8 +21,9 @@
 
 package programming5.concurrent;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * This class represents a pending asynchronous request for which more than one response is expected, 
@@ -31,11 +32,11 @@ import java.util.Vector;
  * methods of the Condition should not be used directly, unless the application logic requires the awaiting 
  * threads to be signaled without the result being complete.
  * @author Andres Quiroz Hernandez
- * @version 6.0
+ * @version 6.09
  */
 public class MultiRequestVariable<E> extends ConditionVariable {
     
-    protected final Vector<E> result = new Vector<E>();
+    protected final List<E> result = new ArrayList<E>();
     
     private int targetSize;
     private boolean exact = false; 

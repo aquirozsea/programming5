@@ -32,7 +32,7 @@ import programming5.math.MathOperations;
 /**
  *Provides utility methods to use with/for collections classes
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.08
  */
 public abstract class CollectionUtils {
 
@@ -41,7 +41,9 @@ public abstract class CollectionUtils {
      * in the Vector class.
      * @param array the input array; the elements of the array will be put into the vector by reference
      * @return the filled vector of the type of the input array elements
+     * @deprecated use of Vector class is obsolete; use listFromArray instead
      */
+    @Deprecated 
     public static final <T> Vector<T> vectorFromArray(T[] array) {
         Vector<T> ret = new Vector<T>();
         for (T element : array) {
@@ -49,9 +51,43 @@ public abstract class CollectionUtils {
         }
         return ret;
     }
+    
+    /**
+     * To create a list with the elements of a given array
+     * @param array the input array; the elements of the array will be put into the list by reference
+     * @return the filled list of the type of the input array elements
+     */
+    public static final <T> List<T> listFromArray(T[] array) {
+        List<T> ret = new ArrayList<T>();
+        for (T element : array) {
+            ret.add(element);
+        }
+        return ret;
+    }
 
+    /**
+     * To create an integer vector with the elements of a given array, for which there is surprisingly no constructor
+     * in the Vector class.
+     * @param array the input array
+     * @return the filled integer vector
+     * @deprecated use of Vector class is obsolete; use listFromIntArray instead
+     */
+    @Deprecated 
     public static Vector<Integer> vectorFromIntArray(int[] array) {
         Vector<Integer> ret = new Vector<Integer>();
+        for (int element : array) {
+            ret.add(element);
+        }
+        return ret;
+    }
+    
+    /**
+     * To create an integer list with the elements of a given array
+     * @param array the input array
+     * @return the filled integer list
+     */
+    public static List<Integer> listFromIntArray(int[] array) {
+        List<Integer> ret = new ArrayList<Integer>();
         for (int element : array) {
             ret.add(element);
         }
@@ -63,9 +99,11 @@ public abstract class CollectionUtils {
      * in the Vector class.
      * @param element the input element, which will be put into the vector by reference
      * @return the typed vector containing the given element
+     * @deprecated use of vector is obsolete; use Collections.singletonList instead
      */
+    @Deprecated
     public static final <T> Vector<T> vectorFromElement(T element) {
-        Vector<T> ret = new Vector<T>();
+        Vector<T> ret = new Vector<T>(); 
         ret.add(element);
         return ret;
     }
@@ -75,7 +113,9 @@ public abstract class CollectionUtils {
      * @param element the input element, which will be put into the vector by reference
      * @param type the vector type, which is a superclass of the element type.
      * @return the typed vector containing the given element
+     * @deprecated use of Vector class is obsolete; use listFromElement method instead
      */
+    @Deprecated
     public static final <T, U extends T> Vector<T> vectorFromElement(U element, Class<T> type) {
         Vector<T> ret = new Vector<T>();
         ret.add(element);
@@ -83,29 +123,41 @@ public abstract class CollectionUtils {
     }
 
     /**
-     * Upcasts the given vector of a derived class to a vector of a base class
-     * @param vector the vector to downcast
-     * @param type the superclass that will determine the returned vector class
-     * @return a new vector of the base type with all the elements of the input vector (by
+     * To create a list initialized to contain the given element of a subclass of the list type.
+     * @param element the input element, which will be put into the list by reference
+     * @param type the list type, which is a superclass of the element type.
+     * @return the typed list containing the given element
+     */
+    public static final <T, U extends T> List<T> listFromElement(U element, Class<T> type) {
+        List<T> ret = new ArrayList<T>();
+        ret.add(element);
+        return ret;
+    }
+
+    /**
+     * Upcasts the given list of a derived class to a list of a base class
+     * @param list the list to downcast
+     * @param type the superclass that will determine the returned list class
+     * @return a new list of the base type with all the elements of the input list (by
      * reference)
      */
-    public static final <T, U extends T> Vector<T> upcastVector(Vector<U> vector, Class<T> type) {
-        Vector<T> ret = new Vector<T>();
-        for (U element : vector) {
+    public static final <T, U extends T> List<T> upcastList(List<U> list, Class<T> type) {
+        List<T> ret = new ArrayList<T>();
+        for (U element : list) {
             ret.add(element);
         }
         return ret;
     }
 
     /**
-     * Downcasts the given vector of a base class, if possible, to a vector of a derived class.
-     * @param vector the vector to upcast, which must be composed of elements of the derived class
-     * @return a new vector of the derived class with all the elements of the input vector
-     * @throws ClassCastException if the elements of the input vector are not of the derived class
+     * Downcasts the given list of a base class, if possible, to a list of a derived class.
+     * @param list the list to upcast, which must be composed of elements of the derived class
+     * @return a new list of the derived class with all the elements of the input list
+     * @throws ClassCastException if the elements of the input list are not of the derived class
      */
-    public static final <T, U extends T> Vector<U> downcastVector(Vector<T> vector) {
-        Vector<U> ret = new Vector<U>();
-        for (T element : vector) {
+    public static final <T, U extends T> List<U> downcastList(List<T> list) {
+        List<U> ret = new ArrayList<U>();
+        for (T element : list) {
             ret.add((U) element);
         }
         return ret;

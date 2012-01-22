@@ -22,22 +22,23 @@
 package programming5.io;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An instrumented thread is a derived thread object that provides methods to keep timing information during
  * the thread's runtime and to show the timing information, either individually or for all instrumented
  * threads.
  * @author Andres Quiroz Hernandez
- * @version 6.0
+ * @version 6.09
  */
 public class InstrumentedThread extends Thread {
 
     static final ArrayList<InstrumentedThread> threadList = new ArrayList<InstrumentedThread>();
-    static final Hashtable<String, ArrayList<InstrumentedThread>> groupThreadLists = new Hashtable<String, ArrayList<InstrumentedThread>>();
+    static final Map<String, ArrayList<InstrumentedThread>> groupThreadLists = new HashMap<String, ArrayList<InstrumentedThread>>();
 
-    Hashtable<String, Long> callLog = new Hashtable<String, Long>();
+    Map<String, Long> callLog = new HashMap<String, Long>();
     Runnable runnableClass = null;
 
     /**

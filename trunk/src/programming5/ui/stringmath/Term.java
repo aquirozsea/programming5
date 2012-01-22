@@ -21,7 +21,8 @@
 
 package programming5.ui.stringmath;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import programming5.math.MathOperations;
 
 /**
@@ -29,14 +30,14 @@ import programming5.math.MathOperations;
  *providing the string representations that reflect all of the operations performed, using the toString method. This class defines an 
  *expression of the form factor*variables which is the building block of all other expressions.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.09
  */
 public class Term extends Expression {
     
     private static final int NO_FIX = -1;
     
     private double number = 1;
-    private Vector<String> variables = new Vector<String>();
+    private List<String> variables = new ArrayList<String>();
     private boolean operator = false;
     private int fix = NO_FIX;
     

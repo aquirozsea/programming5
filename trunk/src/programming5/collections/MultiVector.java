@@ -39,7 +39,9 @@ import programming5.strings.StringOperations;
  *specifying the other. Vector elements can also be accessed separately by search or by their index number.
  *@author Andres Quiroz Hernandez
  *@version 6.0
+ *@deprecated this class is based on the java.util.Vector class, the use of which is obsolete; use the MultiList class instead
  */
+@Deprecated
 public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
     
     protected Vector<E> vector1;

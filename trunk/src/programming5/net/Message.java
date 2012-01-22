@@ -21,7 +21,8 @@
 
 package programming5.net;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import programming5.arrays.ArrayOperations;
 
 /**
@@ -42,7 +43,7 @@ import programming5.arrays.ArrayOperations;
  *accessors were added to manipulate these items directly as byte arrays, for serialized objects or raw byte
  *payloads.
  *@author Andres Quiroz Hernandez
- *@version 6.1
+ *@version 6.19
  */
 public class Message {
     
@@ -133,7 +134,7 @@ public class Message {
             if (headerIndex > 0) {
                 header = new String(ArrayOperations.prefix(messageBytes, headerIndex));
             }
-            Vector<Integer> separators = new Vector<Integer>();
+            List<Integer> separators = new ArrayList<Integer>();
             int start = headerIndex + 1;
             int separatorIndex = ArrayOperations.seqFind(sepByte, messageBytes, start);
             while (separatorIndex > 0 && separatorIndex < (messageBytes.length-1)) {
@@ -146,7 +147,7 @@ public class Message {
             body = new byte[separators.size()+1][];
             start = headerIndex + 1;
             for (int i = 0; i < separators.size(); i++) {
-                int separator = separators.elementAt(i);
+                int separator = separators.get(i);
                 body[i] = ArrayOperations.subArray(messageBytes, start, separator);
                 start = separator + 2;
             }

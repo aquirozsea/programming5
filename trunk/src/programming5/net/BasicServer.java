@@ -21,7 +21,8 @@
 
 package programming5.net;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *This is a base class for server implementations in a client/server system. A concrete subclass of this class must 
@@ -29,11 +30,11 @@ import java.util.Vector;
  *protocol. The accept thread must have a reference to the BasicServer object, which is a ServiceObject, so that it can 
  *call the newClient method every time a new client connects.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.09
  */
 public abstract class BasicServer implements ServiceObject {
 	
-	protected Vector<PluggableClient> clients = new Vector<PluggableClient>();
+	protected List<PluggableClient> clients = new ArrayList<PluggableClient>();
 	protected ServerAcceptThread accepter = null;
 	protected ServiceObjectFactory sObjFact = null;	
 	
