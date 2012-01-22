@@ -27,12 +27,14 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import programming5.arrays.ArrayOperations;
-import programming5.collections.MultiVector;
+import programming5.collections.MultiList;
 import programming5.io.Debug;
 import programming5.net.MessageArrivedEvent;
 import programming5.net.MessagingClient;
@@ -49,16 +51,16 @@ import programming5.net.ReceiveRequest;
  *@see programming5.net.PluggableClient
  *@see java.net.Socket
  *@author Andres Quiroz Hernandez
- *@version 6.0.1
+ *@version 6.09
  */
 public class TCPClient extends Publisher<MessageArrivedEvent> implements MessagingClient {
     
-    protected Vector<String> pendingConnections = new Vector<String>();
-    protected Hashtable<String, Socket> connections = new Hashtable<String, Socket>();
-    protected Hashtable<String, OutputStream> outStreams = new Hashtable<String, OutputStream>();
-    protected Hashtable<String, Integer> localPorts = new Hashtable<String, Integer>();
-    protected Hashtable<String, TCPReceiver> receivers = new Hashtable<String, TCPReceiver>();
-    protected final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
+    protected List<String> pendingConnections = new ArrayList<String>();
+    protected Map<String, Socket> connections = new HashMap<String, Socket>();
+    protected Map<String, OutputStream> outStreams = new HashMap<String, OutputStream>();
+    protected Map<String, Integer> localPorts = new HashMap<String, Integer>();
+    protected Map<String, TCPReceiver> receivers = new HashMap<String, TCPReceiver>();
+    protected final List<ReceiveRequest> receiveRequests = new ArrayList<ReceiveRequest>();
     
     private static final int ANYPORT = -1;
     private boolean useSeparator = true;
@@ -148,7 +150,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *Creates a TCPClient that can be used to communicate with all the hosts addressed by the given urls. The clients will be 
      *bound to the local ports specified with the urls.
      */
-    public TCPClient(MultiVector<String, Integer> socketDescriptors) {
+    public TCPClient(MultiList<String, Integer> socketDescriptors) {
         for (String url : socketDescriptors.first()) {
             pendingConnections.add(url);
             localPorts.put(url, socketDescriptors.getInSecond(url));
@@ -160,9 +162,10 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
      *addresses with which the client has been created, gets their output streams, and starts their receiver
      *threads.
      */
+    @Override
     public void establishConnection() throws NetworkException {
         if (pendingConnections.size() > 0) {
-            MultiVector<String, String> failedConnections = new MultiVector<String, String>();
+            MultiList<String, String> failedConnections = new MultiList<String, String>();
             for (String host : pendingConnections) {
                 int localPort = localPorts.get(host);
                 try {
@@ -206,7 +209,7 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
             byte[] header = ArrayOperations.join(Integer.toString(bytesMessage.length).getBytes(), SEPARATOR);
             bytesMessage = ArrayOperations.join(header, bytesMessage);
         }
-        MultiVector<String, String> failedSend = new MultiVector<String, String>();
+        MultiList<String, String> failedSend = new MultiList<String, String>();
         for (String host : connections.keySet()) {
             try {
                 OutputStream out = outStreams.get(host);

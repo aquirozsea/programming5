@@ -30,14 +30,16 @@ import java.util.Vector;
  * end of the vector.
  * @author Andres Quiroz Hernandez
  * @version 6.0
+ * @deprecated this class is based on the Vector class, the use of which is considered obsolete; use the new RotatingList instead
  */
+@Deprecated
 public class RotatingVector<E> extends Vector<E> {
     
     private int pointer = 0;
     private int fixedSize;
     
     /**
-     *Creates a new rotating vector based on the default initial capicity of the Vector class.
+     *Creates a new rotating vector based on the default initial capacity of the Vector class.
      *@see java.util.Vector
      */
     public RotatingVector() {

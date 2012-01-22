@@ -21,14 +21,16 @@
 
 package programming5.net.sockets;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import programming5.arrays.ArrayOperations;
-import programming5.collections.RotatingVector;
+import programming5.collections.RotatingList;
 import programming5.io.Debug;
 import programming5.net.AsynchMessageArrivedEvent;
 import programming5.net.MalformedMessageException;
@@ -69,16 +71,16 @@ import programming5.net.Subscriber;
  *@see programming5.net.ReliableProtocolMessage
  *@see programming5.net.ReliableMessageArrivedListener
  *@author Andres Quiroz Hernandez
- *@version 6.11
+ *@version 6.19
  */
 public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements MessagingClient, MessageArrivedListener {
     
     protected UDPClient client;
-    protected final Hashtable<Long, ReliableProtocolMessage[]> messageTable = new Hashtable<Long, ReliableProtocolMessage[]>();
-    protected final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
-    protected final Hashtable<String, byte[][]> assembly = new Hashtable<String, byte[][]>();
-    protected final Hashtable<String, boolean[]> assemblyCounter = new Hashtable<String, boolean[]>();
-    protected final RotatingVector<String> receivedMessages = new RotatingVector<String>(DEF_RCV_MEMORY);
+    protected final Map<Long, ReliableProtocolMessage[]> messageTable = new HashMap<Long, ReliableProtocolMessage[]>();
+    protected final List<ReceiveRequest> receiveRequests = new ArrayList<ReceiveRequest>();
+    protected final Map<String, byte[][]> assembly = new HashMap<String, byte[][]>();
+    protected final Map<String, boolean[]> assemblyCounter = new HashMap<String, boolean[]>();
+    protected final RotatingList<String> receivedMessages = new RotatingList<String>(DEF_RCV_MEMORY);
 
     private long timeout = DEF_TIMEOUT;
     private int maxResend = DEF_RESEND;
@@ -577,9 +579,9 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
 
         @Override
         public void run() {
-            Vector<ReliableProtocolMessage[]> unackedMessages;
+            List<ReliableProtocolMessage[]> unackedMessages;
             synchronized (messageTable) {
-                unackedMessages = new Vector<ReliableProtocolMessage[]>(messageTable.values());
+                unackedMessages = new ArrayList<ReliableProtocolMessage[]>(messageTable.values());
             }
             for (ReliableProtocolMessage[] message : unackedMessages) {
                 boolean allAcked = true;

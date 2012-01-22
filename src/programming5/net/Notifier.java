@@ -21,7 +21,8 @@
 
 package programming5.net;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *This class implements a standard notifier that subscribes listeners that expect to be signaled. 
@@ -29,24 +30,28 @@ import java.util.Vector;
  *the notifying application.
  *@see Listener
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.09
  */
 public abstract class Notifier implements INotifier {
     
-    protected Vector<Listener> listeners = new Vector<Listener>();
+    protected List<Listener> listeners = new ArrayList<Listener>();
     
+    @Override
     public void addListener(Listener s) {
         listeners.add(s);
     }
     
+    @Override
     public void removeListener(Listener s) {
         listeners.remove(s);
     }
     
+    @Override
     public void fireSignal() {
         for (Listener listener : listeners) {
             final Listener auxListener = listener;
             new Thread(new Runnable() {
+                @Override
                 public void run() {
                     auxListener.signal();
                 }

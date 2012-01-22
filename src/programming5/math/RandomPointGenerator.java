@@ -21,15 +21,16 @@
 
 package programming5.math;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 import programming5.arrays.ArrayOperations;
 
 /**
  * Generates real-valued points (coordinates) in a multidimensional space around fixed geometries with random noise.
  * @author Andres Quiroz Hernandez
- * @version 6.01
+ * @version 6.09
  */
 public class RandomPointGenerator {
     
@@ -45,17 +46,17 @@ public class RandomPointGenerator {
     protected DistType[] declaredTypes = {DistType.AREA};
     protected int[] correspondence = null;
     // Point specs
-    protected Vector<double[]> pointCenters = new Vector<double[]>();
-    protected Vector<double[][][]> pointAngleDistributions = new Vector<double[][][]>();
-    protected Vector<double[][][]> pointWidthDistributions = new Vector<double[][][]>();
+    protected List<double[]> pointCenters = new ArrayList<double[]>();
+    protected List<double[][][]> pointAngleDistributions = new ArrayList<double[][][]>();
+    protected List<double[][][]> pointWidthDistributions = new ArrayList<double[][][]>();
     // Line specs
-    protected Vector<double[]> lineCoefficients = new Vector<double[]>();
-    protected Vector<double[]> lineIntercepts = new Vector<double[]>();
-//    protected Vector<double[][][]> lineDistributions = new Vector<double[][][]>();
-    protected Vector<double[][]> lineDomainDistributions = new Vector<double[][]>();
-    protected Vector<double[][][]> lineWidthDistributions = new Vector<double[][][]>();
+    protected List<double[]> lineCoefficients = new ArrayList<double[]>();
+    protected List<double[]> lineIntercepts = new ArrayList<double[]>();
+//    protected List<double[][][]> lineDistributions = new ArrayList<double[][][]>();
+    protected List<double[][]> lineDomainDistributions = new ArrayList<double[][]>();
+    protected List<double[][][]> lineWidthDistributions = new ArrayList<double[][][]>();
     // Area specs
-    protected Vector<double[][][]> areaDistributions = new Vector<double[][][]>();
+    protected List<double[][][]> areaDistributions = new ArrayList<double[][][]>();
     
     /**
      *Initializes a new random point generator in a space with a limit for each dimension given each value of the given space range array.
@@ -108,7 +109,7 @@ public class RandomPointGenerator {
         for (int i = 0; i < angleDistribution.length; i++) {
             pointDistribution[i] = Arrays.copyOf(angleDistribution[i], 3);
         }
-        pointAngleDistributions.elementAt(pointIndex)[dimension] = pointDistribution;
+        pointAngleDistributions.get(pointIndex)[dimension] = pointDistribution;
     }
     
     /**
@@ -126,7 +127,7 @@ public class RandomPointGenerator {
         for (int i = 0; i < widthDistribution.length; i++) {
             pointDistribution[i] = Arrays.copyOf(widthDistribution[i], 3);
         }
-        pointWidthDistributions.elementAt(pointIndex)[dimension] = pointDistribution;
+        pointWidthDistributions.get(pointIndex)[dimension] = pointDistribution;
     }
     
     /**
@@ -163,7 +164,7 @@ public class RandomPointGenerator {
         for (int i = 0; i < distribution.length; i++) {
             lineDomainDistribution[i] = Arrays.copyOf(distribution[i], 3);
         }
-        lineDomainDistributions.setElementAt(lineDomainDistribution, lineIndex);
+        lineDomainDistributions.set(lineIndex, lineDomainDistribution);
     }
 
     /**
@@ -183,7 +184,7 @@ public class RandomPointGenerator {
         for (int i = 0; i < distribution.length; i++) {
             lineWidthDistribution[i] = Arrays.copyOf(distribution[i], 3);
         }
-        lineWidthDistributions.elementAt(lineIndex)[dimension] = lineWidthDistribution;
+        lineWidthDistributions.get(lineIndex)[dimension] = lineWidthDistribution;
     }
     
     /**
@@ -211,14 +212,14 @@ public class RandomPointGenerator {
         for (int i = 0; i < distribution.length; i++) {
             areaDistribution[i] = Arrays.copyOf(distribution[i], 3);
         }
-        areaDistributions.elementAt(areaIndex)[dimension] = areaDistribution;
+        areaDistributions.get(areaIndex)[dimension] = areaDistribution;
     }
     
     /**
      *Generates the given number of points (coordinates) according to the distributions given.
      */
-    public Vector<double[]> generate(int number) {
-        Vector<double[]> points = new Vector<double[]>();
+    public List<double[]> generate(int number) {
+        List<double[]> points = new ArrayList<double[]>();
         for (int i = 0; i < number; i++) {
             double[] nextPoint = new double[dimensions];
             // Find declaration by which point will be generated
@@ -235,9 +236,9 @@ public class RandomPointGenerator {
             DistType distType = declaredTypes[declaration];
             switch (distType) {
                 case POINT: {
-                    nextPoint = Arrays.copyOf(pointCenters.elementAt(correspondence[declaration]), dimensions);
+                    nextPoint = Arrays.copyOf(pointCenters.get(correspondence[declaration]), dimensions);
                     for (int dim = 0; dim < dimensions-1; dim++) {
-                        double[][] widthDistribution = pointWidthDistributions.elementAt(correspondence[declaration])[dim];
+                        double[][] widthDistribution = pointWidthDistributions.get(correspondence[declaration])[dim];
                         double width;
                         if (widthDistribution != null) {
                             width = applyDistribution(widthDistribution);
@@ -245,7 +246,7 @@ public class RandomPointGenerator {
                         else {
                             width = random.nextFloat() * range[0];
                         }
-                        double[][] angleDistribution = pointAngleDistributions.elementAt(correspondence[declaration])[dim];
+                        double[][] angleDistribution = pointAngleDistributions.get(correspondence[declaration])[dim];
                         double angle;
                         if (angleDistribution != null) {
                             angle = applyDistribution(angleDistribution);
@@ -263,21 +264,21 @@ public class RandomPointGenerator {
                 case LINE: {
                     // Set line point
                     nextPoint = new double[dimensions];
-                    double[][] coordDistribution = lineDomainDistributions.elementAt(correspondence[declaration]);
+                    double[][] coordDistribution = lineDomainDistributions.get(correspondence[declaration]);
                     if (coordDistribution != null) {
                         nextPoint[0] = applyDistribution(coordDistribution);
                     }
                     else {
                         nextPoint[0] = range[0] * random.nextFloat();
                     }
-                    double[] coefficients = lineCoefficients.elementAt(correspondence[declaration]);
-                    double[] intercepts = lineIntercepts.elementAt(correspondence[declaration]);
+                    double[] coefficients = lineCoefficients.get(correspondence[declaration]);
+                    double[] intercepts = lineIntercepts.get(correspondence[declaration]);
                     for (int dim = 1; dim < dimensions; dim++) {
                         nextPoint[dim] = coefficients[dim-1] * nextPoint[0] + intercepts[dim-1];
                     }
                     // Perturb line point
                     for (int dim = 0; dim < dimensions; dim++) {
-                        double[][] widthDistribution = lineWidthDistributions.elementAt(correspondence[declaration])[dim];
+                        double[][] widthDistribution = lineWidthDistributions.get(correspondence[declaration])[dim];
                         if (widthDistribution != null) {
                             nextPoint[dim] += applyDistribution(widthDistribution);
                         }
@@ -292,7 +293,7 @@ public class RandomPointGenerator {
                     for (int dim = 0; dim < dimensions; dim++) {
                         nextPoint[dim] = random.nextFloat() * range[dim];
                         if (declaration < declaredTypes.length-1) {
-                            double[][] sideDistribution = areaDistributions.elementAt(correspondence[declaration])[dim];
+                            double[][] sideDistribution = areaDistributions.get(correspondence[declaration])[dim];
                             if (sideDistribution != null) {
                                 nextPoint[dim] = applyDistribution(sideDistribution);
                             }

@@ -1,6 +1,22 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * JdbcDriver.java
+ *
+ * Copyright 2011 Andres Quiroz Hernandez
+ *
+ * This file is part of Programming5.
+ * Programming5 is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Programming5 is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Programming5.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package programming5.io.jdbc;
@@ -11,18 +27,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import programming5.io.Debug;
 
 /**
  *
- * @author aquirozh
+ * @version 6.19
  */
 public class JdbcDriver {
 
     Connection db = null;
-    Hashtable<String, Savepoint> savepoints = new Hashtable<String, Savepoint>();
+    Map<String, Savepoint> savepoints = new HashMap<String, Savepoint>();
 
 //    static {
 //        try {

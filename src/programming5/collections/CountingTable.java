@@ -1,5 +1,5 @@
 /*
- * CollectionUtils.java
+ * CountingTable.java
  *
  * Copyright 2010 Andres Quiroz Hernandez
  *
@@ -29,7 +29,7 @@ import java.util.Set;
  * Wrapper class for a hashtable with an integer value that can be used to keep track of counts for its key elements
  * of a given type.
  * @author aquirozh
- * @version 6.0
+ * @version 6.09
  */
 public class CountingTable<E> {
 

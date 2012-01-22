@@ -27,7 +27,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import programming5.arrays.ArrayOperations;
 import programming5.io.Debug;
 import programming5.net.AsynchMessageArrivedEvent;
@@ -39,7 +40,7 @@ import programming5.net.ReceivingThread;
  *This class complements the UDPClient class as a constant listener to the socket
  *@see programming5.net.sockets.UDPClient
  *@author Andres Quiroz Hernandez
- *@version 6.1
+ *@version 6.19
  */
 public class UDPReceiver extends ReceivingThread {
     
@@ -49,8 +50,8 @@ public class UDPReceiver extends ReceivingThread {
     private final int PACKET_SIZE = 65536;
     private boolean listening = true;
 
-    private Hashtable<String, byte[][]> assembly = new Hashtable<String, byte[][]>();
-    private Hashtable<String, boolean[]> assemblyCounter = new Hashtable<String, boolean[]>();
+    private Map<String, byte[][]> assembly = new HashMap<String, byte[][]>();
+    private Map<String, boolean[]> assemblyCounter = new HashMap<String, boolean[]>();
     
     public static final int NO_PORT = -1;
     

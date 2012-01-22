@@ -29,8 +29,9 @@ import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import programming5.arrays.ArrayOperations;
 import programming5.io.Debug;
@@ -51,7 +52,7 @@ import programming5.net.ReceiveRequest;
  *@see programming5.net.MessagingClient
  *@see #send(String, String, int)
  *@author Andres Quiroz Hernandez
- *@version 6.1
+ *@version 6.19
  */
 public class UDPClient extends Publisher<MessageArrivedEvent> implements MessagingClient {
     
@@ -61,7 +62,7 @@ public class UDPClient extends Publisher<MessageArrivedEvent> implements Messagi
     protected UDPReceiver receiver;
     protected boolean listening = false;
     protected boolean fixedHost, connect;
-    protected final Vector<ReceiveRequest> receiveRequests = new Vector<ReceiveRequest>();
+    protected final List<ReceiveRequest> receiveRequests = new ArrayList<ReceiveRequest>();
 
     protected static final int MAX_SIZE = 65450;
     protected static final String SEPARATOR = ":";

@@ -23,8 +23,9 @@ package programming5.io;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 import programming5.math.NumberRange;
 import programming5.arrays.ArrayOperations;
 
@@ -32,7 +33,7 @@ import programming5.arrays.ArrayOperations;
  *This class is meant to receive the argument array of an application to provide methods to get arguments of different 
  *primitive types, either by specifying tags or the position of the array item.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.09
  */
 public class ArgHandler {
     
@@ -728,8 +729,8 @@ public class ArgHandler {
      * Finds zero or more occurrences of a string argument, each preceded by the given tag
      * @return a possibly empty vector of strings that follow each occurrence of the given tag
      */
-    public Vector<String> getMultipleStringArg(String tag) {
-        Vector<String> ret = new Vector<String>();
+    public List<String> getMultipleStringArg(String tag) {
+        List<String> ret = new ArrayList<String>();
         int index = ArrayOperations.seqFind(tag, args);
         while (index >= 0) {
             try {
@@ -748,8 +749,8 @@ public class ArgHandler {
      * @param minOccurrences the minimum number of occurrences of the given tag
      * @return a possibly empty vector of strings that follow each occurrence of the given tag
      */
-    public Vector<String> getMultipleStringArg(String tag, int minOccurrences) {
-        Vector<String> ret = new Vector<String>();
+    public List<String> getMultipleStringArg(String tag, int minOccurrences) {
+        List<String> ret = new ArrayList<String>();
         int index = ArrayOperations.seqFind(tag, args);
         while (index >= 0) {
             try {
@@ -786,8 +787,8 @@ public class ArgHandler {
      * Finds zero or more occurrences of an integer argument, each preceded by the given tag
      * @return a possibly empty vector of integers that follow each occurrence of the given tag
      */
-    public Vector<Integer> getMultipleIntegerArg(String tag) {
-        Vector<Integer> ret = new Vector<Integer>();
+    public List<Integer> getMultipleIntegerArg(String tag) {
+        List<Integer> ret = new ArrayList<Integer>();
         int index = ArrayOperations.seqFind(tag, args);
         while (index >= 0) {
             try {
@@ -806,8 +807,8 @@ public class ArgHandler {
      * @param minOccurrences the minimum number of occurrences of the given tag
      * @return a possibly empty vector of inetegers that follow each occurrence of the given tag
      */
-    public Vector<Integer> getMultipleIntegerArg(String tag, int minOccurrences) {
-        Vector<Integer> ret = new Vector<Integer>();
+    public List<Integer> getMultipleIntegerArg(String tag, int minOccurrences) {
+        List<Integer> ret = new ArrayList<Integer>();
         int index = ArrayOperations.seqFind(tag, args);
         while (index >= 0) {
             try {
