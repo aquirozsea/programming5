@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Map;
 import programming5.arrays.ArrayOperations;
 import programming5.collections.CollectionUtils;
+import programming5.math.NumberRange;
 
 /**
  * Abstract class that provides utility methods for string manipulation that are not provided directly
  * by the String class
  * @author aquirozh
- * @version 6.0
+ * @version 6.01
  */
 public abstract class StringOperations {
 
@@ -140,7 +141,7 @@ public abstract class StringOperations {
             }
         }
         else {
-            throw new IllegalArgumentException("StringOperations: Cannot decode string: Line does not match given pattern");
+            throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + string + ") does not match given pattern: " + regexPattern);
         }
         return decodeElements;
     }
@@ -287,6 +288,22 @@ public abstract class StringOperations {
             ret = insert(ret, insertee, positions[i] + (i * insertee.length()));
         }
         return ret;
+    }
+
+    /**
+     * @param intString the string to parse, representing an integer value
+     * @param range the number range that must include the integer value
+     * @return the integer value represented by the string, if it is contained in the given range
+     * @throws NumberFormatException if the string does not represent an integer value, or if that value is not contained in the given range
+     */
+    public static int parseInt(String intString, NumberRange range) throws NumberFormatException {
+        int ret = Integer.parseInt(intString);
+        if (range.contains(ret)) {
+            return ret;
+        }
+        else {
+            throw new NumberFormatException("StringOperations: Error when parsing integer: " + intString + " is outside the range " + range.toString());
+        }
     }
 
 }
