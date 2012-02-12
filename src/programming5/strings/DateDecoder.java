@@ -1,6 +1,22 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * DateDecoder.java
+ *
+ * Copyright 2012 Andres Quiroz Hernandez
+ *
+ * This file is part of Programming5.
+ * Programming5 is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Programming5 is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Programming5.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package programming5.strings;
@@ -11,8 +27,10 @@ import java.util.Map.Entry;
 import programming5.math.NumberRange;
 
 /**
- *
- * @author andresqh
+ * Class to create date (Calendar) objects from date strings, given a date pattern string with a specific format
+ * TODO: Document format
+ * @author Andres Quiroz
+ * @version 6.0
  */
 public class DateDecoder {
 
@@ -20,10 +38,18 @@ public class DateDecoder {
 
     private static enum PatternCode {dd, ddd, dddd, mm, mmm, mmmm, yy, yyyy, HH, HHH, MM, SS, SSS};
 
+    /**
+     * Creates a decoder for a given pattern. Can be used to decode multiple date strings that follow the same pattern.
+     */
     public DateDecoder(String myPattern) {
         datePattern = myPattern;
     }
 
+    /**
+     * @param dateString the date to decode
+     * @return a Calendar object set to the time/date given in the string, if the date is consistent and well-formatted
+     * @throws IllegalArgumentException if the date does not match the pattern for this object, or if the date is inconsistent or badly formatted
+     */
     public Calendar decode(String dateString) throws IllegalArgumentException {
         Calendar ret = Calendar.getInstance();
         Map<String, String> dateElements = StringOperations.decodePattern(dateString, datePattern);
@@ -68,6 +94,13 @@ public class DateDecoder {
         return ret;
     }
 
+    /**
+     * Convenience method to decode a single date with a particular pattern
+     * @param dateString the date string to decode
+     * @param pattern the pattern to use for decoding
+     * @return a Calendar object set to the time/date given in the string, if the date is consistent and well-formatted
+     * @throws IllegalArgumentException if the date does not match the pattern for this object, or if the date is inconsistent or badly formatted
+     */
     public static Calendar decodeDateWithPattern(String dateString, String pattern) {
         DateDecoder decoder = new DateDecoder(pattern);
         return decoder.decode(dateString);
