@@ -21,10 +21,13 @@
 
 package programming5.math;
 
+import java.util.Map;
+import programming5.strings.StringOperations;
+
 /**
  *This class provides a convenient way of defining and enforcing a range for a numeric value.
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.01
  */
 public class NumberRange {
     
@@ -38,7 +41,9 @@ public class NumberRange {
     /**
      *@param lowerLimit the lower limit, which is included in the range by default
      *@param upperLimit the upper limit, which is included in the range by default
+     *@deprecated use of static create method is preferred, since it is more explicit
      */
+    @Deprecated
     public NumberRange(int lowerLimit, int upperLimit) {
         if (lowerLimit <= upperLimit) {
             lower = lowerLimit;
@@ -52,7 +57,9 @@ public class NumberRange {
     /**
      *@param lowerLimit the lower limit, which is included in the range by default
      *@param upperLimit the upper limit, which is included in the range by default
+     *@deprecated use of static create method is preferred, since it is more explicit
      */
+    @Deprecated
     public NumberRange(float lowerLimit, float upperLimit) {
         if (lowerLimit <= upperLimit) {
             lower = lowerLimit;
@@ -66,7 +73,9 @@ public class NumberRange {
     /**
      *@param lowerLimit the lower limit, which is included in the range by default
      *@param upperLimit the upper limit, which is included in the range by default
+     *@deprecated use of static create method is preferred, since it is more explicit
      */
+    @Deprecated
     public NumberRange(double lowerLimit, double upperLimit) {
         if (lowerLimit <= upperLimit) {
             lower = lowerLimit;
@@ -128,6 +137,23 @@ public class NumberRange {
         }
         else {
             throw new IllegalArgumentException("NumberRange: Lower limit must be less than upper limit");
+        }
+    }
+
+    /**
+     * Creates a number range from a range string, using parentheses for exclusive limits and brackets for inclusive limits.
+     * @param rangeString the string representation of the range, e.g. (1,2) ; (3, 4] ; [20, 35) ; [0 , 100]
+     * @throws IllegalArgumentException if the range string is not a valid range expression
+     */
+    public static NumberRange create(String rangeString) {
+        try {
+            Map<String, String> decoding = StringOperations.decodePattern(rangeString, "[\\(\\[]<ll>,<ul>[\\)\\]]");
+            double lowerLimit = Double.parseDouble(decoding.get("ll").trim());
+            double upperLimit = Double.parseDouble(decoding.get("ul").trim());
+            return new NumberRange(lowerLimit, rangeString.startsWith("["), upperLimit, rangeString.endsWith("]"));
+        }
+        catch (IllegalArgumentException iae) {
+            throw new IllegalArgumentException("NumberRange: Cannot create from string: Not a valid range expression", iae);
         }
     }
     
