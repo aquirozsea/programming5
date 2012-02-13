@@ -134,4 +134,9 @@ public class CountingTable<E> {
         return ret;
     }
 
+    @Override
+    public String toString() {
+        return baseTable.toString();
+    }
+
 }
