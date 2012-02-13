@@ -142,6 +142,23 @@ public class ConsoleInterface {
         }
     }
 
+    public Process executeAsync(String... command) throws IOException {
+        List<String> commandChain = new LinkedList<String>();
+        commandChain.addAll(Arrays.asList(command));
+        Process p = new ProcessBuilder(commandChain).start();
+        if (p != null) {
+            OutputRedirector redirector = null;
+            if (redirectOutput) {
+                redirector = new OutputRedirector(p.getInputStream(), redirectStream);
+                new Thread(redirector).start();
+            }
+            return p;
+        }
+        else {
+            throw new IOException("ConsoleInterface: Could not execute command: Could not build process");
+        }
+    }
+
     /**
      *@return a string with the command's output, null if there is none
      */
