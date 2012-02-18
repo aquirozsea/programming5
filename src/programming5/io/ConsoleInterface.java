@@ -208,6 +208,7 @@ public class ConsoleInterface {
                     }
                 }
                 catch (IOException ioe) {
+                    running = false;
                     ioe.printStackTrace();
                 }
             }
