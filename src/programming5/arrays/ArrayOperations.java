@@ -3092,10 +3092,119 @@ public abstract class ArrayOperations {
         return sortedOrder;
     }
 
+    public static int binarySearch(int[] array, int value, int[] order) {
+        int ret;
+        // Check first and last element
+        if (value <= array[order[0]]) {
+            ret = (value == array[order[0]]) ? order[0] : -1;
+        }
+        else if (value >= array[order[array.length-1]]) {
+            ret = -1;
+        }
+        else {
+            int a = 0;
+            int b = array.length-1;
+            int middle;
+            while (b - a > 1) {
+                middle = (a+b) / 2;
+                if (value > array[order[middle]]) {
+                    a = middle;
+                }
+                else {
+                    b = middle;
+                }
+            }
+            ret = (value == array[order[b]]) ? order[b] : -1;
+        }
+        return ret;
+    }
+
+    public static int binarySearch(float[] array, float value, int[] order) {
+        int ret;
+        // Check first and last element
+        if (value <= array[order[0]]) {
+            ret = (value == array[order[0]]) ? order[0] : -1;
+        }
+        else if (value > array[order[array.length-1]]) {
+            ret = -1;
+        }
+        else {
+            int a = 0;
+            int b = array.length-1;
+            int middle;
+            while (b - a > 1) {
+                middle = (a+b) / 2;
+                if (value > array[order[middle]]) {
+                    a = middle;
+                }
+                else {
+                    b = middle;
+                }
+            }
+            ret = (value == array[order[b]]) ? order[b] : -1;
+        }
+        return ret;
+    }
+
+    public static int binarySearch(long[] array, long value, int[] order) {
+        int ret;
+        // Check first and last element
+        if (value <= array[order[0]]) {
+            ret = (value == array[order[0]]) ? order[0] : -1;
+        }
+        else if (value > array[order[array.length-1]]) {
+            ret = -1;
+        }
+        else {
+            int a = 0;
+            int b = array.length-1;
+            int middle;
+            while (b - a > 1) {
+                middle = (a+b) / 2;
+                if (value > array[order[middle]]) {
+                    a = middle;
+                }
+                else {
+                    b = middle;
+                }
+            }
+            ret = (value == array[order[b]]) ? order[b] : -1;
+        }
+        return ret;
+    }
+
+    public static int binarySearch(double[] array, double value, int[] order) {
+        int ret;
+        // Check first and last element
+        if (value <= array[order[0]]) {
+            ret = (value == array[order[0]]) ? order[0] : -1;
+        }
+        else if (value > array[order[array.length-1]]) {
+            ret = -1;
+        }
+        else {
+            int a = 0;
+            int b = array.length-1;
+            int middle;
+            while (b - a > 1) {
+                middle = (a+b) / 2;
+                if (value > array[order[middle]]) {
+                    a = middle;
+                }
+                else {
+                    b = middle;
+                }
+            }
+            ret = (value == array[order[b]]) ? order[b] : -1;
+        }
+        return ret;
+    }
+
     public static <T extends Comparable, S extends T> int binarySearch(T[] array, S value, int[] order) {
         int ret;
-        if (value.compareTo(array[order[0]]) < 0) {
-            ret = -1;
+        // Check first and last elements, to maintain invariant
+        if (value.compareTo(array[order[0]]) <= 0) {
+            ret = (value.compareTo(array[order[0]]) == 0) ? order[0] : -1;
         }
         else if (value.compareTo(array[order[array.length-1]]) > 0) {
             ret = -1;
