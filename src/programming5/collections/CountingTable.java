@@ -124,6 +124,10 @@ public class CountingTable<E> {
         return baseTable.entrySet();
     }
 
+    public int size() {
+        return baseTable.size();
+    }
+
     public static <T> CountingTable<T> add(CountingTable<T>... tables) {
         CountingTable<T> ret = new CountingTable<T>();
         for (CountingTable<T> table : tables) {
