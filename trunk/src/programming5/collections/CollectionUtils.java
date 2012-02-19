@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
+import programming5.arrays.ArrayOperations;
 import programming5.math.MathOperations;
 
 /**
@@ -751,6 +752,124 @@ public abstract class CollectionUtils {
             }
         }
         return matches;
+    }
+    
+    /**
+     * Finds the sorted order of the given list, which must be of comparable type
+     * @param <T> List element type, extends Comparable
+     * @param list the list to be sorted (will not be modified)
+     * @return the sorted order of the list elements, such that sortedOrder(list)[i] is the index in the original list
+     * of the ith element in order
+     */
+    public static <T extends Comparable> int[] sortedOrder(List<T> list) {
+        Comparable[] listArray = list.toArray(new Comparable[] {});
+        return ArrayOperations.sortedOrder(listArray);
+    }
+
+    /**
+     * Finds the sorted order of the given list, without a compile-time check that the list elements are comparable
+     * @param <T> List element type, expected to be comparable, but not checked
+     * @param list the list to be sorted (will not be modified)
+     * @return the sorted order of the list elements, such that sortedOrder(list)[i] is the index in the original list
+     * of the ith element in order
+     * @throws IllegalArgumentException at runtime if the given list does not contain comparable elements
+     */
+    public static <T> int[] sortedOrderRT(List<T> list) throws IllegalArgumentException {
+        int[] ret = null;
+        try {
+            Comparable[] listArray = list.toArray(new Comparable[] {});
+            ret = ArrayOperations.sortedOrder(listArray);
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("CollectionUtils: Cannot return sorted order: Given list elements not comparable", e);
+        }
+        return ret;
+    }
+
+    /**
+     * Performs binary search on an arbitrary list of comparable elements, where the sorted order of the list elements is given
+     * @param <T> the list type, which extends Comparable
+     * @param <S> the value type, which extends T
+     * @param list the list to search, not necessarily sorted
+     * @param value the value to search
+     * @param order the sorted order of the elements of the list, where order[i] is the index in the given list of the ith element in order
+     * @return the index of the given value, if it is contained in the list; otherwise, -1
+     */
+    // TODO: Accounts for repetitions?
+    public static <T extends Comparable, S extends T> int binarySearch(List<T> list, S value, int[] order) {
+        int ret;
+        // Check the first and last element to maintain the invariant
+        T firstElement = list.get(order[0]);
+        T lastElement = list.get(order[list.size()-1]);
+        if (value.compareTo(firstElement) <= 0) {
+            ret = (value.compareTo(firstElement) == 0) ? order[0] : -1;
+        }
+        else if (value.compareTo(lastElement) > 0) {
+            ret = -1;
+        }
+        else {
+            int a = 0;
+            int b = list.size()-1;
+            int middle;
+            while (b - a > 1) {
+                middle = (a+b) / 2;
+                if (value.compareTo(list.get(order[middle])) > 0) {
+                    a = middle;
+                }
+                else {
+                    b = middle;
+                }
+            }
+            ret = (value.compareTo(list.get(order[b])) == 0) ? order[b] : -1;
+        }
+        return ret;
+    }
+
+    /**
+     * Performs binary search on an arbitrary list (without a compile-time check that the list elements are comparable),
+     * where the sorted order of the list elements is given
+     * @param <T> the list type, expected to be Comparable, but not checked
+     * @param <S> the value type, which extends T
+     * @param list the list to search, not necessarily sorted
+     * @param value the value to search
+     * @param order the sorted order of the elements of the list, where order[i] is the index in the given list of the ith element in order
+     * @return the index of the given value, if it is contained in the list; otherwise, -1
+     */
+    // TODO: Accounts for repetitions?
+    public static <T, S extends T> int binarySearchRT(List<T> list, S value, int[] order) throws IllegalArgumentException {
+        int ret;
+        try {
+            Comparable cvalue = (Comparable) value;
+            // Check the first and last element to maintain the invariant
+            T firstElement = list.get(order[0]);
+            T lastElement = list.get(order[list.size()-1]);
+            if (cvalue.compareTo(firstElement) <= 0) {
+                ret = (cvalue.compareTo(firstElement) == 0) ? order[0] : -1;
+            }
+            else if (cvalue.compareTo(lastElement) > 0) {
+                ret = -1;
+            }
+            else {
+                int a = 0;
+                int b = list.size()-1;
+                int middle;
+                while (b - a > 1) {
+                    middle = (a+b) / 2;
+                    if (cvalue.compareTo(list.get(order[middle])) > 0) {
+                        a = middle;
+                    }
+                    else {
+                        b = middle;
+                    }
+                }
+                ret = (cvalue.compareTo(list.get(order[b])) == 0) ? order[b] : -1;
+            }
+        }
+        catch (Exception e) {
+            ret = -1;
+            throw new IllegalArgumentException("CollectionUtils: Cannot complete binary search: Given list elements not comparable", e);
+        }
+        return ret;
     }
 
 }
