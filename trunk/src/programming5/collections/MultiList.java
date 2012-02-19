@@ -164,7 +164,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      */
     @Override
     public boolean containsKey(Object key) {
-        return containsFirst((E) key);
+        return containsInFirst((E) key);
     }
 
     /**
@@ -173,7 +173,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      */
     @Override
     public boolean containsValue(Object value) {
-        return containsSecond((D) value);
+        return containsInSecond((D) value);
     }
 
     /**
@@ -353,6 +353,11 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
         return ret;
     }
 
+    /**
+     * @return the first component of the element pair at the given position, according to the order in the second 
+     * component vector. If the multi-list is sorted by the second component, this method will differ from 
+     * getInFirstAt; otherwise the result will be equivalent.
+     */
     public E getInFirstAtSecond(int index) {
         E ret;
         if (isSorted2) {
@@ -378,6 +383,11 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
         return ret;
     }
 
+    /**
+     * @return the second component of the element pair at the given position, according to the order in the first
+     * component vector. If the multi-list is sorted by the first component, this method will differ from
+     * getInSecondAt; otherwise the result will be equivalent.
+     */
     public D getInSecondAtFirst(int index) {
         D ret;
         if (isSorted1) {
@@ -395,9 +405,14 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     public E getInFirst(D element) {
         E ret = null;
         try {
-            ret = vector1.get(vector2.indexOf(element));
+            if (isSorted2) {
+                ret = vector1.get(CollectionUtils.binarySearchRT(vector2, element, sortedOrder2));  // Runtime binary search (comparable type not checked until runtime)
+            }
+            else {
+                ret = vector1.get(vector2.indexOf(element));
+            }
         }
-        catch (ArrayIndexOutOfBoundsException iobe) {
+        catch (ArrayIndexOutOfBoundsException iobe) {   // Element not found, so nothing retrieved from vector1 (ret stays null)
         }
         return ret;
     }
@@ -408,71 +423,147 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     public D getInSecond(E element) {
         D ret = null;
         try {
-            ret = vector2.get(vector1.indexOf(element));
+            if (isSorted1) {
+                ret = vector2.get(CollectionUtils.binarySearchRT(vector1, element, sortedOrder1));  // Runtime binary search (comparable type not checked until runtime)
+            }
+            else {
+                ret = vector2.get(vector1.indexOf(element));
+            }
         }
         catch (ArrayIndexOutOfBoundsException iobe) {
         }
         return ret;
     }
 
-    public Entry<E, D> getEntry(int index) {
+    /**
+     * @return the element pair at the given index, according to the order of the first component (if sorted, the index-th
+     * element in the first list and its corresponding second element)
+     */
+    public Entry<E, D> getEntryAtFirst(int index) {
         return new MultiListEntry<E, D>(this.getInFirstAt(index), this.getInSecondAtFirst(index));
     }
 
+    /**
+     * @return the element pair at the given index, according to the order of the second component (if sorted, the index-th
+     * element in the second list and its corresponding first element)
+     */
     public Entry<E, D> getEntryAtSecond(int index) {
         return new MultiListEntry<E, D>(this.getInFirstAtSecond(index), this.getInSecondAt(index));
     }
     
     /**
-     *@return true if either component of any element pair equals the given object, using the Vector contains method
-     *@see java.util.Vector#contains
+     * Equivalent to getEntryAtFirst(index)
+     */
+    public Entry<E, D> getEntry(int index) {
+        return getEntryAtFirst(index);
+    }
+
+    /**
+     *@return true if either component of any element pair equals the given object
      */
     public boolean contains(Object object) {
-        boolean contains;
+        boolean contains = false;
         if (isSorted1) {
-
+            try {
+                E eobject = (E) object;
+                contains = (CollectionUtils.binarySearchRT(vector1, eobject, sortedOrder1) >= 0);
+            }
+            catch (ClassCastException cce) {} // Contains does not change (= false)
         }
-        return vector1.contains(object) || vector2.contains(object);
+        if (!contains && isSorted2) {
+            try {
+                D dobject = (D) object;
+                contains = (CollectionUtils.binarySearchRT(vector2, dobject, sortedOrder2) >= 0);
+            }
+            catch (ClassCastException cce) {}   // Contains does not change (= false)
+        }
+        if (!contains && !isSorted1) {
+            contains = vector1.contains(object);
+        }
+        if (!contains && !isSorted2) {
+            contains = vector2.contains(object);
+        }
+        return  contains;
     }
     
     /**
-     *@return true if the first component of any element pair equals the given object, using the Vector contains method
-     *@see java.util.Vector#contains
+     *@return true if the first component of any element pair equals the given object
      */
-    public boolean containsFirst(E object) {
-        return vector1.contains(object);
+    public boolean containsInFirst(E object) {
+        boolean contains = false;
+        if (isSorted1) {
+            contains = (CollectionUtils.binarySearchRT(vector1, object, sortedOrder1) >= 0);
+        }
+        else {
+            contains = vector1.contains(object);
+        }
+        return contains;
     }
     
     /**
-     *@return true if the second component of any element pair equals the given object, using the Vector contains method
-     *@see java.util.Vector#contains
+     *@return true if the second component of any element pair equals the given object
      */
-    public boolean containsSecond(D object) {
-        return vector2.contains(object);
+    public boolean containsInSecond(D object) {
+        boolean contains = false;
+        if (isSorted2) {
+            contains = (CollectionUtils.binarySearchRT(vector2, object, sortedOrder2) >= 0);
+        }
+        else {
+            contains = vector2.contains(object);
+        }
+        return contains;
     }
 
     /**
-     *@return true if a component of any element pair can be found that equals every object of the given collection, using the Vector containsAll method
-     *@see java.util.Vector#containsAll
+     *@return true if a component of any element pair can be found that equals every object of the given collection
      */
     public boolean containsAll(Collection<?> c) {
-        return vector1.containsAll(c) || vector2.containsAll(c);
+        boolean contained = true;
+        for (Object o : c) {
+            contained = this.contains(o);
+            if (!contained) {
+                break;
+            }
+        }
+        return contained;
     }
 
     /**
-     *@return true if the first component of any element pair can be found that equals every object of the given collection, using the Vector containsAll method
-     *@see java.util.Vector#containsAll
+     *@return true if the first component of any element pair can be found that equals every object of the given collection
      */
-    public boolean containsAllFirst(Collection<?> c) {
-        return vector1.containsAll(c);
+    public boolean containsAllInFirst(Collection<?> c) {
+        boolean contained = true;
+        for (Object o : c) {
+            try {
+                contained = this.containsInFirst((E) o);
+            }
+            catch (ClassCastException cce) {
+                contained = false;
+            }
+            if (!contained) {
+                break;
+            }
+        }
+        return contained;
     }
 
     /**
-     *@return true if the second component of any element pair can be found that equals every object of the given collection, using the Vector containsAll method
-     *@see java.util.Vector#containsAll
+     *@return true if the second component of any element pair can be found that equals every object of the given collection
      */
-    public boolean containsAllSecond(Collection<?> c) {
-        return vector2.containsAll(c);
+    public boolean containsAllInSecond(Collection<?> c) {
+        boolean contained = true;
+        for (Object o : c) {
+            try {
+                contained = this.containsInSecond((D) o);
+            }
+            catch (ClassCastException cce) {
+                contained = false;
+            }
+            if (!contained) {
+                break;
+            }
+        }
+        return contained;
     }
     
     /**
@@ -528,6 +619,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      *Removes the first element pair whose first component matches the given object.
      *@return true if a matching element pair was found and removed
      */
+    // TODO: Optimize (and remove all matches?)
     public boolean removeUsingFirst(E object) {
         boolean removed = false;
         int index = vector1.indexOf(object);
@@ -551,6 +643,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      *Removes the first element pair whose second component matches the given object.
      *@return true if a matching element pair was found and removed
      */
+    // TODO: Optimize (and remove all matches?)
     public boolean removeUsingSecond(D object) {
         boolean removed = false;
         int index = vector2.indexOf(object);
@@ -574,6 +667,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      *Removes all element pairs whose first component matches any of the objects in the given collection.
      *@return true if some matching element pair was found and removed
      */
+    // TODO: Optimize (and remove all matches?)
     public boolean removeAllUsingFirst(Collection<? extends E> c) {
         boolean modified = false;
         for (E object : c) {
@@ -586,6 +680,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      *Removes all element pairs whose second component matches any of the objects in the given collection.
      *@return true if some matching element pair was found and removed
      */
+    // TODO: Optimize (and remove all matches?)
     public boolean removeAllUsingSecond(Collection<? extends D> c) {
         boolean modified = false;
         for (D object : c) {
@@ -598,6 +693,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      *Removes all element pairs whose first component doesn't match any of the objects in the given collection.
      *@return true if the multi-vector was modified (element pairs were removed)
      */
+    // TODO: Optimize
     public boolean retainAllUsingFirst(Collection<? extends E> c) {
         boolean modified = false;
         List<E> toRemove = new ArrayList<E>();
@@ -619,6 +715,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      *Removes all element pairs whose second component doesn't match any of the objects in the given collection.
      *@return true if the multi-vector was modified (element pairs were removed)
      */
+    // TODO: Optimize
     public boolean retainAllUsingSecond(Collection<? extends D> c) {
         boolean modified = false;
         List<D> toRemove = new ArrayList<D>();
@@ -653,14 +750,18 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      *@param match the index object
      *@param object the value object
      */
+    // TODO: Test
     public boolean setInFirst(D match, E object) {
-        boolean modified = true;
+        boolean modified = false;
         try {
-            vector1.set(vector2.indexOf(match), object);
+            if (isSorted2) {
+                vector1.set(CollectionUtils.binarySearchRT(vector2, match, sortedOrder2), object);
+            }
+            else {
+                vector1.set(vector2.indexOf(match), object);
+            }
         }
-        catch (ArrayIndexOutOfBoundsException iobe) {
-            modified = false;
-        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}  // match not found; modified stays false
         if (modified && isSorted1) {
             isSorted1 = false;
             sortedOrder1 = null;
@@ -684,14 +785,18 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
      *@param match the index object
      *@param object the value object
      */
+    // TODO: Test
     public boolean setInSecond(E match, D object) {
-        boolean modified = true;
+        boolean modified = false;
         try {
-            vector2.set(vector1.indexOf(match), object);
+            if (isSorted1) {
+                vector2.set(CollectionUtils.binarySearchRT(vector1, match, sortedOrder1), object);
+            }
+            else {
+                vector2.set(vector1.indexOf(match), object);
+            }
         }
-        catch (ArrayIndexOutOfBoundsException iobe) {
-            modified = false;
-        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}  // match not found; modified stays false
         if (modified && isSorted2) {
             isSorted2 = false;
             sortedOrder2 = null;
@@ -716,6 +821,8 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     public void copyInto(E[] array1, D[] array2) {
         vector1 = CollectionUtils.listFromArray(array1);
         vector2 = CollectionUtils.listFromArray(array2);
+        isSorted1 = false;
+        isSorted2 = false;
     }
     
     /**
@@ -804,21 +911,50 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
         }
         return ret;
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MultiList<E, D> other = (MultiList<E, D>) obj;
+        if (this.vector1 != other.vector1 && (this.vector1 == null || !this.vector1.equals(other.vector1))) {
+            return false;
+        }
+        if (this.vector2 != other.vector2 && (this.vector2 == null || !this.vector2.equals(other.vector2))) {
+            return false;
+        }
+        if (this.isSorted1 != other.isSorted1) {
+            return false;
+        }
+        if (this.isSorted2 != other.isSorted2) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public int hashCode() {
-        return vector1.hashCode() + vector2.hashCode();
+        int hash = 5;
+        hash = 83 * hash + (this.vector1 != null ? this.vector1.hashCode() : 0);
+        hash = 83 * hash + (this.vector2 != null ? this.vector2.hashCode() : 0);
+        hash = 83 * hash + ((this.isSorted1) ? 1 : 0);
+        hash = 83 * hash + ((this.isSorted2) ? 1 : 0);
+        return hash;
     }
     
     /**
-     *@return the index of the first element pair whose first component equals the given object, using the Vector indexOf method
-     *@see java.util.Vector#indexOf
+     *@return the index of the first element pair whose first component equals the given object
      */
+    // TODO: Test
     public int indexOfInFirst(E element) {
         int ret;
         if (isSorted1) {
-            int unsortedIndex = vector1.indexOf(element);
-            ret = ArrayOperations.seqFind(unsortedIndex, sortedOrder1);
+//            int unsortedIndex = vector1.indexOf(element);
+            ret = CollectionUtils.binarySearchRT(vector1, element, sortedOrder1);
         }
         else {
             ret = vector1.indexOf(element);
@@ -827,14 +963,13 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     }
     
     /**
-     *@return the index of the first element pair whose second component equals the given object, using the Vector indexOf method
-     *@see java.util.Vector#indexOf
+     *@return the index of the first element pair whose second component equals the given object
      */
     public int indexOfInSecond(D element) {
         int ret;
         if (isSorted2) {
-            int unsortedIndex = vector2.indexOf(element);
-            ret = ArrayOperations.seqFind(unsortedIndex, sortedOrder2);
+//            int unsortedIndex = vector2.indexOf(element);
+            ret = CollectionUtils.binarySearchRT(vector2, element, sortedOrder2);
         }
         else {
             ret = vector2.indexOf(element);
@@ -843,8 +978,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     }
     
     /**
-     *@return the index of the first element pair after the given start index whose first component equals the given object, using the Vector indexOf method
-     *@see java.util.Vector#indexOf
+     *@return the index of the first element pair after the given start index whose first component equals the given object
      */
     public int indexOfInFirst(E element, int startIndex) {
         int ret;
@@ -871,8 +1005,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     }
     
     /**
-     *@return the index of the first element pair after the given start index whose second component equals the given object, using the Vector indexOf method
-     *@see java.util.Vector#indexOf
+     *@return the index of the first element pair after the given start index whose second component equals the given object
      */
     public int indexOfInSecond(D element, int startIndex) {
         int ret;
@@ -899,9 +1032,9 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     }
     
     /**
-     *@return the index of the last element pair whose first component equals the given object, using the Vector lastIndexOf method
-     *@see java.util.Vector#lastIndexOf
+     *@return the index of the last element pair whose first component equals the given object
      */
+    // TODO: Test
     public int lastIndexOfInFirst(E element) {
         int ret;
         if (isSorted1) {
@@ -934,9 +1067,9 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     }
     
     /**
-     *@return the index of the last element pair whose second component equals the given object, using the Vector lastIndexOf method
-     *@see java.util.Vector#lastIndexOf
+     *@return the index of the last element pair whose second component equals the given object
      */
+    // TODO: Test
     public int lastIndexOfInSecond(D element) {
         int ret;
         if (isSorted2) {
@@ -1045,6 +1178,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
         return (isSortedFirst() || isSortedSecond());
     }
 
+    // TODO: Verify for insertions that don't modify the length
     private void reSortFirst() {
         int unsortedStart = sortedOrder1.length;
         List<Comparable> sortedVector = new ArrayList<Comparable>();
@@ -1058,6 +1192,7 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
         }
     }
 
+    // TODO: Verify for insertions that don't modify the length
     private void reSortSecond() {
         int unsortedStart = sortedOrder2.length;
         List<Comparable> sortedVector = new ArrayList<Comparable>();
