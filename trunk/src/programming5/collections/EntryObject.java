@@ -5,11 +5,13 @@
 
 package programming5.collections;
 
+import java.io.Serializable;
+
 /**
  *
  * @author andresqh
  */
-public class EntryObject<K, V> implements java.util.Map.Entry<K, V> {
+public class EntryObject<K, V> implements java.util.Map.Entry<K, V>, Serializable {
 
     protected final K key;
     protected V value;
