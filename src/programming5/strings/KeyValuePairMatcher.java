@@ -27,6 +27,7 @@ import programming5.code.ObjectMatcher;
  * Used to match a key pair string by using its key, regardless of the value. For example, the pair "color:blue" matches the key "color".
  * Note that the matcher is not reflexive: "color" does not match "color:blue"
  * @author andresqh
+ * @version 6.0
  */
 public class KeyValuePairMatcher implements ObjectMatcher<String> {
 
