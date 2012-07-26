@@ -23,6 +23,7 @@ package programming5.arrays;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import programming5.code.ObjectMatcher;
 
 /**
  *This class provides additional array manipulation operations to those in java.util.Arrays.
@@ -1110,6 +1111,20 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     *@return the index of the first b in the array, or -1 if not found, using the given matcher to perform comparisons
+     */
+    public static final int seqFind(Object b, Object[] array, ObjectMatcher matcher) {
+        int ret = -1;
+        for (int i = 0; i < array.length; i++) {
+            if (matcher.matches(array[i], b)) {
+                ret = i;
+                break;
+            }
+        }
+        return ret;
+    }
     
     /**
      *@return the index of the first b in the array, starting at from, or -1 if not found
@@ -1188,6 +1203,22 @@ public abstract class ArrayOperations {
         int ret = -1;
         for (int i = from; i < array.length; i++) {
             if (array[i].equals(b)) {
+                ret = i;
+                break;
+            }
+        }
+        return ret;
+    }
+
+
+
+    /**
+     *@return the index of the first b in the array, starting at from, or -1 if not found, using the given matcher to perform comparisons
+     */
+    public static final int seqFind(Object b, Object[] array, int from, ObjectMatcher matcher) {
+        int ret = -1;
+        for (int i = 0; i < array.length; i++) {
+            if (matcher.matches(array[i], b)) {
                 ret = i;
                 break;
             }
