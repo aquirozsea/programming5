@@ -857,8 +857,7 @@ public class FileHandler {
         }
 	
 	/**
-	 *Reads a char from the file. If the file is of text type, the character to be read must be on its own on a single 
-	 *line.
+	 *Reads a char from the file. Note that each character does not have to be in its own line for TEXT file type as before
 	 */
 	public char readChar() throws IOException {
 		char ret = '\0';
@@ -866,12 +865,7 @@ public class FileHandler {
 			
 			case TEXT:
 				if (inT != null) {
-					String aux = inT.readLine();
-					if (aux != null) {
-						byte[] aux2 = aux.getBytes();
-						ret = (char)aux2[0];
-					}
-					else throw new java.io.EOFException();
+					ret = (char) inT.read();
 				}
 				else throw new IOException("FileHandler: No file");
 				break;
