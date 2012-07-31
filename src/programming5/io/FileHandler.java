@@ -24,7 +24,6 @@ package programming5.io;
 import java.io.*;
 import java.util.EmptyStackException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Stack;
 import programming5.arrays.ArrayOperations;
 
@@ -866,6 +865,9 @@ public class FileHandler {
 			case TEXT:
 				if (inT != null) {
 					ret = (char) inT.read();
+                                        if (ret == 65535) { // TODO: Check why (supposed to be -1)
+                                            throw new EOFException();
+                                        }
 				}
 				else throw new IOException("FileHandler: No file");
 				break;
