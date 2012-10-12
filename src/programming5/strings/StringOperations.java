@@ -21,6 +21,7 @@
 
 package programming5.strings;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -319,6 +320,39 @@ public abstract class StringOperations {
         }
         else {
             throw new NumberFormatException("StringOperations: Error when parsing integer: " + intString + " is outside the range " + range.toString());
+        }
+    }
+
+    /**
+     * @return true if the given string contains only letters and numbers and false otherwise
+     */
+    public static boolean isAlnum(String string) {
+        return string.matches("\\w+");
+    }
+
+    /**
+     * @return true if the given string starts with a letter or underscore and contains only letters, numbers or underscores thereafter (typical identifier pattern)
+     */
+    public static boolean isIdentifier(String string) {
+        return string.matches("_*[a-zA-z][\\w_]*");
+    }
+
+    /**
+     * @return true if the string is a valid number
+     */
+    public static boolean isNumeric(String string) {
+        try {
+            Double.parseDouble(string);
+            return true;
+        }
+        catch (Exception e) {
+            try {
+                new BigInteger(string);
+                return true;
+            }
+            catch (Exception e2) {
+                return false;
+            }
         }
     }
 
