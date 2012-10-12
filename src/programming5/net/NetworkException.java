@@ -21,13 +21,15 @@
 
 package programming5.net;
 
+import java.io.IOException;
+
 /**
  *This exception class is meant to be a generic and unique exception class for all network        
  *communication methods. 
  *@author Andres Quiroz Hernandez
- *@version 6.0
+ *@version 6.1
  */
-public class NetworkException extends Exception {
+public class NetworkException extends IOException {
 
 	public NetworkException() {
 		super();
