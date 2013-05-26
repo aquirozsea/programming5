@@ -609,9 +609,7 @@ public abstract class ArrayOperations {
      */
     public static int[] subArray(int[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         int[] ret = new int[until-from];
-        for (int i = from; i < until; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
@@ -620,9 +618,7 @@ public abstract class ArrayOperations {
      */
     public static float[] subArray(float[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         float[] ret = new float[until-from];
-        for (int i = from; i < until; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
@@ -631,9 +627,7 @@ public abstract class ArrayOperations {
      */
     public static double[] subArray(double[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         double[] ret = new double[until-from];
-        for (int i = from; i < until; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
@@ -642,9 +636,7 @@ public abstract class ArrayOperations {
      */
     public static char[] subArray(char[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         char[] ret = new char[until-from];
-        for (int i = from; i < until; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
@@ -653,9 +645,7 @@ public abstract class ArrayOperations {
      */
     public static String[] subArray(String[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         String[] ret = new String[until-from];
-        for (int i = from; i < until; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
@@ -664,16 +654,14 @@ public abstract class ArrayOperations {
      */
     public static Object[] subArray(Object[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         Object[] ret = new Object[until-from];
-        for (int i = from; i < until; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final byte[] join(byte[]... arrays) {
+    public static byte[] join(byte[]... arrays) {
         int totalLength = 0;
         for (byte[] array : arrays) {
             totalLength += array.length;
@@ -681,9 +669,8 @@ public abstract class ArrayOperations {
         byte[] ret = new byte[totalLength];
         int pos = 0;
         for (byte[] array : arrays) {
-            for (int i = 0; i < array.length; i++) {
-                ret[pos++] = array[i];
-            }
+            System.arraycopy(array, 0, ret, pos, array.length);
+            pos += array.length;
         }
         return ret;
     }
@@ -691,7 +678,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final int[] join(int[]... arrays) {
+    public static int[] join(int[]... arrays) {
         int totalLength = 0;
         for (int[] array : arrays) {
             totalLength += array.length;
@@ -699,9 +686,8 @@ public abstract class ArrayOperations {
         int[] ret = new int[totalLength];
         int pos = 0;
         for (int[] array : arrays) {
-            for (int i = 0; i < array.length; i++) {
-                ret[pos++] = array[i];
-            }
+            System.arraycopy(array, 0, ret, pos, array.length);
+            pos += array.length;
         }
         return ret;
     }
@@ -709,7 +695,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final float[] join(float[]... arrays) {
+    public static float[] join(float[]... arrays) {
         int totalLength = 0;
         for (float[] array : arrays) {
             totalLength += array.length;
@@ -717,9 +703,8 @@ public abstract class ArrayOperations {
         float[] ret = new float[totalLength];
         int pos = 0;
         for (float[] array : arrays) {
-            for (int i = 0; i < array.length; i++) {
-                ret[pos++] = array[i];
-            }
+            System.arraycopy(array, 0, ret, pos, array.length);
+            pos += array.length;
         }
         return ret;
     }
@@ -727,7 +712,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final double[] join(double[]... arrays) {
+    public static double[] join(double[]... arrays) {
         int totalLength = 0;
         for (double[] array : arrays) {
             totalLength += array.length;
@@ -735,9 +720,8 @@ public abstract class ArrayOperations {
         double[] ret = new double[totalLength];
         int pos = 0;
         for (double[] array : arrays) {
-            for (int i = 0; i < array.length; i++) {
-                ret[pos++] = array[i];
-            }
+            System.arraycopy(array, 0, ret, pos, array.length);
+            pos += array.length;
         }
         return ret;
     }
@@ -745,7 +729,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final char[] join(char[]... arrays) {
+    public static char[] join(char[]... arrays) {
         int totalLength = 0;
         for (char[] array : arrays) {
             totalLength += array.length;
@@ -753,9 +737,8 @@ public abstract class ArrayOperations {
         char[] ret = new char[totalLength];
         int pos = 0;
         for (char[] array : arrays) {
-            for (int i = 0; i < array.length; i++) {
-                ret[pos++] = array[i];
-            }
+            System.arraycopy(array, 0, ret, pos, array.length);
+            pos += array.length;
         }
         return ret;
     }
@@ -763,7 +746,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final boolean[] join(boolean[]... arrays) {
+    public static boolean[] join(boolean[]... arrays) {
         int totalLength = 0;
         for (boolean[] array : arrays) {
             totalLength += array.length;
@@ -771,9 +754,8 @@ public abstract class ArrayOperations {
         boolean[] ret = new boolean[totalLength];
         int pos = 0;
         for (boolean[] array : arrays) {
-            for (int i = 0; i < array.length; i++) {
-                ret[pos++] = array[i];
-            }
+            System.arraycopy(array, 0, ret, pos, array.length);
+            pos += array.length;
         }
         return ret;
     }
@@ -781,7 +763,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
-    public static final String[] join(String[]... arrays) {
+    public static String[] join(String[]... arrays) {
         int totalLength = 0;
         for (String[] array : arrays) {
             totalLength += array.length;
@@ -789,9 +771,8 @@ public abstract class ArrayOperations {
         String[] ret = new String[totalLength];
         int pos = 0;
         for (String[] array : arrays) {
-            for (int i = 0; i < array.length; i++) {
-                ret[pos++] = array[i];
-            }
+            System.arraycopy(array, 0, ret, pos, array.length);
+            pos += array.length;
         }
         return ret;
     }
@@ -800,7 +781,7 @@ public abstract class ArrayOperations {
      *@return a new array containing the elements of all arrays in sequential order.
      *Caution: Does not replicate objects!
      */
-    public static final Object[] join(Object[]... arrays) {
+    public static Object[] join(Object[]... arrays) {
         int totalLength = 0;
         for (Object[] array : arrays) {
             totalLength += array.length;
@@ -808,9 +789,8 @@ public abstract class ArrayOperations {
         Object[] ret = new Object[totalLength];
         int pos = 0;
         for (Object[] array : arrays) {
-            for (int i = 0; i < array.length; i++) {
-                ret[pos++] = array[i];
-            }
+            System.arraycopy(array, 0, ret, pos, array.length);
+            pos += array.length;
         }
         return ret;
     }
@@ -818,50 +798,92 @@ public abstract class ArrayOperations {
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
-    public static final byte[] delete(byte[] array, int item) {
-        return join(prefix(array, item), suffix(array, item+1));
+    public static byte[] delete(byte[] array, int item) {
+        if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
+        byte[] ret = new byte[array.length-1];
+        if (ret.length > 0) {
+            System.arraycopy(array, 0, ret, 0, item);
+            System.arraycopy(array, item+1, ret, item, ret.length-item);
+        }
+        return ret;
     }
     
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
-    public static final int[] delete(int[] array, int item) {
-        return join(prefix(array, item), suffix(array, item+1));
+    public static int[] delete(int[] array, int item) {
+        if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
+        int[] ret = new int[array.length-1];
+        if (ret.length > 0) {
+            System.arraycopy(array, 0, ret, 0, item);
+            System.arraycopy(array, item+1, ret, item, ret.length-item);
+        }
+        return ret;
     }
     
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
-    public static final float[] delete(float[] array, int item) {
-        return join(prefix(array, item), suffix(array, item+1));
+    public static float[] delete(float[] array, int item) {
+        if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
+        float[] ret = new float[array.length-1];
+        if (ret.length > 0) {
+            System.arraycopy(array, 0, ret, 0, item);
+            System.arraycopy(array, item+1, ret, item, ret.length-item);
+        }
+        return ret;
     }
     
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
-    public static final double[] delete(double[] array, int item) {
-        return join(prefix(array, item), suffix(array, item+1));
+    public static double[] delete(double[] array, int item) {
+        if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
+        double[] ret = new double[array.length-1];
+        if (ret.length > 0) {
+            System.arraycopy(array, 0, ret, 0, item);
+            System.arraycopy(array, item+1, ret, item, ret.length-item);
+        }
+        return ret;
     }
     
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
-    public static final char[] delete(char[] array, int item) {
-        return join(prefix(array, item), suffix(array, item+1));
+    public static char[] delete(char[] array, int item) {
+        if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
+        char[] ret = new char[array.length-1];
+        if (ret.length > 0) {
+            System.arraycopy(array, 0, ret, 0, item);
+            System.arraycopy(array, item+1, ret, item, ret.length-item);
+        }
+        return ret;
     }
     
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
-    public static final String[] delete(String[] array, int item) {
-        return join(prefix(array, item), suffix(array, item+1));
+    public static String[] delete(String[] array, int item) {
+        if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
+        String[] ret = new String[array.length-1];
+        if (ret.length > 0) {
+            System.arraycopy(array, 0, ret, 0, item);
+            System.arraycopy(array, item+1, ret, item, ret.length-item);
+        }
+        return ret;
     }
     
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified). Caution: Does not replicate objects!
      */
-    public static final Object[] delete(Object[] array, int item) {
-        return join(prefix(array, item), suffix(array, item+1));
+    public static Object[] delete(Object[] array, int item) {
+        if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
+        Object[] ret = new Object[array.length-1];
+        if (ret.length > 0) {
+            System.arraycopy(array, 0, ret, 0, item);
+            System.arraycopy(array, item+1, ret, item, ret.length-item);
+        }
+        return ret;
     }
     
     /**
