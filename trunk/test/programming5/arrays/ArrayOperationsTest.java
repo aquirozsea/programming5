@@ -853,10 +853,13 @@ public class ArrayOperationsTest {
         assertArrayEquals(new byte[] {'a', 'b', 'c'}, toCut);
         try {
             subArray = ArrayOperations.subArray(toCut, 0, 4);
-            subArray = ArrayOperations.subArray(toCut, 2, 1);
             fail("SubArray failed to throw out of bounds exception");
         }
         catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            subArray = ArrayOperations.subArray(toCut, 2, 1);
+            fail("SubArray failed to negative array size exception");
+        }
         catch (NegativeArraySizeException nas) {}
     }
 
@@ -877,10 +880,13 @@ public class ArrayOperationsTest {
         assertArrayEquals(new int[] {1, 2, 3}, toCut);
         try {
             subArray = ArrayOperations.subArray(toCut, 0, 4);
-            subArray = ArrayOperations.subArray(toCut, 2, 1);
             fail("SubArray failed to throw out of bounds exception");
         }
         catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            subArray = ArrayOperations.subArray(toCut, 2, 1);
+            fail("SubArray failed to negative array size exception");
+        }
         catch (NegativeArraySizeException nas) {}
     }
 
@@ -889,6 +895,24 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSubArray_3args_3() {
+        float[] toCut = new float[] {1, 2, 3};
+        float[] subArray = ArrayOperations.subArray(toCut, 0, 3);
+        assertEquals(3, subArray.length);
+        subArray = ArrayOperations.subArray(toCut, 1, 2);
+        assertEquals(1, subArray.length);
+        subArray = ArrayOperations.subArray(toCut, 2, 2);
+        assertEquals(0, subArray.length);
+        assertEquals(1, toCut[0], 0);
+        try {
+            subArray = ArrayOperations.subArray(toCut, 0, 4);
+            fail("SubArray failed to throw out of bounds exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            subArray = ArrayOperations.subArray(toCut, 2, 1);
+            fail("SubArray failed to negative array size exception");
+        }
+        catch (NegativeArraySizeException nas) {}
     }
 
     /**
@@ -896,6 +920,24 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSubArray_3args_4() {
+        double[] toCut = new double[] {1, 2, 3};
+        double[] subArray = ArrayOperations.subArray(toCut, 0, 3);
+        assertEquals(3, subArray.length);
+        subArray = ArrayOperations.subArray(toCut, 1, 2);
+        assertEquals(1, subArray.length);
+        subArray = ArrayOperations.subArray(toCut, 2, 2);
+        assertEquals(0, subArray.length);
+        assertEquals(1, toCut[0], 0);
+        try {
+            subArray = ArrayOperations.subArray(toCut, 0, 4);
+            fail("SubArray failed to throw out of bounds exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            subArray = ArrayOperations.subArray(toCut, 2, 1);
+            fail("SubArray failed to negative array size exception");
+        }
+        catch (NegativeArraySizeException nas) {}
     }
 
     /**
@@ -903,6 +945,26 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSubArray_3args_5() {
+        char[] toCut = new char[] {'a', 'b', 'c'};
+        char[] subArray = ArrayOperations.subArray(toCut, 0, 3);
+        assertEquals(3, subArray.length);
+        assertArrayEquals(new char[] {'a', 'b', 'c'}, subArray);
+        subArray = ArrayOperations.subArray(toCut, 1, 2);
+        assertEquals(1, subArray.length);
+        assertArrayEquals(new char[] {'b'}, subArray);
+        subArray = ArrayOperations.subArray(toCut, 2, 2);
+        assertEquals(0, subArray.length);
+        assertArrayEquals(new char[] {'a', 'b', 'c'}, toCut);
+        try {
+            subArray = ArrayOperations.subArray(toCut, 0, 4);
+            fail("SubArray failed to throw out of bounds exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            subArray = ArrayOperations.subArray(toCut, 2, 1);
+            fail("SubArray failed to negative array size exception");
+        }
+        catch (NegativeArraySizeException nas) {}
     }
 
     /**
@@ -910,6 +972,26 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSubArray_3args_6() {
+        String[] toCut = new String[] {"a", "b", "c"};
+        String[] subArray = ArrayOperations.subArray(toCut, 0, 3);
+        assertEquals(3, subArray.length);
+        assertArrayEquals(new String[] {"a", "b", "c"}, subArray);
+        subArray = ArrayOperations.subArray(toCut, 1, 2);
+        assertEquals(1, subArray.length);
+        assertArrayEquals(new String[] {"b"}, subArray);
+        subArray = ArrayOperations.subArray(toCut, 2, 2);
+        assertEquals(0, subArray.length);
+        assertArrayEquals(new String[] {"a", "b", "c"}, toCut);
+        try {
+            subArray = ArrayOperations.subArray(toCut, 0, 4);
+            fail("SubArray failed to throw out of bounds exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            subArray = ArrayOperations.subArray(toCut, 2, 1);
+            fail("SubArray failed to negative array size exception");
+        }
+        catch (NegativeArraySizeException nas) {}
     }
 
     /**
@@ -917,6 +999,29 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSubArray_3args_7() {
+        ReplicableObject one = new ReplicableObject(1);
+        ReplicableObject two = new ReplicableObject(2);
+        ReplicableObject three = new ReplicableObject(3);
+        ReplicableObject[] toCut = new ReplicableObject[] {one, two, three};
+        Object[] subArray = ArrayOperations.subArray(toCut, 0, 3);
+        assertEquals(3, subArray.length);
+        assertArrayEquals(new ReplicableObject[] {one, two, three}, subArray);
+        subArray = ArrayOperations.subArray(toCut, 1, 2);
+        assertEquals(1, subArray.length);
+        assertArrayEquals(new ReplicableObject[] {two}, subArray);
+        subArray = ArrayOperations.subArray(toCut, 3, 3);
+        assertEquals(0, subArray.length);
+        assertArrayEquals(new ReplicableObject[] {one, two, three}, toCut);
+        try {
+            subArray = ArrayOperations.subArray(toCut, 0, 4);
+            fail("SubArray failed to throw out of bounds exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            subArray = ArrayOperations.subArray(toCut, 2, 1);
+            fail("SubArray failed to negative array size exception");
+        }
+        catch (NegativeArraySizeException nas) {}
     }
 
     /**
@@ -924,6 +1029,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testJoin_byteArrArr() {
+        byte[] empty = new byte[0];
+        byte[] single = new byte[] {'a'};
+        byte[] multiple = new byte[] {'a', 'b', 'c'};
+        byte[] joined = ArrayOperations.join(empty);
+        assertEquals(0, joined.length);
+        assertNotSame(joined, empty);
+        joined = ArrayOperations.join(empty, single, multiple, empty);
+        assertEquals(4, joined.length);
+        assertArrayEquals(new byte[] {'a', 'a', 'b', 'c'}, joined);
+        joined = ArrayOperations.join(single, single);
+        assertEquals(2, joined.length);
+        assertArrayEquals(new byte[] {'a', 'a'}, joined);
     }
 
     /**
@@ -931,6 +1048,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testJoin_intArrArr() {
+        int[] empty = new int[0];
+        int[] single = new int[] {1};
+        int[] multiple = new int[] {1, 2, 3};
+        int[] joined = ArrayOperations.join(empty);
+        assertEquals(0, joined.length);
+        assertNotSame(joined, empty);
+        joined = ArrayOperations.join(empty, single, multiple, empty);
+        assertEquals(4, joined.length);
+        assertArrayEquals(new int[] {1, 1, 2, 3}, joined);
+        joined = ArrayOperations.join(single, single);
+        assertEquals(2, joined.length);
+        assertArrayEquals(new int[] {1, 1}, joined);
     }
 
     /**
@@ -938,6 +1067,16 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testJoin_floatArrArr() {
+        float[] empty = new float[0];
+        float[] single = new float[] {1};
+        float[] multiple = new float[] {1, 2, 3};
+        float[] joined = ArrayOperations.join(empty);
+        assertEquals(0, joined.length);
+        assertNotSame(joined, empty);
+        joined = ArrayOperations.join(empty, single, multiple, empty);
+        assertEquals(4, joined.length);
+        joined = ArrayOperations.join(single, single);
+        assertEquals(2, joined.length);
     }
 
     /**
@@ -945,6 +1084,16 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testJoin_doubleArrArr() {
+        double[] empty = new double[0];
+        double[] single = new double[] {1};
+        double[] multiple = new double[] {1, 2, 3};
+        double[] joined = ArrayOperations.join(empty);
+        assertEquals(0, joined.length);
+        assertNotSame(joined, empty);
+        joined = ArrayOperations.join(empty, single, multiple, empty);
+        assertEquals(4, joined.length);
+        joined = ArrayOperations.join(single, single);
+        assertEquals(2, joined.length);
     }
 
     /**
@@ -952,6 +1101,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testJoin_charArrArr() {
+        char[] empty = new char[0];
+        char[] single = new char[] {'a'};
+        char[] multiple = new char[] {'a', 'b', 'c'};
+        char[] joined = ArrayOperations.join(empty);
+        assertEquals(0, joined.length);
+        assertNotSame(joined, empty);
+        joined = ArrayOperations.join(empty, single, multiple, empty);
+        assertEquals(4, joined.length);
+        assertArrayEquals(new char[] {'a', 'a', 'b', 'c'}, joined);
+        joined = ArrayOperations.join(single, single);
+        assertEquals(2, joined.length);
+        assertArrayEquals(new char[] {'a', 'a'}, joined);
     }
 
     /**
@@ -959,6 +1120,16 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testJoin_booleanArrArr() {
+        boolean[] empty = new boolean[0];
+        boolean[] single = new boolean[] {true};
+        boolean[] multiple = new boolean[] {true, false, true};
+        boolean[] joined = ArrayOperations.join(empty);
+        assertEquals(0, joined.length);
+        assertNotSame(joined, empty);
+        joined = ArrayOperations.join(empty, single, multiple, empty);
+        assertEquals(4, joined.length);
+        joined = ArrayOperations.join(single, single);
+        assertEquals(2, joined.length);
     }
 
     /**
@@ -966,6 +1137,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testJoin_StringArrArr() {
+        String[] empty = new String[0];
+        String[] single = new String[] {"a"};
+        String[] multiple = new String[] {"a", "b", "c"};
+        String[] joined = ArrayOperations.join(empty);
+        assertEquals(0, joined.length);
+        assertNotSame(joined, empty);
+        joined = ArrayOperations.join(empty, single, multiple, empty);
+        assertEquals(4, joined.length);
+        assertArrayEquals(new String[] {"a", "a", "b", "c"}, joined);
+        joined = ArrayOperations.join(single, single);
+        assertEquals(2, joined.length);
+        assertArrayEquals(new String[] {"a", "a"}, joined);
     }
 
     /**
@@ -973,6 +1156,21 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testJoin_ObjectArrArr() {
+        ReplicableObject one = new ReplicableObject(1);
+        ReplicableObject two = new ReplicableObject(2);
+        ReplicableObject three = new ReplicableObject(3);
+        ReplicableObject[] empty = new ReplicableObject[0];
+        ReplicableObject[] single = new ReplicableObject[] {one};
+        ReplicableObject[] multiple = new ReplicableObject[] {one, two, three};
+        Object[] joined = ArrayOperations.join(empty);
+        assertEquals(0, joined.length);
+        assertNotSame(joined, empty);
+        joined = ArrayOperations.join(empty, single, multiple, empty);
+        assertEquals(4, joined.length);
+        assertArrayEquals(new ReplicableObject[] {one, one, two, three}, joined);
+        joined = ArrayOperations.join(single, single);
+        assertEquals(2, joined.length);
+        assertArrayEquals(new ReplicableObject[] {one, one}, joined);
     }
 
     /**
@@ -980,6 +1178,28 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testDelete_byteArr_int() {
+        try {
+            ArrayOperations.delete(new byte[0], 0);
+            fail("Delete failed to throw index exception for empty array");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            ArrayOperations.delete(new byte[] {'a', 'b', 'c'}, 3);
+            fail("Delete failed to throw index exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        byte[] toDelete = new byte[] {'a', 'b', 'c'};
+        byte[] deleted = ArrayOperations.delete(toDelete, 0);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new byte[] {'b', 'c'}, deleted);
+        deleted = ArrayOperations.delete(deleted, 1);
+        assertEquals(1, deleted.length);
+        assertArrayEquals(new byte[] {'b'}, deleted);
+        deleted = ArrayOperations.delete(deleted, 0);
+        assertEquals(0, deleted.length);
+        deleted = ArrayOperations.delete(toDelete, 1);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new byte[] {'a', 'c'}, deleted);
     }
 
     /**
