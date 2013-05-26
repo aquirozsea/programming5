@@ -21,9 +21,11 @@
 
 package programming5.arrays;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Comparator;
 import programming5.code.ObjectMatcher;
+import programming5.code.Replicable;
 
 /**
  *This class provides additional array manipulation operations to those in java.util.Arrays.
@@ -35,88 +37,95 @@ public abstract class ArrayOperations {
     /**
      *@return a new copy of the input array
      */
-    public static final byte[] replicate(byte[] array) {
+    public static byte[] replicate(byte[] array) {
+        if (array == null) {return null;}
         byte[] ret = new byte[array.length];
-        for (int i = 0; i < array.length; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, array.length);
         return ret;
     }
     
     /**
      *@return a new copy of the input array
      */
-    public static final int[] replicate(int[] array) {
+    public static int[] replicate(int[] array) {
+        if (array == null) {return null;}
         int[] ret = new int[array.length];
-        for (int i = 0; i < array.length; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, array.length);
         return ret;
     }
     
     /**
      *@return a new copy of the input array
      */
-    public static final float[] replicate(float[] array) {
+    public static float[] replicate(float[] array) {
+        if (array == null) {return null;}
         float[] ret = new float[array.length];
-        for (int i = 0; i < array.length; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, array.length);
         return ret;
     }
     
     /**
      *@return a new copy of the input array
      */
-    public static final double[] replicate(double[] array) {
+    public static double[] replicate(double[] array) {
+        if (array == null) {return null;}
         double[] ret = new double[array.length];
-        for (int i = 0; i < array.length; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, array.length);
         return ret;
     }
     
     /**
      *@return a new copy of the input array
      */
-    public static final char[] replicate(char[] array) {
+    public static char[] replicate(char[] array) {
+        if (array == null) {return null;}
         char[] ret = new char[array.length];
-        for (int i = 0; i < array.length; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, array.length);
         return ret;
     }
     
     /**
      *@return a new copy of the input array
      */
-    public static final String[] replicate(String[] array) {
+    public static String[] replicate(String[] array) {
+        if (array == null) {return null;}
         String[] ret = new String[array.length];
-        for (int i = 0; i < array.length; i++) {
-            ret[i] = new String(array[i]);
-        }
+        System.arraycopy(array, 0, ret, 0, array.length);
         return ret;
     }
 
     public static long[] replicate(long[] array) {
+        if (array == null) {return null;}
         long[] ret = new long[array.length];
-        for (int i = 0; i < array.length; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, array.length);
         return ret;
     }
     
     /**
      *@param source the array to be replicated
-     *@param destination the pre-allocated distination array, of equal size as the source array, which will be filled with values from the source
+     *@param destination the pre-allocated destination array, of equal size as the source array, which will be filled with values from the source
      *@throws java.lang.IllegalArgumentException if the arrays are of different sizes
      */
-    public static final <T> void replicate(T[] source, T[] destination) {
+    public static <T> void replicate(T[] source, T[] destination) {
+        if (source.length == destination.length) {
+            System.arraycopy(source, 0, destination, 0, source.length);
+        } 
+        else {
+            throw new IllegalArgumentException("ArrayOperations: Could not replicate source array: Arrays of different dimensions");
+        }
+    }
+    
+    /**
+     *@param source the array to be replicated
+     *@param destination the pre-allocated destination array, of equal size as the source array, which will be filled with values from the source
+     *@throws java.lang.IllegalArgumentException if the arrays are of different sizes
+     */
+    public static <T extends Replicable> void replicate(T[] source, T[] destination) {
         if (source.length == destination.length) {
             for (int i = 0; i < source.length; i++) {
-                destination[i] = source[i];
+                destination[i] = (T) source[i].replicate();
             }
-        } 
+        }
         else {
             throw new IllegalArgumentException("ArrayOperations: Could not replicate source array: Arrays of different dimensions");
         }
@@ -125,7 +134,7 @@ public abstract class ArrayOperations {
     /**
      *@return the sum of the elements of the input array
      */
-    public static final int sum(int[] array) {
+    public static int sum(int[] array) {
         int sum = 0;
         for (int elem : array) {
             sum += elem;
@@ -136,7 +145,7 @@ public abstract class ArrayOperations {
     /**
      *@return the sum of the elements of the input array
      */
-    public static final float sum(float[] array) {
+    public static float sum(float[] array) {
         float sum = 0;
         for (float elem : array) {
             sum += elem;
@@ -147,7 +156,7 @@ public abstract class ArrayOperations {
     /**
      *@return the sum of the elements of the input array
      */
-    public static final double sum(double[] array) {
+    public static double sum(double[] array) {
         double sum = 0;
         for (double elem : array) {
             sum += elem;
@@ -156,9 +165,10 @@ public abstract class ArrayOperations {
     }
 
     /**
-     * @return the product of the elements of the given array
+     * @return the product of the elements of the given array (beware of overflow)
      */
-    public static final long product(int[] array) {
+    public static long product(int[] array) {
+        if (array.length == 0) {return 0;}
         long product = 1;
         for (int elem : array) {
             product *= elem;
@@ -167,9 +177,34 @@ public abstract class ArrayOperations {
     }
 
     /**
-     * @return the product of the elements of the given array
+     * @return the product of the elements of the given array (using a BigInteger in case of overflow)
      */
-    public static final double product(float[] array) {
+    public static BigInteger bigProduct(int[] array) {
+        if (array.length == 0) {return BigInteger.ZERO;}
+        BigInteger product = BigInteger.ONE;
+        for (int elem : array) {
+            product = product.multiply(BigInteger.valueOf(elem));
+        }
+        return product;
+    }
+
+    /**
+     * @return the product of the elements of the given array (using a BigInteger in case of overflow)
+     */
+    public static BigInteger bigProduct(long[] array) {
+        if (array.length == 0) {return BigInteger.ZERO;}
+        BigInteger product = BigInteger.ONE;
+        for (long elem : array) {
+            product = product.multiply(BigInteger.valueOf(elem));
+        }
+        return product;
+    }
+
+    /**
+     * @return the product of the elements of the given array (beware of overflow)
+     */
+    public static double product(float[] array) {
+        if (array.length == 0) {return 0;}
         double product = 1;
         for (float elem : array) {
             product *= elem;
@@ -178,9 +213,10 @@ public abstract class ArrayOperations {
     }
 
     /**
-     * @return the product of the elements of the given array
+     * @return the product of the elements of the given array (beware of overflow)
      */
-    public static final double product(double[] array) {
+    public static double product(double[] array) {
+        if (array.length == 0) {return 0;}
         double product = 1;
         for (double elem : array) {
             product *= elem;
@@ -191,28 +227,31 @@ public abstract class ArrayOperations {
     /**
      *@return the average of the elements of the input array
      */
-    public static final double avg(int[] array) {
+    public static double avg(int[] array) {
+        if (array.length == 0) {return 0;}
         return (double)sum(array)/(double)array.length;
     }
     
     /**
      *@return the average of the elements of the input array
      */
-    public static final double avg(float[] array) {
+    public static double avg(float[] array) {
+        if (array.length == 0) {return 0;}
         return (double)sum(array)/(double)array.length;
     }
     
     /**
      *@return the average of the elements of the input array
      */
-    public static final double avg(double[] array) {
+    public static double avg(double[] array) {
+        if (array.length == 0) {return 0;}
         return sum(array)/(double)array.length;
     }
     
     /**
      *@return the maximum element value of the elements of the input array
      */
-    public static final int max(int[] array) {
+    public static int max(int[] array) {
         int ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] > ret) {
@@ -225,7 +264,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array
      */
-    public static final float max(float[] array) {
+    public static float max(float[] array) {
         float ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] > ret) {
@@ -238,7 +277,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array
      */
-    public static final double max(double[] array) {
+    public static double max(double[] array) {
         double ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] > ret) {
@@ -251,7 +290,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array, with respect to the given comparator
      */
-    public static final <T, S extends T> Object max(S[] array, Comparator<T> comp) {
+    public static <T, S extends T> Object max(S[] array, Comparator<T> comp) {
         S ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (comp.compare(array[i], ret) > 0) {
@@ -264,7 +303,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of maximum value in the input array
      */
-    public static final int maxIndex(int[] array) {
+    public static int maxIndex(int[] array) {
         int ret = 0;
         int maxval = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -279,7 +318,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of maximum value in the input array
      */
-    public static final int maxIndex(float[] array) {
+    public static int maxIndex(float[] array) {
         int ret = 0;
         float maxval = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -294,7 +333,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of maximum value in the input array
      */
-    public static final int maxIndex(double[] array) {
+    public static int maxIndex(double[] array) {
         int ret = 0;
         double maxval = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -309,7 +348,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of maximum value in the input array, with respect to the given comparator
      */
-    public static final <T, S extends T> int maxIndex(S[] array, Comparator<T> comp) {
+    public static <T, S extends T> int maxIndex(S[] array, Comparator<T> comp) {
         int ret = 0;
         S maxval = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -324,7 +363,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array
      */
-    public static final int min(int[] array) {
+    public static int min(int[] array) {
         int ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] < ret)
@@ -336,7 +375,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array
      */
-    public static final float min(float[] array) {
+    public static float min(float[] array) {
         float ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] < ret)
@@ -348,7 +387,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array
      */
-    public static final double min(double[] array) {
+    public static double min(double[] array) {
         double ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] < ret)
@@ -360,7 +399,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array, with respect to the given comparator
      */
-    public static final <T, S extends T> Object min(S[] array, Comparator<T> comp) {
+    public static <T, S extends T> Object min(S[] array, Comparator<T> comp) {
         S ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (comp.compare(array[i], ret) < 0) {
@@ -373,7 +412,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of minimum value of the elements in the input array
      */
-    public static final int minIndex(int[] array) {
+    public static int minIndex(int[] array) {
         int ret = 0;
         int minval = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -388,7 +427,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of minimum value of the elements in the input array
      */
-    public static final int minIndex(float[] array) {
+    public static int minIndex(float[] array) {
         int ret = 0;
         float minval = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -403,7 +442,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of minimum value of the elements in the input array
      */
-    public static final int minIndex(double[] array) {
+    public static int minIndex(double[] array) {
         int ret = 0;
         double minval = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -418,7 +457,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of minimum value of the elements in the input array, with respect to the given comparator
      */
-    public static final <T, S extends T> int minIndex(S[] array, Comparator<T> comp) {
+    public static <T, S extends T> int minIndex(S[] array, Comparator<T> comp) {
         int ret = 0;
         S maxval = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -433,172 +472,142 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
-    public static final byte[] prefix(byte[] array, int until) throws ArrayIndexOutOfBoundsException {
+    public static byte[] prefix(byte[] array, int until) throws ArrayIndexOutOfBoundsException {
         byte[] ret = new byte[until];
-        for (int i = 0; i < until; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, until);
         return ret;
     }
     
     /**
      *@return  a new subarray of elements of array from 0 to that indexed by until-1
      */
-    public static final int[] prefix(int[] array, int until) throws ArrayIndexOutOfBoundsException {
+    public static int[] prefix(int[] array, int until) throws ArrayIndexOutOfBoundsException {
         int[] ret = new int[until];
-        for (int i = 0; i < until; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, until);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
-    public static final float[] prefix(float[] array, int until) throws ArrayIndexOutOfBoundsException {
+    public static float[] prefix(float[] array, int until) throws ArrayIndexOutOfBoundsException {
         float[] ret = new float[until];
-        for (int i = 0; i < until; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, until);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
-    public static final double[] prefix(double[] array, int until) throws ArrayIndexOutOfBoundsException {
+    public static double[] prefix(double[] array, int until) throws ArrayIndexOutOfBoundsException {
         double[] ret = new double[until];
-        for (int i = 0; i < until; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, until);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
-    public static final char[] prefix(char[] array, int until) throws ArrayIndexOutOfBoundsException {
+    public static char[] prefix(char[] array, int until) throws ArrayIndexOutOfBoundsException {
         char[] ret = new char[until];
-        for (int i = 0; i < until; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, until);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
-    public static final String[] prefix(String[] array, int until) throws ArrayIndexOutOfBoundsException {
+    public static String[] prefix(String[] array, int until) throws ArrayIndexOutOfBoundsException {
         String[] ret = new String[until];
-        for (int i = 0; i < until; i++) {
-            ret[i] = new String(array[i]);
-        }
+        System.arraycopy(array, 0, ret, 0, until);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1. Caution: Does not replicate objects
      */
-    public static final Object[] prefix(Object[] array, int until) throws ArrayIndexOutOfBoundsException {
+    public static Object[] prefix(Object[] array, int until) throws ArrayIndexOutOfBoundsException {
         Object[] ret = new Object[until];
-        for (int i = 0; i < until; i++) {
-            ret[i] = array[i];
-        }
+        System.arraycopy(array, 0, ret, 0, until);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
-    public static final byte[] suffix(byte[] array, int from) throws ArrayIndexOutOfBoundsException {
+    public static byte[] suffix(byte[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         byte[] ret = new byte[array.length-from];
-        for (int i = from; i < array.length; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
-    public static final int[] suffix(int[] array, int from) throws ArrayIndexOutOfBoundsException {
+    public static int[] suffix(int[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         int[] ret = new int[array.length-from];
-        for (int i = from; i < array.length; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
-    public static final float[] suffix(float[] array, int from) throws ArrayIndexOutOfBoundsException {
+    public static float[] suffix(float[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         float[] ret = new float[array.length-from];
-        for (int i = from; i < array.length; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
-    public static final double[] suffix(double[] array, int from) throws ArrayIndexOutOfBoundsException {
+    public static double[] suffix(double[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         double[] ret = new double[array.length-from];
-        for (int i = from; i < array.length; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
-    public static final char[] suffix(char[] array, int from) throws ArrayIndexOutOfBoundsException {
+    public static char[] suffix(char[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         char[] ret = new char[array.length-from];
-        for (int i = from; i < array.length; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
-    public static final String[] suffix(String[] array, int from) throws ArrayIndexOutOfBoundsException {
+    public static String[] suffix(String[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         String[] ret = new String[array.length-from];
-        for (int i = from; i < array.length; i++) {
-            ret[i-from] = new String(array[i]);
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element. Caution: Does not replicate objects!
      */
-    public static final Object[] suffix(Object[] array, int from) throws ArrayIndexOutOfBoundsException {
+    public static Object[] suffix(Object[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         Object[] ret = new Object[array.length-from];
-        for (int i = from; i < array.length; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
-    public static final byte[] subArray(byte[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
+    public static byte[] subArray(byte[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         byte[] ret = new byte[until-from];
-        for (int i = from; i < until; i++) {
-            ret[i-from] = array[i];
-        }
+        System.arraycopy(array, from, ret, 0, ret.length);
         return ret;
     }
     
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
-    public static final int[] subArray(int[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
+    public static int[] subArray(int[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         int[] ret = new int[until-from];
         for (int i = from; i < until; i++) {
             ret[i-from] = array[i];
@@ -609,7 +618,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
-    public static final float[] subArray(float[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
+    public static float[] subArray(float[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         float[] ret = new float[until-from];
         for (int i = from; i < until; i++) {
             ret[i-from] = array[i];
@@ -620,7 +629,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
-    public static final double[] subArray(double[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
+    public static double[] subArray(double[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         double[] ret = new double[until-from];
         for (int i = from; i < until; i++) {
             ret[i-from] = array[i];
@@ -631,7 +640,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
-    public static final char[] subArray(char[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
+    public static char[] subArray(char[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         char[] ret = new char[until-from];
         for (int i = from; i < until; i++) {
             ret[i-from] = array[i];
@@ -642,7 +651,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
-    public static final String[] subArray(String[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
+    public static String[] subArray(String[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         String[] ret = new String[until-from];
         for (int i = from; i < until; i++) {
             ret[i-from] = array[i];
@@ -653,7 +662,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1. Caution: Does not replicate objects!
      */
-    public static final Object[] subArray(Object[] array, int from, int until) throws ArrayIndexOutOfBoundsException {
+    public static Object[] subArray(Object[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         Object[] ret = new Object[until-from];
         for (int i = from; i < until; i++) {
             ret[i-from] = array[i];
