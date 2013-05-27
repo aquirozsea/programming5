@@ -21,6 +21,7 @@
 
 package programming5.arrays;
 
+import java.io.PrintStream;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -33,6 +34,8 @@ import programming5.code.Replicable;
  *@version 6.1
  */
 public abstract class ArrayOperations {
+
+    public static PrintStream OUT = System.out;
     
     /**
      *@return a new copy of the input array
@@ -887,155 +890,155 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *Prints the elements of the array to System.out, one per line
+     *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static final void print(byte[] array) {
+    public static void print(byte[] array) {
         for (byte elem : array)
-            System.out.println(elem);
+            OUT.println(elem);
     }
     
     /**
-     *Prints the elements of the array to System.out, one per line
+     *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static final void print(int[] array) {
+    public static void print(int[] array) {
         for (int elem : array)
-            System.out.println(elem);
+            OUT.println(elem);
     }
     
     /**
-     *Prints the elements of the array to System.out, one per line
+     *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static final void print(float[] array) {
+    public static void print(float[] array) {
         for (float elem : array)
-            System.out.println(elem);
+            OUT.println(elem);
     }
     
     /**
-     *Prints the elements of the array to System.out, one per line
+     *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static final void print(double[] array) {
+    public static void print(double[] array) {
         for (double elem : array)
-            System.out.println(elem);
+            OUT.println(elem);
     }
     
     /**
-     *Prints the elements of the array to System.out, one per line
+     *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static final void print(char[] array) {
+    public static void print(char[] array) {
         for (char elem : array)
-            System.out.println(elem);
+            OUT.println(elem);
     }
     
     /**
-     *Prints the elements of the array to System.out, one per line
+     *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static final void print(String[] array) {
+    public static void print(String[] array) {
         for (String elem : array)
-            System.out.println(elem);
+            OUT.println(elem);
     }
     
     /**
-     *Prints the elements of the array to System.out, one per line, using objects' toString method
+     *Prints the elements of the array to System.out, or the current OUT stream, one per line, using objects' toString method
      */
-    public static final void print(Object[] array) {
+    public static void print(Object[] array) {
         for (Object elem : array) {
-            System.out.println(elem.toString());
+            OUT.println(elem.toString());
         }
     }
     
     /**
-     *Prints a comma separated list of the elements of the input array to System.out
+     *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static final void printHorizontal(byte[] array) {
-        System.out.print(array[0]);
+    public static void printHorizontal(byte[] array) {
+        OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
-            System.out.print(", " + array[i]);
+            OUT.print(", " + array[i]);
         }
-        System.out.println();
+        OUT.println();
     }
     
     /**
-     *Prints a comma separated list of the elements of the input array to System.out
+     *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static final void printHorizontal(int[] array) {
-        System.out.print(array[0]);
+    public static void printHorizontal(int[] array) {
+        OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
-            System.out.print(", " + array[i]);
+            OUT.print(", " + array[i]);
         }
-        System.out.println();
+        OUT.println();
     }
     
     /**
-     *Prints a comma separated list of the elements of the input array to System.out
+     *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static final void printHorizontal(float[] array) {
-        System.out.print(array[0]);
+    public static void printHorizontal(float[] array) {
+        OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
-            System.out.print(", " + array[i]);
+            OUT.print(", " + array[i]);
         }
-        System.out.println();
+        OUT.println();
     }
     
     /**
-     *Prints a comma separated list of the elements of the input array to System.out
+     *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static final void printHorizontal(double[] array) {
-        System.out.print(array[0]);
+    public static void printHorizontal(double[] array) {
+        OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
-            System.out.print(", " + array[i]);
+            OUT.print(", " + array[i]);
         }
-        System.out.println();
+        OUT.println();
     }
     
     /**
-     *Prints a comma separated list of the elements of the input array to System.out
+     *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static final void printHorizontal(char[] array) {
-        System.out.print(array[0]);
+    public static void printHorizontal(char[] array) {
+        OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
-            System.out.print(", " + array[i]);
+            OUT.print(", " + array[i]);
         }
-        System.out.println();
+        OUT.println();
     }
     
     /**
-     *Prints a comma separated list of the elements of the input array to System.out
+     *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static final void printHorizontal(String[] array) {
-        System.out.print(array[0]);
+    public static void printHorizontal(String[] array) {
+        OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
-            System.out.print(", " + array[i]);
+            OUT.print(", " + array[i]);
         }
-        System.out.println();
+        OUT.println();
     }
     
     /**
-     *Prints a comma separated list of the elements of the input array to System.out, using objects' toString method
+     *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream, using objects' toString method
      */
-    public static final void printHorizontal(Object[] array) {
-        System.out.print(array[0].toString());
+    public static void printHorizontal(Object[] array) {
+        OUT.print(array[0].toString());
         for (int i = 1; i < array.length; i++) {
-            System.out.print(", " + array[i].toString());
+            OUT.print(", " + array[i].toString());
         }
-        System.out.println();
+        OUT.println();
     }
     
     /**
-     *Prints a comma separated list of the elements of the input array to System.out
+     *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static final void printHorizontal(boolean[] array) {
-        System.out.print(array[0]);
+    public static void printHorizontal(boolean[] array) {
+        OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
-            System.out.print(", " + array[i]);
+            OUT.print(", " + array[i]);
         }
-        System.out.println();
+        OUT.println();
     }
     
     /**
      *@return true if all of the elements of the input array are true
      */
-    public static final boolean tautology(boolean[] array) {
-        boolean ret = true;
+    public static boolean tautology(boolean[] array) {
+        boolean ret = (array.length > 0) ? true : false;
         for (boolean ind : array) {
             if (!ind) {
                 ret = false;
@@ -1046,9 +1049,9 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return true if all the elements of the input array are false
+     *@return true if all the elements of the input array are false, or if the array is empty
      */
-    public static final boolean contradiction(boolean[] array) {
+    public static boolean contradiction(boolean[] array) {
         boolean ret = true;
         for (boolean ind : array) {
             if (ind) {
@@ -1061,8 +1064,10 @@ public abstract class ArrayOperations {
     
     /**
      *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(byte b, byte[] array) {
+    @Deprecated
+    public static int seqFind(byte b, byte[] array) {
         int ret = -1;
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1075,8 +1080,10 @@ public abstract class ArrayOperations {
     
     /**
      *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(int b, int[] array) {
+    @Deprecated
+    public static int seqFind(int b, int[] array) {
         int ret = -1;
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1089,8 +1096,10 @@ public abstract class ArrayOperations {
     
     /**
      *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(float b, float[] array) {
+    @Deprecated
+    public static int seqFind(float b, float[] array) {
         int ret = -1;
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1103,8 +1112,10 @@ public abstract class ArrayOperations {
     
     /**
      *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(double b, double[] array) {
+    @Deprecated
+    public static int seqFind(double b, double[] array) {
         int ret = -1;
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1117,8 +1128,10 @@ public abstract class ArrayOperations {
     
     /**
      *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(char b, char[] array) {
+    @Deprecated
+    public static int seqFind(char b, char[] array) {
         int ret = -1;
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1131,8 +1144,10 @@ public abstract class ArrayOperations {
     
     /**
      *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(Object b, Object[] array) {
+    @Deprecated
+    public static int seqFind(Object b, Object[] array) {
         int ret = -1;
         for (int i = 0; i < array.length; i++) {
             if (array[i].equals(b)) {
@@ -1144,9 +1159,11 @@ public abstract class ArrayOperations {
     }
 
     /**
-     *@return the index of the first b in the array, or -1 if not found, using the given matcher to perform comparisons
+     *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(Object b, Object[] array, ObjectMatcher matcher) {
+    @Deprecated
+    public static int seqFind(Object b, Object[] array, ObjectMatcher matcher) {
         int ret = -1;
         for (int i = 0; i < array.length; i++) {
             if (matcher.matches(array[i], b)) {
@@ -1158,9 +1175,11 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the first b in the array, starting at from, or -1 if not found
+     *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(byte b, byte[] array, int from) {
+    @Deprecated
+    public static int seqFind(byte b, byte[] array, int from) {
         int ret = -1;
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1172,9 +1191,11 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the first b in the array, starting at from, or -1 if not found
+     *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(int b, int[] array, int from) {
+    @Deprecated
+    public static int seqFind(int b, int[] array, int from) {
         int ret = -1;
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1186,9 +1207,11 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the first b in the array, starting at from, or -1 if not found
+     *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(float b, float[] array, int from) {
+    @Deprecated
+    public static int seqFind(float b, float[] array, int from) {
         int ret = -1;
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1200,9 +1223,11 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the first b in the array, starting at from, or -1 if not found
+     *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(double b, double[] array, int from) {
+    @Deprecated
+    public static int seqFind(double b, double[] array, int from) {
         int ret = -1;
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1214,9 +1239,11 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the first b in the array, starting at from, or -1 if not found
+     *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(char b, char[] array, int from) {
+    @Deprecated
+    public static int seqFind(char b, char[] array, int from) {
         int ret = -1;
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1228,9 +1255,11 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the first b in the array, starting at from, or -1 if not found
+     *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(Object b, Object[] array, int from) {
+    @Deprecated
+    public static int seqFind(Object b, Object[] array, int from) {
         int ret = -1;
         for (int i = from; i < array.length; i++) {
             if (array[i].equals(b)) {
@@ -1244,9 +1273,11 @@ public abstract class ArrayOperations {
 
 
     /**
-     *@return the index of the first b in the array, starting at from, or -1 if not found, using the given matcher to perform comparisons
+     *@return the index of the first b in the array, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
      */
-    public static final int seqFind(Object b, Object[] array, int from, ObjectMatcher matcher) {
+    @Deprecated
+    public static int seqFind(Object b, Object[] array, int from, ObjectMatcher matcher) {
         int ret = -1;
         for (int i = 0; i < array.length; i++) {
             if (matcher.matches(array[i], b)) {
