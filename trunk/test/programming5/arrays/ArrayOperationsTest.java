@@ -5,6 +5,9 @@
 
 package programming5.arrays;
 
+import programming5.strings.KeyValuePairMatcher;
+import java.util.Arrays;
+import java.util.Random;
 import programming5.strings.NumericStringComparator;
 import java.math.BigInteger;
 import programming5.code.ReplicableObject;
@@ -24,6 +27,7 @@ import static org.junit.Assert.*;
 public class ArrayOperationsTest {
 
     NumericStringComparator comparator = new NumericStringComparator();
+    Random random = new Random(System.currentTimeMillis());
 
     public ArrayOperationsTest() {
     }
@@ -1207,6 +1211,28 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testDelete_intArr_int() {
+        try {
+            ArrayOperations.delete(new int[0], 0);
+            fail("Delete failed to throw index exception for empty array");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            ArrayOperations.delete(new int[] {1, 2, 3}, 3);
+            fail("Delete failed to throw index exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        int[] toDelete = new int[] {1, 2, 3};
+        int[] deleted = ArrayOperations.delete(toDelete, 0);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new int[] {2, 3}, deleted);
+        deleted = ArrayOperations.delete(deleted, 1);
+        assertEquals(1, deleted.length);
+        assertArrayEquals(new int[] {2}, deleted);
+        deleted = ArrayOperations.delete(deleted, 0);
+        assertEquals(0, deleted.length);
+        deleted = ArrayOperations.delete(toDelete, 1);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new int[] {1, 3}, deleted);
     }
 
     /**
@@ -1214,6 +1240,26 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testDelete_floatArr_int() {
+        try {
+            ArrayOperations.delete(new float[0], 0);
+            fail("Delete failed to throw index exception for empty array");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            ArrayOperations.delete(new float[] {1, 2, 3}, 3);
+            fail("Delete failed to throw index exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        float[] toDelete = new float[] {1, 2, 3};
+        float[] deleted = ArrayOperations.delete(toDelete, 0);
+        assertEquals(2, deleted.length);
+        deleted = ArrayOperations.delete(deleted, 1);
+        assertEquals(1, deleted.length);
+        deleted = ArrayOperations.delete(deleted, 0);
+        assertEquals(0, deleted.length);
+        deleted = ArrayOperations.delete(toDelete, 1);
+        assertEquals(2, deleted.length);
+        assertEquals(3, deleted[1], 0);
     }
 
     /**
@@ -1221,6 +1267,26 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testDelete_doubleArr_int() {
+        try {
+            ArrayOperations.delete(new double[0], 0);
+            fail("Delete failed to throw index exception for empty array");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            ArrayOperations.delete(new double[] {1, 2, 3}, 3);
+            fail("Delete failed to throw index exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        double[] toDelete = new double[] {1, 2, 3};
+        double[] deleted = ArrayOperations.delete(toDelete, 0);
+        assertEquals(2, deleted.length);
+        deleted = ArrayOperations.delete(deleted, 1);
+        assertEquals(1, deleted.length);
+        deleted = ArrayOperations.delete(deleted, 0);
+        assertEquals(0, deleted.length);
+        deleted = ArrayOperations.delete(toDelete, 1);
+        assertEquals(2, deleted.length);
+        assertEquals(3, deleted[1], 0);
     }
 
     /**
@@ -1228,6 +1294,28 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testDelete_charArr_int() {
+        try {
+            ArrayOperations.delete(new char[0], 0);
+            fail("Delete failed to throw index exception for empty array");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            ArrayOperations.delete(new char[] {'a', 'b', 'c'}, 3);
+            fail("Delete failed to throw index exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        char[] toDelete = new char[] {'a', 'b', 'c'};
+        char[] deleted = ArrayOperations.delete(toDelete, 0);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new char[] {'b', 'c'}, deleted);
+        deleted = ArrayOperations.delete(deleted, 1);
+        assertEquals(1, deleted.length);
+        assertArrayEquals(new char[] {'b'}, deleted);
+        deleted = ArrayOperations.delete(deleted, 0);
+        assertEquals(0, deleted.length);
+        deleted = ArrayOperations.delete(toDelete, 1);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new char[] {'a', 'c'}, deleted);
     }
 
     /**
@@ -1235,6 +1323,28 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testDelete_StringArr_int() {
+        try {
+            ArrayOperations.delete(new String[0], 0);
+            fail("Delete failed to throw index exception for empty array");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            ArrayOperations.delete(new String[] {"a", "b", "c"}, 3);
+            fail("Delete failed to throw index exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        String[] toDelete = new String[] {"a", "b", "c"};
+        String[] deleted = ArrayOperations.delete(toDelete, 0);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new String[] {"b", "c"}, deleted);
+        deleted = ArrayOperations.delete(deleted, 1);
+        assertEquals(1, deleted.length);
+        assertArrayEquals(new String[] {"b"}, deleted);
+        deleted = ArrayOperations.delete(deleted, 0);
+        assertEquals(0, deleted.length);
+        deleted = ArrayOperations.delete(toDelete, 1);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new String[] {"a", "c"}, deleted);
     }
 
     /**
@@ -1242,111 +1352,28 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testDelete_ObjectArr_int() {
-    }
-
-    /**
-     * Test of print method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrint_byteArr() {
-    }
-
-    /**
-     * Test of print method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrint_intArr() {
-    }
-
-    /**
-     * Test of print method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrint_floatArr() {
-    }
-
-    /**
-     * Test of print method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrint_doubleArr() {
-    }
-
-    /**
-     * Test of print method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrint_charArr() {
-    }
-
-    /**
-     * Test of print method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrint_StringArr() {
-    }
-
-    /**
-     * Test of print method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrint_ObjectArr() {
-    }
-
-    /**
-     * Test of printHorizontal method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrintHorizontal_byteArr() {
-    }
-
-    /**
-     * Test of printHorizontal method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrintHorizontal_intArr() {
-    }
-
-    /**
-     * Test of printHorizontal method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrintHorizontal_floatArr() {
-    }
-
-    /**
-     * Test of printHorizontal method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrintHorizontal_doubleArr() {
-    }
-
-    /**
-     * Test of printHorizontal method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrintHorizontal_charArr() {
-    }
-
-    /**
-     * Test of printHorizontal method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrintHorizontal_StringArr() {
-    }
-
-    /**
-     * Test of printHorizontal method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrintHorizontal_ObjectArr() {
-    }
-
-    /**
-     * Test of printHorizontal method, of class ArrayOperations.
-     */
-    @Test
-    public void testPrintHorizontal_booleanArr() {
+        try {
+            ArrayOperations.delete(new Object[0], 0);
+            fail("Delete failed to throw index exception for empty array");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        try {
+            ArrayOperations.delete(new Object[] {"a", "b", "c"}, 3);
+            fail("Delete failed to throw index exception");
+        }
+        catch (ArrayIndexOutOfBoundsException iobe) {}
+        Object[] toDelete = new Object[] {"a", "b", "c"};
+        Object[] deleted = ArrayOperations.delete(toDelete, 0);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new Object[] {"b", "c"}, deleted);
+        deleted = ArrayOperations.delete(deleted, 1);
+        assertEquals(1, deleted.length);
+        assertArrayEquals(new Object[] {"b"}, deleted);
+        deleted = ArrayOperations.delete(deleted, 0);
+        assertEquals(0, deleted.length);
+        deleted = ArrayOperations.delete(toDelete, 1);
+        assertEquals(2, deleted.length);
+        assertArrayEquals(new Object[] {"a", "c"}, deleted);
     }
 
     /**
@@ -1354,6 +1381,16 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testTautology() {
+        assertFalse(ArrayOperations.tautology(new boolean[0]));
+        assertTrue(ArrayOperations.tautology(new boolean[] {true}));
+        int size = random.nextInt(100);
+        boolean[] array = new boolean[size];
+        Arrays.fill(array, true);
+        assertTrue(ArrayOperations.tautology(array));
+        array[random.nextInt(size)] = false;
+        assertFalse(ArrayOperations.tautology(array));
+        Arrays.fill(array, false);
+        assertFalse(ArrayOperations.tautology(array));
     }
 
     /**
@@ -1361,6 +1398,16 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testContradiction() {
+        assertTrue(ArrayOperations.contradiction(new boolean[0]));
+        assertTrue(ArrayOperations.contradiction(new boolean[] {false}));
+        int size = random.nextInt(100);
+        boolean[] array = new boolean[size];
+        Arrays.fill(array, false);
+        assertTrue(ArrayOperations.contradiction(array));
+        array[random.nextInt(size)] = true;
+        assertFalse(ArrayOperations.contradiction(array));
+        Arrays.fill(array, true);
+        assertFalse(ArrayOperations.contradiction(array));
     }
 
     /**
@@ -1368,6 +1415,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_byte_byteArr() {
+        byte[] findArray = new byte[] {'a', 'b', 'a', 'c'};
+        assertEquals(0, ArrayOperations.seqFind((byte) 'a', findArray));
+        assertEquals(1, ArrayOperations.seqFind((byte) 'b', findArray));
+        assertEquals(3, ArrayOperations.seqFind((byte) 'c', findArray));
+        assertEquals(-1, ArrayOperations.seqFind((byte) 'd', findArray));
     }
 
     /**
@@ -1375,6 +1427,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_int_intArr() {
+        int[] findArray = new int[] {1, 2, 1, 3};
+        assertEquals(0, ArrayOperations.seqFind(1, findArray));
+        assertEquals(1, ArrayOperations.seqFind(2, findArray));
+        assertEquals(3, ArrayOperations.seqFind(3, findArray));
+        assertEquals(-1, ArrayOperations.seqFind(4, findArray));
     }
 
     /**
@@ -1382,6 +1439,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_float_floatArr() {
+        float[] findArray = new float[] {1, 2, 1, 3};
+        assertEquals(0, ArrayOperations.seqFind(1, findArray));
+        assertEquals(1, ArrayOperations.seqFind(2, findArray));
+        assertEquals(3, ArrayOperations.seqFind(3, findArray));
+        assertEquals(-1, ArrayOperations.seqFind(4, findArray));
     }
 
     /**
@@ -1389,6 +1451,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_double_doubleArr() {
+        double[] findArray = new double[] {1, 2, 1, 3};
+        assertEquals(0, ArrayOperations.seqFind(1, findArray));
+        assertEquals(1, ArrayOperations.seqFind(2, findArray));
+        assertEquals(3, ArrayOperations.seqFind(3, findArray));
+        assertEquals(-1, ArrayOperations.seqFind(4, findArray));
     }
 
     /**
@@ -1396,6 +1463,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_char_charArr() {
+        char[] findArray = new char[] {'a', 'b', 'a', 'c'};
+        assertEquals(0, ArrayOperations.seqFind( 'a', findArray));
+        assertEquals(1, ArrayOperations.seqFind('b', findArray));
+        assertEquals(3, ArrayOperations.seqFind('c', findArray));
+        assertEquals(-1, ArrayOperations.seqFind('d', findArray));
     }
 
     /**
@@ -1403,6 +1475,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_Object_ObjectArr() {
+        String[] findArray = new String[] {"a", "b", "a", "c"};
+        assertEquals(0, ArrayOperations.seqFind("a", findArray));
+        assertEquals(1, ArrayOperations.seqFind("b", findArray));
+        assertEquals(3, ArrayOperations.seqFind("c", findArray));
+        assertEquals(-1, ArrayOperations.seqFind("d", findArray));
     }
 
     /**
@@ -1410,6 +1487,10 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_3args_1() {
+        String[] findArray = new String[] {"first:a", "b:b", "other:a", "c:c"};
+        KeyValuePairMatcher keyMatcher = new KeyValuePairMatcher();
+        assertEquals(-1, ArrayOperations.seqFind("a", findArray, keyMatcher));
+        assertEquals(2, ArrayOperations.seqFind("other", findArray, keyMatcher));
     }
 
     /**
@@ -1417,6 +1498,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_3args_2() {
+        byte[] findArray = new byte[] {'a', 'b', 'a', 'c'};
+        assertEquals(0, ArrayOperations.seqFind((byte) 'a', findArray, 0));
+        assertEquals(2, ArrayOperations.seqFind((byte) 'a', findArray, 1));
+        assertEquals(-1, ArrayOperations.seqFind((byte) 'a', findArray, 3));
+        assertEquals(-1, ArrayOperations.seqFind((byte) 'd', findArray, 0));
     }
 
     /**
@@ -1424,6 +1510,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_3args_3() {
+        int[] findArray = new int[] {1, 2, 1, 3};
+        assertEquals(0, ArrayOperations.seqFind(1, findArray, 0));
+        assertEquals(2, ArrayOperations.seqFind(1, findArray, 1));
+        assertEquals(-1, ArrayOperations.seqFind(1, findArray, 3));
+        assertEquals(-1, ArrayOperations.seqFind(4, findArray, 0));
     }
 
     /**
@@ -1431,6 +1522,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_3args_4() {
+        float[] findArray = new float[] {1, 2, 1, 3};
+        assertEquals(0, ArrayOperations.seqFind(1, findArray, 0));
+        assertEquals(2, ArrayOperations.seqFind(1, findArray, 1));
+        assertEquals(-1, ArrayOperations.seqFind(1, findArray, 3));
+        assertEquals(-1, ArrayOperations.seqFind(4, findArray), 0);
     }
 
     /**
@@ -1438,6 +1534,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_3args_5() {
+        double[] findArray = new double[] {1, 2, 1, 3};
+        assertEquals(0, ArrayOperations.seqFind(1, findArray, 0));
+        assertEquals(2, ArrayOperations.seqFind(1, findArray, 1));
+        assertEquals(-1, ArrayOperations.seqFind(1, findArray, 3));
+        assertEquals(-1, ArrayOperations.seqFind(4, findArray, 0));
     }
 
     /**
@@ -1445,6 +1546,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_3args_6() {
+        char[] findArray = new char[] {'a', 'b', 'a', 'c'};
+        assertEquals(0, ArrayOperations.seqFind( 'a', findArray, 0));
+        assertEquals(2, ArrayOperations.seqFind('a', findArray, 1));
+        assertEquals(-1, ArrayOperations.seqFind('a', findArray, 3));
+        assertEquals(-1, ArrayOperations.seqFind('d', findArray, 0));
     }
 
     /**
@@ -1452,6 +1558,11 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_3args_7() {
+        String[] findArray = new String[] {"a", "b", "a", "c"};
+        assertEquals(0, ArrayOperations.seqFind("a", findArray, 0));
+        assertEquals(2, ArrayOperations.seqFind("a", findArray, 1));
+        assertEquals(-1, ArrayOperations.seqFind("a", findArray, 3));
+        assertEquals(-1, ArrayOperations.seqFind("d", findArray, 0));
     }
 
     /**
@@ -1459,6 +1570,9 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSeqFind_4args() {
+        String[] findArray = new String[] {"first:a", "b:b", "other:a", "c:c"};
+        KeyValuePairMatcher keyMatcher = new KeyValuePairMatcher();
+        assertEquals(2, ArrayOperations.seqFind("other", findArray, 1, keyMatcher));
     }
 
     /**
