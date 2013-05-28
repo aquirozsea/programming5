@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import programming5.code.ObjectMatcher;
 import programming5.code.Replicable;
+import programming5.math.DistanceFunction;
 
 /**
  *This class provides additional array manipulation operations to those in java.util.Arrays.
@@ -1291,12 +1292,12 @@ public abstract class ArrayOperations {
     /**
      *@return the element of array that is closest to value
      */
-    public static final int findClosest(int[] array, int value) {
+    public static int findClosest(int[] array, int value) {
         int ret = array[0];
-        int minDiff = Math.abs(value - array[0]);
-        int diff;
+        long minDiff = Math.abs((long) value - array[0]);
+        long diff;
         for (int i = 1; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) < minDiff) {
+            if ((diff = Math.abs((long) value - array[i])) < minDiff) {
                 ret = array[i];
                 minDiff = diff;
             }
@@ -1307,7 +1308,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of array that is closest to value
      */
-    public static final int findClosestIndex(int[] array, int value) {
+    public static int findClosestIndex(int[] array, int value) {
         int ret = 0;
         int minDiff = Math.abs(value - array[0]);
         int diff;
@@ -1321,9 +1322,12 @@ public abstract class ArrayOperations {
     }
     
     /**
+     * Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
      *@return the element of array that is closest to value
+     * @deprecated Known cases where overflow can cause the wrong result.
      */
-    public static final double findClosest(double[] array, double value) {
+    @Deprecated
+    public static double findClosest(double[] array, double value) {
         double ret = array[0];
         double minDiff = Math.abs(value - array[0]);
         double diff;
@@ -1332,6 +1336,15 @@ public abstract class ArrayOperations {
                 ret = array[i];
                 minDiff = diff;
             }
+            else if (diff == minDiff && array[i] != ret) {  // This is for rare occasions where the differences are so large that the precision isn't enough to differentiate them
+                if (((array[i] > ret) && (array[i] < value && ret < value))
+                 || ((array[i] < ret) && (array[i] > value && ret > value))
+                 || (array[i] < 0 && value < 0 && ret > 0)
+                 || (array[i] > 0 && value > 0 && ret < 0))
+                {
+                    ret = array[i];
+                }
+            }
         }
         return ret;
     }
@@ -1339,7 +1352,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of array that is closest to value
      */
-    public static final int findClosestIndex(double[] array, double value) {
+    public static int findClosestIndex(double[] array, double value) {
         int ret = 0;
         double minDiff = Math.abs(value - array[0]);
         double diff;
@@ -1353,16 +1366,26 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the element of array that is closest to value
+     * Works with current tests, but be wary of precision issues. Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
+     *@return the element of array that is closest to value 
      */
-    public static final float findClosest(float[] array, float value) {
+    public static float findClosest(float[] array, float value) {
         float ret = array[0];
-        float minDiff = Math.abs(value - array[0]);
-        float diff;
+        double minDiff = Math.abs((double) value - array[0]);
+        double diff;
         for (int i = 1; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) < minDiff) {
+            if ((diff = Math.abs((double) value - array[i])) < minDiff) {
                 ret = array[i];
                 minDiff = diff;
+            }
+            else if (diff == minDiff && array[i] != ret) {  // This is for rare occasions where the differences are so large that the precision isn't enough to differentiate them
+                if (((array[i] > ret) && (array[i] < value && ret < value))
+                 || ((array[i] < ret) && (array[i] > value && ret > value))
+                 || (array[i] < 0 && value < 0 && ret > 0)
+                 || (array[i] > 0 && value > 0 && ret < 0))
+                {
+                    ret = array[i];
+                }
             }
         }
         return ret;
@@ -1371,7 +1394,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of array that is closest to value
      */
-    public static final int findClosestIndex(float[] array, float value) {
+    public static int findClosestIndex(float[] array, float value) {
         int ret = 0;
         float minDiff = Math.abs(value - array[0]);
         float diff;
@@ -1385,9 +1408,11 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the element of array that is closest to value
+     * @return the element of array that is closest to value, using the String.compareTo method (lexicographic distance)
+     * @deprecated the distance function for this method is not guaranteed to be well-defined: currently compareTo uses a lexicographic distance function, but a comparison function is only required to have the correct sign in the result of the application to two values, and therefore may be changed. Use findClosest method with explicit distance function instead. Note that lexicographic distance may give un-intuitive results if alphabetic distance is expected
      */
-    public static final String findClosest(String[] array, String value) {
+    @Deprecated
+    public static String findClosest(String[] array, String value) {
         String ret = array[0];
         int minDiff = Math.abs(value.compareTo(array[0]));
         int diff;
@@ -1397,13 +1422,26 @@ public abstract class ArrayOperations {
                 minDiff = diff;
             }
         }
-        return new String(ret);
+        return ret;
+    }
+
+    public static <T> T findClosest(T[] array, T value, DistanceFunction<T> df) {
+        T ret = array[0];
+        double minDiff = df.distance(value, array[0]);
+        double diff;
+        for (int i = 1; i < array.length; i++) {
+            if ((diff = df.distance(value, array[i])) < minDiff) {
+                ret = array[i];
+                minDiff = diff;
+            }
+        }
+        return ret;
     }
     
     /**
      *@return the index of the element of array that is closest to value
      */
-    public static final int findClosestIndex(String[] array, String value) {
+    public static int findClosestIndex(String[] array, String value) {
         int ret = 0;
         int minDiff = Math.abs(value.compareTo(array[0]));
         int diff;
@@ -1417,9 +1455,9 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the element of array that is closest to value
+     *@return the element of array that is closest to value, using lexicographic distance (difference in the char code values)
      */
-    public static final char findClosest(char[] array, char value) {
+    public static char findClosest(char[] array, char value) {
         char ret = array[0];
         int minDiff = Math.abs(value - array[0]);
         int diff;
@@ -1435,7 +1473,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of array that is closest to value
      */
-    public static final int findClosestIndex(char[] array, char value) {
+    public static int findClosestIndex(char[] array, char value) {
         int ret = 0;
         int minDiff = Math.abs(value - array[0]);
         int diff;
