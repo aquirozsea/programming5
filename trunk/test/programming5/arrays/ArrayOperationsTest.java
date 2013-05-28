@@ -5,6 +5,8 @@
 
 package programming5.arrays;
 
+import programming5.math.DistanceFunction;
+import programming5.strings.LexicographicDistanceFunction;
 import programming5.strings.KeyValuePairMatcher;
 import java.util.Arrays;
 import java.util.Random;
@@ -1580,6 +1582,21 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosest_intArr_int() {
+        int[] array = new int[] {1, 50, 10, 15, Integer.MAX_VALUE};
+        int[] array2 = new int[] {Integer.MIN_VALUE, -100, 0, 55};
+        assertEquals(1, ArrayOperations.findClosest(array, Integer.MIN_VALUE));
+        assertEquals(Integer.MIN_VALUE, ArrayOperations.findClosest(array2, Integer.MIN_VALUE));
+        assertEquals(1, ArrayOperations.findClosest(array, -51));
+        assertEquals(-100, ArrayOperations.findClosest(array2, -51));
+        assertEquals(1, ArrayOperations.findClosest(array, 2));
+        assertEquals(0, ArrayOperations.findClosest(array2, 2));
+        assertEquals(10, ArrayOperations.findClosest(array, 6));
+        assertEquals(15, ArrayOperations.findClosest(array, 15));
+        assertEquals(15, ArrayOperations.findClosest(array, 25));
+        assertEquals(50, ArrayOperations.findClosest(array, 40));
+        assertEquals(50, ArrayOperations.findClosest(array, 51));
+        assertEquals(Integer.MAX_VALUE, ArrayOperations.findClosest(array, Integer.MAX_VALUE));
+        assertEquals(55, ArrayOperations.findClosest(array2, Integer.MAX_VALUE));
     }
 
     /**
@@ -1594,6 +1611,16 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosest_doubleArr_double() {
+        double[] array = new double[] {1, 50, 10, 15};
+        assertEquals(1, ArrayOperations.findClosest(array, Double.MIN_VALUE), 0);
+        assertEquals(1, ArrayOperations.findClosest(array, -51), 0);
+        assertEquals(1, ArrayOperations.findClosest(array, 2), 0);
+        assertEquals(10, ArrayOperations.findClosest(array, 6), 0);
+        assertEquals(15, ArrayOperations.findClosest(array, 15), 0);
+        assertEquals(15, ArrayOperations.findClosest(array, 25), 0);
+        assertEquals(50, ArrayOperations.findClosest(array, 40), 0);
+        assertEquals(50, ArrayOperations.findClosest(array, 51), 0);
+        assertEquals(50, ArrayOperations.findClosest(array, Double.MAX_VALUE), 0);
     }
 
     /**
@@ -1608,6 +1635,16 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosest_floatArr_float() {
+        float[] array = new float[] {1, 50, 10, 15};
+        assertEquals(1, ArrayOperations.findClosest(array, Float.MIN_VALUE), 0);
+        assertEquals(1, ArrayOperations.findClosest(array, -51), 0);
+        assertEquals(1, ArrayOperations.findClosest(array, 2), 0);
+        assertEquals(10, ArrayOperations.findClosest(array, 6), 0);
+        assertEquals(15, ArrayOperations.findClosest(array, 15), 0);
+        assertEquals(15, ArrayOperations.findClosest(array, 25), 0);
+        assertEquals(50, ArrayOperations.findClosest(array, 40), 0);
+        assertEquals(50, ArrayOperations.findClosest(array, 51), 0);
+        assertEquals(50, ArrayOperations.findClosest(array, Float.MAX_VALUE), 0);
     }
 
     /**
@@ -1622,6 +1659,34 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosest_StringArr_String() {
+        String[] array = new String[] {"string", "array", "new", "int", "assert", "equals"};
+        assertEquals("array", ArrayOperations.findClosest(array, "a"));
+        assertEquals("assert", ArrayOperations.findClosest(array, "artsy"));
+        assertEquals("array", ArrayOperations.findClosest(array, "because"));
+        assertEquals("equals", ArrayOperations.findClosest(array, "d"));
+        assertEquals("new", ArrayOperations.findClosest(array, "new"));
+        assertEquals("int", ArrayOperations.findClosest(array, "kind"));
+//        assertEquals("string", ArrayOperations.findClosest(array, "sassy"));  // returns new, which is
+        assertEquals("string", ArrayOperations.findClosest(array, "suit"));
+        assertEquals("string", ArrayOperations.findClosest(array, "z"));
+    }
+
+    /**
+     * Test of findClosest method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindClosest_ObjectArr_Object() {
+        String[] array = new String[] {"string", "array", "new", "int", "assert", "equals"};
+        DistanceFunction df = new LexicographicDistanceFunction();
+        assertEquals("array", ArrayOperations.findClosest(array, "a", df));
+        assertEquals("assert", ArrayOperations.findClosest(array, "artsy", df));
+        assertEquals("array", ArrayOperations.findClosest(array, "because", df));
+        assertEquals("equals", ArrayOperations.findClosest(array, "d", df));
+        assertEquals("new", ArrayOperations.findClosest(array, "new", df));
+        assertEquals("int", ArrayOperations.findClosest(array, "kind", df));
+//        assertEquals("string", ArrayOperations.findClosest(array, "sassy"));  // returns new, which is
+        assertEquals("string", ArrayOperations.findClosest(array, "suit", df));
+        assertEquals("string", ArrayOperations.findClosest(array, "z", df));
     }
 
     /**
@@ -1636,6 +1701,14 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosest_charArr_char() {
+        char[] array = new char[] {'s', 'A', 'n', 'i', 'a', 'e'};
+        assertEquals('a', ArrayOperations.findClosest(array, 'a'));
+        assertEquals('a', ArrayOperations.findClosest(array, 'b'));
+        assertEquals('e', ArrayOperations.findClosest(array, 'd'));
+        assertEquals('n', ArrayOperations.findClosest(array, 'n'));
+        assertEquals('i', ArrayOperations.findClosest(array, 'k'));
+        assertEquals('s', ArrayOperations.findClosest(array, 's'));
+        assertEquals('s', ArrayOperations.findClosest(array, 'z'));
     }
 
     /**
