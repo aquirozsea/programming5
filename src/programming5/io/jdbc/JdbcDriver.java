@@ -22,6 +22,7 @@
 package programming5.io.jdbc;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,11 +32,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import programming5.arrays.ArrayOperations;
+import programming5.collections.HashTable;
 import programming5.io.Debug;
 import programming5.strings.KeyValuePairMatcher;
 
 /**
  * This class is a utility wrapper for a JDBC database connection, providing basic CRUD methods
+ * TODO: Illegal state exceptions, what is the best way to provide access to db instance?
  * @version 6.2
  */
 public class JdbcDriver {
@@ -155,6 +158,47 @@ public class JdbcDriver {
         }
     }
 
+    /**
+     * Simplified constructor that encapsulates commonly used drivers for particular database types. Uses an inner enumeration of database
+     * types, and the known connect schema and drivers for each. The constructor will register the driver and create the connection.
+     * Username/password required for the connection and other properties may be specified in the connect properties parameter, using
+     * keys in DBPropertyKey enumeration provided by the class.
+     * @param dbType type from the inner enumeration DBType
+     * @param databaseName database name
+     * @param connectProperties zero or more properties that may be required for creating the connection, given as key, value pairs in the map
+     */
+    public JdbcDriver(DBType dbType, String databaseName, Map<String, String> connectProperties) throws SQLException {
+        try {
+            Class.forName(dbType.getDriver());
+        }
+        catch (Exception e){
+            throw new SQLException("JdbcDriver: Could not register database driver: " + e.getMessage(), e);
+        }
+        HashTable<String, String> defaultableProperties = new HashTable<String, String>(connectProperties);
+        String host = defaultableProperties.safeGet(DBPropertyKey.host.toString(), "localhost");
+        String port = defaultableProperties.safeGet(DBPropertyKey.port.toString(), dbType.getDefaultPortString());
+        // Create connect URL with given or default values
+        String dbURL = dbType.getConnectSchema() + "://" + host + ":" + port + "/" + databaseName;
+        // Fill user and password, if given
+        String user = defaultableProperties.safeGet(DBPropertyKey.user.toString(), null);
+        String password = defaultableProperties.safeGet(DBPropertyKey.password.toString(), null);
+        if (user != null) {
+            Properties propertiesObject = new Properties();
+            propertiesObject.put(DBPropertyKey.user.toString(), user);
+            if (password != null) {
+                propertiesObject.put(DBPropertyKey.password.toString(), password);
+            }
+            db = DriverManager.getConnection(dbURL, propertiesObject);
+        }
+        else {
+            db = DriverManager.getConnection(dbURL);
+        }
+    }
+
+    public Connection getConection() {
+        return db;
+    }
+
     public void createTable(String name, String[] fields, String[] types) throws SQLException {
         Statement sqlStmt = db.createStatement();
         String sqlCode = "CREATE TABLE " + name;
@@ -245,6 +289,10 @@ public class JdbcDriver {
         }
         sqlCode += ";";
         return sqlStmt.executeUpdate(sqlCode);
+    }
+
+    public DatabaseMetaData getConnectionMetadata() throws SQLException {
+        return db.getMetaData();
     }
 
     public void startTransaction() throws SQLException {
