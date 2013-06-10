@@ -24,6 +24,7 @@ package programming5.io;
 import java.io.*;
 import java.util.EmptyStackException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 import programming5.arrays.ArrayOperations;
 
@@ -1110,6 +1111,17 @@ public class FileHandler {
             }
         }
 	
+	/**
+         * Finds all files recursively, from a given root path
+         * @param path the path of the file or directory
+         * @throws IOException if unable to access files
+         */
+        public static List<File> listFiles(String path) throws IOException {
+            FileList list = new FileList();
+            FileHandler.fileTreeTraversal(path, list);
+            return list.getCurrentList();
+        }
+
 	/**
 	 *Sets or resets the file for the handler
 	 */
