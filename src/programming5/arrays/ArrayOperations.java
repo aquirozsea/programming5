@@ -1797,8 +1797,40 @@ public abstract class ArrayOperations {
         int ret;
         if (value.compareTo(array[0]) <= 0) {
             ret = 0;
-        } 
+        }
         else if (value.compareTo(array[array.length-1]) > 0) {
+            ret = array.length;
+        }
+        else {
+            int a = 0;
+            int b = array.length-1;
+            int middle;
+            while (b - a > 1) {
+                middle = (a+b) / 2;
+                if (value.compareTo(array[middle]) > 0) {
+                    a = middle;
+                }
+                else {
+                    b = middle;
+                }
+            }
+            ret = b;
+        }
+        return ret;
+    }
+
+    /**
+     *@return the position in the sorted array of comparable elements of the element that follows (or is equal to) the given
+     *value in order, which is the position where the value should be inserted in the array. The position is the length of the
+     *array if the value is greater than all values in the array.
+     *@see java.lang.Comparable
+     */
+    public static final int findPositionInOrder(int[] array, int value) {
+        int ret;
+        if (value <= array[0]) {
+            ret = 0;
+        } 
+        else if (value > array[array.length-1]) {
             ret = array.length;
         } 
         else {
@@ -1807,7 +1839,39 @@ public abstract class ArrayOperations {
             int middle;
             while (b - a > 1) {
                 middle = (a+b) / 2;
-                if (value.compareTo(array[middle]) > 0) {
+                if (value > array[middle]) {
+                    a = middle;
+                } 
+                else {
+                    b = middle;
+                }
+            }
+            ret = b;
+        }
+        return ret;
+    }
+
+    /**
+     *@return the position in the sorted array of comparable elements of the element that follows (or is equal to) the given
+     *value in order, which is the position where the value should be inserted in the array. The position is the length of the
+     *array if the value is greater than all values in the array.
+     *@see java.lang.Comparable
+     */
+    public static final int findPositionInOrder(float[] array, float value) {
+        int ret;
+        if (value <= array[0]) {
+            ret = 0;
+        } 
+        else if (value > array[array.length-1]) {
+            ret = array.length;
+        } 
+        else {
+            int a = 0;
+            int b = array.length-1;
+            int middle;
+            while (b - a > 1) {
+                middle = (a+b) / 2;
+                if (value > array[middle]) {
                     a = middle;
                 } 
                 else {
@@ -1819,6 +1883,38 @@ public abstract class ArrayOperations {
         return ret;
     }
     
+    /**
+     *@return the position in the sorted array of comparable elements of the element that follows (or is equal to) the given
+     *value in order, which is the position where the value should be inserted in the array. The position is the length of the
+     *array if the value is greater than all values in the array.
+     *@see java.lang.Comparable
+     */
+    public static final int findPositionInOrder(double[] array, double value) {
+        int ret;
+        if (value <= array[0]) {
+            ret = 0;
+        }
+        else if (value > array[array.length-1]) {
+            ret = array.length;
+        }
+        else {
+            int a = 0;
+            int b = array.length-1;
+            int middle;
+            while (b - a > 1) {
+                middle = (a+b) / 2;
+                if (value > array[middle]) {
+                    a = middle;
+                }
+                else {
+                    b = middle;
+                }
+            }
+            ret = b;
+        }
+        return ret;
+    }
+
     /**
      *@return the element of a sorted array that follows (or is equal to) the given value in order
      *(null if the value is larger than all values in the array), using the given comparator
