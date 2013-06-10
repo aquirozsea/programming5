@@ -1094,6 +1094,21 @@ public class FileHandler {
 		}
 		else throw new IOException("FileHandler: Invalid source: Must be a valid directory");
 	}
+
+        /**
+         * Deletes a file or directory recursively, regardless of whether or not it's empty
+         * @param path the path of the file or directory
+         * @throws IOException if unable to delete the files
+         */
+        public static void delete(String path) throws IOException {
+            File toDelete = new File(path);
+            if (toDelete.isFile()) {
+                toDelete.delete();
+            }
+            else if (toDelete.isDirectory()) {
+                FileHandler.fileTreeTraversal(path, new FileDelete());
+            }
+        }
 	
 	/**
 	 *Sets or resets the file for the handler
