@@ -317,36 +317,37 @@ public abstract class CollectionUtils {
     /**
      *@return the sum of the elements of the input collection
      */
-    public static <N extends Number> N sum(Collection<N> collection) {
+    public static <N extends Number> double sum(Collection<N> collection) {
         Number ret;
         double sum = 0;
         for (Number n : collection) {
             sum += MathOperations.extractValue(n);
         }
-        byte byteSum = (byte) sum;
-        short shortSum = (short) sum;
-        int intSum = (int) sum;
-        long longSum = (long) sum;
-        float floatSum = (float) sum;
-        if (byteSum == sum) {
-            ret = new Byte(byteSum);
-        }
-        else if (shortSum == sum) {
-            ret = new Short(shortSum);
-        }
-        else if(intSum == sum) {
-            ret = new Integer(intSum);
-        }
-        else if (longSum == sum) {
-            ret = new Long(longSum);
-        }
-        else if (floatSum == sum) {
-            ret = new Float(floatSum);
-        }
-        else {
-            ret = new Double(sum);
-        }
-        return (N) ret;
+//        byte byteSum = (byte) sum;
+//        short shortSum = (short) sum;
+//        int intSum = (int) sum;
+//        long longSum = (long) sum;
+//        float floatSum = (float) sum;
+//        if (byteSum == sum) {
+//            ret = new Byte(byteSum);
+//        }
+//        else if (shortSum == sum) {
+//            ret = new Short(shortSum);
+//        }
+//        else if(intSum == sum) {
+//            ret = new Integer(intSum);
+//        }
+//        else if (longSum == sum) {
+//            ret = new Long(longSum);
+//        }
+//        else if (floatSum == sum) {
+//            ret = new Float(floatSum);
+//        }
+//        else {
+//            ret = new Double(sum);
+//        }
+//        return (N) ret;
+        return sum;
     }
     
     /**

@@ -3460,4 +3460,12 @@ public abstract class ArrayOperations {
         }
     }
 
+    public static int[] parseInts(String[] intStrings) {
+        int[] ret = new int[intStrings.length];
+        for (int i = 0; i < intStrings.length; i++) {
+            ret[i] = Integer.parseInt(intStrings[i]);
+        }
+        return ret;
+    }
+
 }
