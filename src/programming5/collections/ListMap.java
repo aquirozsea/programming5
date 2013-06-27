@@ -22,14 +22,18 @@
 package programming5.collections;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * A list map is a wrapper for a hashtable of key, list pairs (each key refers to a list of related values).
  * @author andresqh
  * @version 6.0
+ * TODO: Implement Map interface?
  */
 public class ListMap<K, V> {
 
@@ -66,6 +70,13 @@ public class ListMap<K, V> {
      */
     public List<V> getList(K listKey) {
         return baseTable.get(listKey);
+    }
+
+    /**
+     * Associates the given list with the given key, replacing the previous list, if any
+     */
+    public void putList(K listKey, List<V> list) {
+        baseTable.put(listKey, list);
     }
 
     /**
@@ -174,6 +185,83 @@ public class ListMap<K, V> {
             ret.addAll(list);
         }
         return ret;
+    }
+
+    /**
+     * @return true if the map contains a value for the given key; false otherwise
+     */
+    public boolean containsKey(K key) {
+        return baseTable.containsKey(key);
+    }
+
+    /**
+     * @return true if the value is contained in at least one of the lists in the map; false otherwise
+     */
+    public boolean containsValue(V value) {
+        try {
+            this.matchAllListElement(value, new Comparator() {
+
+                public int compare(Object o1, Object o2) {
+                    return ((o1.equals(o2)) ? 0 : -1);
+                }
+
+            });
+            return true;
+        }
+        catch (IndexOutOfBoundsException iobe) {
+            return false;
+        }
+    }
+
+    /**
+     * @return the size (number of keys) stored
+     */
+    public int size() {
+        return baseTable.size();
+    }
+
+    /**
+     * @return true if no keys are stored (size() == 0); false otherwise
+     */
+    public boolean isEmpty() {
+        return baseTable.isEmpty();
+    }
+
+    /**
+     * Removes the list associated with the given key, if it exists
+     * @return the list that was removed (null if no list was associated with the given key)
+     */
+    public List<V> remove(K listKey) {
+        return baseTable.remove(listKey);
+    }
+
+    /**
+     * Remove all elements from the map
+     */
+    public void clear() {
+        baseTable.clear();
+    }
+
+    /**
+     * @return the set of keys stored in this map
+     */
+    public Set<K> keySet() {
+        return baseTable.keySet();
+    }
+
+    /**
+     * Compare to getAll, which returns all elements from all lists in a single list; values preserves individual lists
+     * @return a collection with all the lists associated with keys in this map
+     */
+    public Collection<List<V>> values() {
+        return baseTable.values();
+    }
+
+    /**
+     * @return the set of entries in this map
+     */
+    public Set<Entry<K, List<V>>> entrySet() {
+        return baseTable.entrySet();
     }
 
 }

@@ -6,12 +6,16 @@
 package programming5.concurrent;
 
 import java.util.concurrent.TimeUnit;
+import programming5.io.Debug;
+import programming5.io.DebugExceptionHandler;
+import programming5.io.ExceptionHandler;
+import programming5.io.RobustThread;
 
 /**
  * TODO: Avoid thrashing between backoff and recover on regress (when period should be stable)
  * @author andresqh
  */
-public abstract class BackoffTester {
+public abstract class BackoffTestThread {
 
     public static enum BackoffStrategy {LINEAR, EXPONENTIAL};
     public static enum RecoveryStrategy {RESET, REGRESS};
@@ -19,21 +23,22 @@ public abstract class BackoffTester {
     private BackoffStrategy backoffStrategy = BackoffStrategy.LINEAR;
     private RecoveryStrategy recoveryStrategy = RecoveryStrategy.RESET;
 
-    private Thread waitThread = null;
+    private RobustThread testThread = null;
+    private ExceptionHandler exceptionHandler = new DebugExceptionHandler();
     private long testingPeriod;
     private long basePeriod;
     private boolean active = true;
 
-    public BackoffTester(long myTestingPeriod) {
+    public BackoffTestThread(long myTestingPeriod) {
         basePeriod = testingPeriod = myTestingPeriod;
     }
 
-    public BackoffTester(long myTestingPeriod, TimeUnit timeUnit) {
+    public BackoffTestThread(long myTestingPeriod, TimeUnit timeUnit) {
         basePeriod = testingPeriod = TimeUtils.toMilliseconds(myTestingPeriod, timeUnit);
     }
 
     public final void setBackoffStrategy(BackoffStrategy strategy) {
-        if (waitThread == null) {   // TODO: Explore possibility of allowing the change
+        if (testThread == null) {   // TODO: Explore possibility of allowing the change
             backoffStrategy = strategy;
         }
         else {
@@ -42,7 +47,7 @@ public abstract class BackoffTester {
     }
 
     public final void setRecoveryStrategy(RecoveryStrategy strategy) {
-        if (waitThread == null) {   // TODO: Explore possibility of allowing the change
+        if (testThread == null) {   // TODO: Explore possibility of allowing the change
             recoveryStrategy = strategy;
         }
         else {
@@ -50,7 +55,20 @@ public abstract class BackoffTester {
         }
     }
 
+    // Note: If the exception handler is set to restart, the action when starting method will be called again
+    // TODO: Separate action starting method? Putting it outside the robust thread run would violate the start() thread contract
+    public final void setExceptionHandler(ExceptionHandler handler) {
+        if (testThread == null) {   // TODO: Explore possibility of allowing the change
+            exceptionHandler = handler;
+        }
+        else {
+            throw new IllegalStateException("BackoffTester: Cannot change handler after thread has started");
+        }
+    }
+
     public abstract boolean test();
+
+    public void actionWhenStarting() {}
 
     public void actionWhenPosTest() {}
 
@@ -59,31 +77,35 @@ public abstract class BackoffTester {
     public void actionWhenCancelled() {}
 
     public final void start() {
-        if (waitThread == null) {
-            waitThread = new Thread() {
+        if (testThread == null) {
+            testThread = new RobustThread(
+                new Runnable() {    // First parameter of RobustThread constructor
 
-                @Override
-                public void run() {
-                    while (active) {
-                        try {
-                            Thread.sleep(testingPeriod);
-                            if (test()) {
-                                actionWhenPosTest();
-                                recover();
+                    @Override
+                    public void run() {
+                        actionWhenStarting();
+                        while (active) {
+                            try {
+                                Thread.sleep(testingPeriod);
+                                if (test()) {
+                                    actionWhenPosTest();
+                                    recover();
+                                }
+                                else {
+                                    actionWhenNegTest();
+                                    backoff();
+                                }
                             }
-                            else {
-                                actionWhenNegTest();
-                                backoff();
+                            catch (InterruptedException ie) {
+                                Debug.println("BackoffThread interrupted (cancelled)", "programming5.concurrent.BackoffTestThread");
                             }
                         }
-                        catch (InterruptedException ie) {
-                            // Should exit
-                        }
+                        actionWhenCancelled();
                     }
-                    actionWhenCancelled();
-                }
-
-            };
+                },
+                exceptionHandler    // Second parameter of RobustThread constructor
+            );
+            testThread.start();
         }
         else {
             throw new IllegalStateException("BackoffTester: Already started");
@@ -91,9 +113,9 @@ public abstract class BackoffTester {
     }
 
     public final void cancel() {
-        if (waitThread != null) {
+        if (testThread != null) {
             active = false;
-            waitThread.interrupt();
+            testThread.interrupt();
         }
         else {
             throw new IllegalStateException("BackoffTester: Cannot cancel thread: Not started");
