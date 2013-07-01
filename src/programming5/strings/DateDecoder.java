@@ -36,7 +36,10 @@ public class DateDecoder {
 
     protected String datePattern;
 
-    private static enum PatternCode {dd, ddd, dddd, mm, mmm, mmmm, yy, yyyy, HH, HHH, MM, SS, SSS};
+    protected static enum PatternCode {dd, ddd, dddd, mm, mmm, mmmm, yy, yyyy, HH, HHH, MM, SS, SSS};
+
+    public static enum DayName {Monday, Tuesday, Wednesday, Thursday, Saturday, Sunday};
+    public static enum MonthName {January, February, March, April, May, June, July, August, September, October, November, December};
 
     /**
      * Creates a decoder for a given pattern. Can be used to decode multiple date strings that follow the same pattern.
