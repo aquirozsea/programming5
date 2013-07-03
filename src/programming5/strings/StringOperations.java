@@ -138,6 +138,33 @@ public abstract class StringOperations {
         return ArrayOperations.addElement(ret, matches.toArray(new String[] {}));
     }
 
+    /**
+     * Meant to decompose a string into a map of key/value pairs, where the keys are taken from special tags 
+     * given in a regular-expression-like pattern, and the values as the parts of the string that correspond to the regions 
+     * that the tags represent. The motivating idea is to extract mutable values or regions within a string where 
+     * other parts of the string are immutable or follow a regular pattern. For example:
+     * <p> decodePattern("11/14/2003 INFO: id=1234, name=\"Something\"", "<date> INFO: id=<id>, name=\"<name>\""), where <date>,
+     * <id>, and <name> are the tags, returns
+     * <p> {"date":"11/14/2003", "id":"1234", "name":"Something"}
+     * <p> This method is a convenient alternative to using groups from the java regex implementation, although the 
+     * implementation does not use that approach (e.g. to extract the same values using this approach, the regex pattern 
+     * "(.*) INFO: id=(.*), name=\"(.*)\"" could be used, but would require slightly more complex and less intuitive code.
+     * <p> Care must be taken to avoid ambiguity in the regular expression patterns, since the identifier tokens may be 
+     * associated with unexpected values. It is not recommended (but still possible) to use wildcards in the immutable 
+     * part of the pattern string, so the results may be unexpected. It is not defined to include tags in the scope of
+     * wildcards (e.g. (<value>)*), and therefore the results will certainly be unexpected.
+     * certainly be unexpected.
+     * <p> TODO: Add specialized tags with internal regular expressions (e.g. <id:\d+>) in order to better control 
+     * matching.
+     * @param string the string to decode
+     * @param regexPattern an enhanced regular expression that includes tags in the form of identifiers between angular 
+     * brackets (e.g. <date>)
+     * @return a map where the tag identifiers (e.g. date, id, name) are used as keys and the values are the variable 
+     * elements in the string that the tags stand for.
+     * @throws IllegalArgumentException if the string (i.e. the immutable portion outside the tags) does not match the 
+     * given pattern (the pattern used for matching the string is equivalent to the pattern given, where the tags have 
+     * been replaced by (.*)
+     */
     public static Map<String, String> decodePattern(String string, String regexPattern) {
         Map<String, String> decodeElements = new HashMap<String, String>();
         String[] fields = extractAndReplace(regexPattern, "<\\w+>", ".*");
@@ -161,6 +188,49 @@ public abstract class StringOperations {
             throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + string + ") does not match given pattern: " + regexPattern);
         }
         return decodeElements;
+    }
+
+    /**
+     * One way to avoid ambiguities in the use of the decodePattern method is to use it multiple times with intermediate 
+     * patterns that group and then progressively decompose complex expressions. The nestedDecodePattern method is a 
+     * convenient way to apply this approach and obtain a final map that only keeps the lower-level (non-intermediate) 
+     * tags. It works by taking additional patterns that are prefixed by the intermediate tag identifier followed by a 
+     * colon.
+     * <p> For example, an equivalent to decodePattern("11/14/2003 INFO: id=1234, name=\"Something\"", "<date> INFO: id=<id>, name=\"<name>\"") would be:
+     * <p> nestedDecodePattern("11/14/2003 INFO: id=1234, name=\"Something\"", "<date> INFO: <pairs>", "pairs:id=<id>, name=\"<name>\"")
+     * <p> Though this example does not clearly show the power of this method, it can be useful to avoid the ambiguities
+     * of a single regular expression. It is possible to include nested patterns prefixed with tags that do not appear in 
+     * the original pattern, as long as they appear in the previous nested pattern. For example:
+     * <p> nestedDecodePattern("11/14/2003 INFO: id=1234, name=\"Something\"", "<date> INFO: <pairs>", "pairs:<idPart>, <namePart>", "idPart:id=<id>", "namePart:name=\"<name>\"") 
+     * is possible and equivalent to the above examples.
+     * <p> This method still does not take care of expressions where parts can appear in different orders, etc.
+     * <p> TODO: How to approach this?
+     * <p> TODO: Document and test keep intermediate tags with underscore prefix
+     * @param string the string to decode
+     * @param mainPattern an enhanced regular expression that includes tags in the form of identifiers between angular 
+     * brackets (e.g. <date>)
+     * @param nestedPatterns enhanced regular expressions like the main pattern, but prefixed by a tag name followed by 
+     * a colon (e.g. "pairs:<idPart>"); the tag name must correspond to a tag present in a previous enhanced expression
+     * @return a map where non-intermediate tag identifiers are used as keys and the values are the variable 
+     * elements in the string that the tags stand for: in the example, the tags included in the result will be date, id, name
+     */
+    // TODO: Avoid double startsWith test
+    public static Map<String, String> nestedDecodePattern(String string, String mainPattern, String... nestedPatterns) {
+        Map<String, String> ret = decodePattern(string, mainPattern);
+        for (String pattern : nestedPatterns) {
+            try {
+                String[] patternSplit = pattern.split(":", 2);
+                String nestedID = patternSplit[0].startsWith("_") ? patternSplit[0].substring(1) : patternSplit[0];
+                ret.putAll(decodePattern(ret.get(nestedID), patternSplit[1]));
+                if (!nestedID.startsWith("_")) {
+                    ret.remove(nestedID);
+                }
+            }
+            catch (ArrayIndexOutOfBoundsException iobe) {
+                throw new IllegalArgumentException("StringOperations: Cannot decode string: Nested pattern " + pattern + " does not follow the syntax id:enhancedRegex");
+            }
+        }
+        return ret;
     }
 
     /**
