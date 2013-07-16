@@ -39,8 +39,9 @@ public class ProgressConsolidator {
                 for (int stageValue : stageProgress) {
                     newProgress += stageFactor * (0.01f * stageValue);
                 }
-                if (newProgress > overallProgress) {
-                    overallProgress = (int) (100 * newProgress);
+                int newProgressInt = (int) (100 * newProgress);
+                if (newProgressInt > overallProgress) {
+                    overallProgress = newProgressInt;
                 }
             }
         }
@@ -62,8 +63,9 @@ public class ProgressConsolidator {
                 for (int stageValue : stageProgress) {
                     newProgress += stageFactor * (0.01f * stageValue);
                 }
-                if (newProgress > overallProgress) {
-                    overallProgress = (int) (100 * newProgress);
+                int newProgressInt = (int) (100 * newProgress);
+                if (newProgressInt > overallProgress) {
+                    overallProgress = newProgressInt;
                 }
             }
         }
@@ -84,8 +86,9 @@ public class ProgressConsolidator {
             for (float stageValue : stageProgress) {
                 newProgress += stageFactor * stageValue;
             }
-            if (newProgress > overallProgress) {
-                overallProgress = (int) (100 * newProgress);
+            int newProgressInt = (int) (100 * newProgress);
+            if (newProgressInt > overallProgress) {
+                overallProgress = newProgressInt;
             }
         }
         return 0.01f * overallProgress;
@@ -105,8 +108,9 @@ public class ProgressConsolidator {
             for (float stageValue : stageProgress) {
                 newProgress += stageFactor * stageValue;
             }
-            if (newProgress > overallProgress) {
-                overallProgress = (int) (100 * newProgress);
+            int newProgressInt = (int) (100 * newProgress);
+            if (newProgressInt > overallProgress) {
+                overallProgress = newProgressInt;
             }
         }
         return 0.01f * overallProgress;
