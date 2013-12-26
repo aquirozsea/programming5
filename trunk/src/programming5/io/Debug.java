@@ -55,6 +55,24 @@ public abstract class Debug {
     private static final int ENABLED = 1;
     private static final String ALT_PATH = "#";
 
+    static {
+        try {
+            String debugClasses = ConfigHandler.getProperty("debug");
+            try {
+                String[] classNames = debugClasses.split(";");
+                for (String className : classNames) {
+                    Debug.enable(Class.forName(className));
+                }
+            }
+            catch (Exception e) {
+                LogUtil.warn("Problem enabling debug classes: " + e.getMessage());
+            }
+        }
+        catch (IllegalArgumentException iae) {
+            // debug property not set, no classes to pre-enable
+        }
+    }
+
     /**
      * Enables debug printing for debug statements identified with the given name or derived names
      * @param setName the identifier of the debug set
