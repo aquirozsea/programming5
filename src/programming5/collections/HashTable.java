@@ -22,7 +22,10 @@
 package programming5.collections;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import programming5.code.ObjectMatcher;
 
 /**
  * This extension of a java Hashtable implements the programming5 PMap interface.
@@ -98,6 +101,22 @@ public class HashTable<E, D> extends HashMap<E, D> implements PMap<E, D> {
             ret = keyGenerator.generateKey();
         }
         this.put(ret, value);
+        return ret;
+    }
+
+    /**
+     * Utility method to retrieve the values associated with keys that match the given query, according to match criteria.
+     * @param partialKey the query (e.g. partial) key
+     * @param matcher instance of the matcher class specifying the match logic
+     * @return all values v such that matcher.matches(k, partialKey) == true, for (k, v) in this table
+     */
+    public Set<D> getMatches (E partialKey, ObjectMatcher<E> matcher) {
+        Set<D> ret = new HashSet<D>();
+        for (Entry<E, D> entry : this.entrySet()) {
+            if (matcher.matches(entry.getKey(), partialKey)) {
+                ret.add(entry.getValue());
+            }
+        }
         return ret;
     }
 
