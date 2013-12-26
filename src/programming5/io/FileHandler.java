@@ -1246,10 +1246,9 @@ public class FileHandler {
 		return checkFile.isFile();
 	}
 
-        public static void fileTreeTraversal(String rootPath, FileProcessor processor) {
+        public static void fileTreeTraversal(File rootNode, FileProcessor processor) {
             Stack<File> preStack = new Stack<File>();
             Stack<File> postStack = new Stack<File>();
-            File rootNode = new File(rootPath);
             if (rootNode.exists()) {
                 if (rootNode.isFile()) {
                     processor.fileProcess(rootNode);
@@ -1287,5 +1286,9 @@ public class FileHandler {
             else {
                 throw new IllegalArgumentException("FileHandler: Cannot traverse given tree: Root path does not exist or is not reachable from current directory");
             }
+        }
+
+        public static void fileTreeTraversal(String rootPath, FileProcessor processor) {
+            fileTreeTraversal(new File(rootPath), processor);
         }
 }
