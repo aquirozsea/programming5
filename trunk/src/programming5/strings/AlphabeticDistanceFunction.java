@@ -30,43 +30,42 @@ import programming5.math.DistanceFunction;
  */
 public class AlphabeticDistanceFunction implements DistanceFunction<String> {
 
-    /**
-     * Returns the alphabetic (lexicographic of lower-case letters) distance of the first differing character in the two 
-     * strings, to a negative exponent based on the position of that differing character (thus, strings that have more 
-     * characters in common will be closer together). If all of the characters of the two strings are equal, except that 
-     * the strings are of different length, then the distance is the distance from 'a' of the first non-matched character 
-     * of the longer string plus one, to an exponent equal to the length of the shorter string. This is:
-     * abs(str1.charAt(i) - str2.charAt(i)) E -i : i is the first differing character (i+1 if dist > 10)
-     * abs('a' - longer.charAt(shorter.length())) E -shorter.length() (+1 if dist > 10)
-     */
+    private static final double factor = 1d / ('z' - 'a' + 2);
+
     public double distance(String obj1, String obj2) {
-        obj1 = obj1.toLowerCase();
-        obj2 = obj2.toLowerCase();
-        // Trivial case
-        if (obj1.equals(obj2)) {return 0;}
-        // Comparison
-        double ret = 0;
-        int limit = (obj1.length() <= obj2.length()) ? obj1.length() : obj2.length();
-        int i = 0;
-        for (; i < limit; i++) {
-            ret = Math.abs(obj1.charAt(i) - obj2.charAt(i));
-            if (ret > 0) {
-                break;
-            }
+        String smaller, larger;
+        if (obj1.compareTo(obj2) < 0) {
+            smaller = obj1;
+            larger = obj2;
         }
-        if (ret == 0) { // i == limit
-            if (obj1.length() < obj2.length()) {
-                ret = Math.abs('a' - obj2.charAt(limit)) + 1;
+        else {
+            smaller = obj2;
+            larger = obj1;
+        }
+        int[] diff = new int[((obj1.length() > obj2.length()) ? obj1.length() : obj2.length())];
+        boolean borrow = false;
+        for (int i = diff.length-1; i >= 0; i--) {
+            char l = (i < larger.length()) ? larger.charAt(i) : ('a' - 1);
+            if (borrow) {
+                l = (l == ('a' - 1)) ? 'z' : (char) (l-1);
+            }
+            char s = (i < smaller.length()) ? smaller.charAt(i) : ('a' - 1);
+            if (l >= s) {
+                diff[i] = l - s;
+                borrow = false;
             }
             else {
-                ret = Math.abs('a' - obj1.charAt(limit)) + 1;
+                diff[i] = ('z' - s + 1) + (l - 'a' + 1);
+                borrow = true;
             }
         }
-        if (ret >= 10 && i > 0) {
-            i++;
+        double dist = diff[0];
+        double exp = factor;
+        for (int i = 1; i < diff.length; i++) {
+            dist += diff[i] * exp;
+            exp *= exp; // TODO: Verify epsilon
         }
-        ret = (i > 0) ? ret * Math.pow(10, -i) : ret;
-        return ret;
+        return dist;
     }
 
 }
