@@ -30,22 +30,39 @@ import programming5.math.DistanceFunction;
  */
 public class LexicographicDistanceFunction implements DistanceFunction<String> {
 
+    public static enum Mode {DEFAULT, COUNT_DIFF_CHARS};
+
+    private Mode distMode;
+
+    public LexicographicDistanceFunction() {
+        distMode = Mode.DEFAULT;
+    }
+
+    public LexicographicDistanceFunction(Mode myMode) {
+        distMode = myMode;
+    }
+
     public double distance(String obj1, String obj2) {
-        // Trivial case
-        if (obj1.equals(obj2)) {return 0;}
-        // Comparison
-        double ret = 0;
-        int limit = (obj1.length() <= obj2.length()) ? obj1.length() : obj2.length();
+        int limit = (obj1.length() > obj2.length()) ? obj1.length() : obj2.length();
+        double dist = 0;
         for (int i = 0; i < limit; i++) {
-            ret = Math.abs(obj1.charAt(i) - obj2.charAt(i));
-            if (ret > 0) {
-                break;
+            char o1 = (i < obj1.length()) ? obj1.charAt(i) : (char) 0;
+            char o2 = (i < obj2.length()) ? obj2.charAt(i) : (char) 0;
+            dist += difference(o1, o2);
+        }
+        return dist;
+    }
+
+    private int difference(char c1, char c2) {
+        if (c1 == c2) {
+            return 0;
+        }
+        else {
+            switch (distMode) {
+                case COUNT_DIFF_CHARS: return 1;
+                default: return Math.abs(c2 - c1);
             }
         }
-        if (ret == 0) {
-            ret = Math.abs(obj1.length() - obj2.length());
-        }
-        return ret;
     }
 
 }

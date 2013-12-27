@@ -367,7 +367,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array
      */
-    public static int min(int[] array) {
+    public static int min(int... array) {
         int ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] < ret)
@@ -391,7 +391,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array
      */
-    public static double min(double[] array) {
+    public static double min(double... array) {
         double ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] < ret)
@@ -2596,6 +2596,13 @@ public abstract class ArrayOperations {
         }
         return array;
     }
+
+    public static int[][] initialize(int[][] matrix, int initValue) {
+        for (int i = 0; i < matrix.length; i++) {
+            Arrays.fill(matrix[i], initValue);
+        }
+        return matrix;
+    }
     
     /**
      *Casts the elements of the origin array to the type of the destination array and copies each of these elements to the new array, which must be pre-allocated with the correct size.
@@ -3464,6 +3471,28 @@ public abstract class ArrayOperations {
         int[] ret = new int[intStrings.length];
         for (int i = 0; i < intStrings.length; i++) {
             ret[i] = Integer.parseInt(intStrings[i]);
+        }
+        return ret;
+    }
+
+    public static int[] doubleCapacity(int[] array) {
+        int[] ret = new int[2 * array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        for (int i = array.length; i < ret.length; i++) {
+            ret[i] = 0;
+        }
+        return ret;
+    }
+
+    public static int[] doubleCapacity(int[] array, int padding) {
+        int[] ret = new int[2 * array.length];
+        for (int i = 0; i < array.length; i++) {
+            ret[i] = array[i];
+        }
+        for (int i = array.length; i < ret.length; i++) {
+            ret[i] = padding;
         }
         return ret;
     }
