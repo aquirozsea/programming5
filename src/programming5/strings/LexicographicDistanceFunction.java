@@ -24,7 +24,16 @@ package programming5.strings;
 import programming5.math.DistanceFunction;
 
 /**
- * Implements a distance function based on the current String class compareTo method (abs(s1.compareTo(s2)))
+ * Implements a distance function based on lexicographic distance (the difference in the character codes of
+ * corresponding characters, with left alignment).
+ * <p> Currently implements two different modes:
+ * <p> DEFAULT: Adds the difference of the the codes of characters at each position, where the empty character has
+ * code 0; because of this, this mode is best suited for comparing strings of equal length, as unmatched characters
+ * will contribute an arbitrary amount to the distance based on their character codes.
+ * <p> COUNT_DIFF_CHARS: Adds 1 to the distance for every character that is different, including unmatched characters;
+ * e.g. "example" and "exemplary" have a distance of 4.
+ * <p> Note the consequence of the left alignment, which gives "assert" and "dessert" a distance of 6 instead of 2.
+ * For a family of functions that finds a minimum distance by optimizing string alignment, try the StringEditDistanceFunction class
  * @author Andres Quiroz Hernandez
  * @version 6.9
  */
