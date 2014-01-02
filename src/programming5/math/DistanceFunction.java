@@ -29,7 +29,7 @@ package programming5.math;
 public interface DistanceFunction<T> {
 
     /**
-     * A distance must be a non-negative number, and must be 0 if the two objects are equals (note that the converse is not necessarily true: two objects that are not equal may have a distance equal to 0)
+     * A distance must be a non-negative number, and must be 0 if the two objects are equal (note that the converse is not necessarily true: two objects that are not equal may have a distance equal to 0)
      * @return the distance between the two objects
      */
     public double distance(T obj1, T obj2);
