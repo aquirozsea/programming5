@@ -27,8 +27,12 @@ import programming5.collections.HashTable;
 import programming5.math.DistanceFunction;
 
 /**
- * TODO: Play with this
- * @author andresqh
+ * Implements a distance function for characters based on their approximate relative keyboard positions.
+ * Currently, each key is given a coordinate in a simple matrix and the distance between two keys is the maximum
+ * difference in either horizontal or vertical position, according to the US keyboard layout.
+ * TODO: Play with this and allow for parameterizable keyboard layouts
+ * @author Andres Quiroz Hernandez
+ * @version 6.9
  */
 public class KeyboardCharDistanceFunction implements DistanceFunction<Character> {
 
@@ -81,10 +85,12 @@ public class KeyboardCharDistanceFunction implements DistanceFunction<Character>
             Entry<Float, Float> coord1 = COORDINATES.safeGet(obj1, new EntryObject<Float, Float>(Float.MAX_VALUE, Float.MAX_VALUE));
             Entry<Float, Float> coord2 = COORDINATES.safeGet(obj2, new EntryObject<Float, Float>(Float.MAX_VALUE, Float.MAX_VALUE));
             if (obj1 == ' ' && obj2 != ' ') {
-                coord1 = new EntryObject<Float, Float>(coord2.getKey()+1, coord2.getValue());   // Simplification with space bar on entire bottom row
+                coord1 = new EntryObject<Float, Float>((float) KEYBOARD1.length, coord2.getValue());   // Simplification with space bar on entire bottom row
+                // TODO: Account for different keyboards
             }
             else if(obj2 == ' ' && obj1 != ' ') {
-                coord2 = new EntryObject<Float, Float>(coord1.getKey()+1, coord1.getValue());   // Simplification with space bar on entire bottom row
+                coord2 = new EntryObject<Float, Float>((float) KEYBOARD1.length, coord1.getValue());   // Simplification with space bar on entire bottom row
+                // TODO: Account for different keyboards
             }
             float proximity = Math.max(Math.abs(coord1.getKey()-coord2.getKey()), Math.abs(coord1.getValue()-coord2.getValue()));
             if (proximity <= 1) {

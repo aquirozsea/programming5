@@ -24,7 +24,9 @@ package programming5.strings;
 import programming5.math.DistanceFunction;
 
 /**
- * Implements a distance function that compares strings alphabetically. Will accept non-alphabetic strings, but the distance is not well defined.
+ * Implements a distance function that compares strings alphabetically (i.e. in dictionary order, where words that 
+ * share a prefix are closer than those that don't and letter distance is the distance in the alphabet). Will
+ * accept non-alphabetic strings, but the distance is not well defined.
  * @author Andres Quiroz Hernandez
  * @version 6.9
  */
@@ -34,6 +36,8 @@ public class AlphabeticDistanceFunction implements DistanceFunction<String> {
 
     public double distance(String obj1, String obj2) {
         String smaller, larger;
+        obj1 = obj1.toLowerCase();
+        obj2 = obj2.toLowerCase();
         if (obj1.compareTo(obj2) < 0) {
             smaller = obj1;
             larger = obj2;
@@ -43,29 +47,34 @@ public class AlphabeticDistanceFunction implements DistanceFunction<String> {
             larger = obj1;
         }
         int[] diff = new int[((obj1.length() > obj2.length()) ? obj1.length() : obj2.length())];
-        boolean borrow = false;
-        for (int i = diff.length-1; i >= 0; i--) {
-            char l = (i < larger.length()) ? larger.charAt(i) : ('a' - 1);
-            if (borrow) {
-                l = (l == ('a' - 1)) ? 'z' : (char) (l-1);
+        if (diff.length > 0) {
+            boolean borrow = false;
+            for (int i = diff.length-1; i >= 0; i--) {
+                char l = (i < larger.length()) ? larger.charAt(i) : ('a' - 1);
+                if (borrow) {
+                    l = (l == ('a' - 1)) ? 'z' : (char) (l-1);
+                }
+                char s = (i < smaller.length()) ? smaller.charAt(i) : ('a' - 1);
+                if (l >= s) {
+                    diff[i] = l - s;
+                    borrow = false;
+                }
+                else {
+                    diff[i] = ('z' - s + 1) + (l - 'a' + 1);
+                    borrow = true;
+                }
             }
-            char s = (i < smaller.length()) ? smaller.charAt(i) : ('a' - 1);
-            if (l >= s) {
-                diff[i] = l - s;
-                borrow = false;
+            double dist = diff[0];
+            double exp = factor;
+            for (int i = 1; i < diff.length; i++) {
+                dist += diff[i] * exp;
+                exp *= exp; // TODO: Verify epsilon
             }
-            else {
-                diff[i] = ('z' - s + 1) + (l - 'a' + 1);
-                borrow = true;
-            }
+            return dist;
         }
-        double dist = diff[0];
-        double exp = factor;
-        for (int i = 1; i < diff.length; i++) {
-            dist += diff[i] * exp;
-            exp *= exp; // TODO: Verify epsilon
+        else {  // Special case where argument are two empty ("") strings
+            return 0;
         }
-        return dist;
     }
 
 }
