@@ -22,11 +22,15 @@
 package programming5.math;
 
 /**
- *
- * @author andresqh
+ * Assigns a value, or score, to a given object
+ * @author Andres Quiroz Hernandez
+ * @version 6.9
  */
 public interface ScoreFunction<T> {
 
+    /**
+     * @return a positive, zero, or negative value, depending on the given object
+     */
     public double score(T obj);
 
 }
