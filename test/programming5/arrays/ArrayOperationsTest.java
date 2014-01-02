@@ -5,6 +5,9 @@
 
 package programming5.arrays;
 
+import programming5.strings.StringEditDistanceFunction;
+import programming5.strings.LexicographicDistanceFunction.Mode;
+import programming5.strings.AlphabeticDistanceFunction;
 import programming5.math.DistanceFunction;
 import programming5.strings.LexicographicDistanceFunction;
 import programming5.strings.KeyValuePairMatcher;
@@ -1666,7 +1669,7 @@ public class ArrayOperationsTest {
         assertEquals("equals", ArrayOperations.findClosest(array, "d"));
         assertEquals("new", ArrayOperations.findClosest(array, "new"));
         assertEquals("int", ArrayOperations.findClosest(array, "kind"));
-//        assertEquals("string", ArrayOperations.findClosest(array, "sassy"));  // returns new, which is
+        assertEquals("new", ArrayOperations.findClosest(array, "sassy"));  // returns new, which is not intuitive
         assertEquals("string", ArrayOperations.findClosest(array, "suit"));
         assertEquals("string", ArrayOperations.findClosest(array, "z"));
     }
@@ -1677,16 +1680,64 @@ public class ArrayOperationsTest {
     @Test
     public void testFindClosest_ObjectArr_Object() {
         String[] array = new String[] {"string", "array", "new", "int", "assert", "equals"};
-        DistanceFunction df = new LexicographicDistanceFunction();
-        assertEquals("array", ArrayOperations.findClosest(array, "a", df));
-        assertEquals("assert", ArrayOperations.findClosest(array, "artsy", df));
-        assertEquals("array", ArrayOperations.findClosest(array, "because", df));
-        assertEquals("equals", ArrayOperations.findClosest(array, "d", df));
-        assertEquals("new", ArrayOperations.findClosest(array, "new", df));
-        assertEquals("int", ArrayOperations.findClosest(array, "kind", df));
-//        assertEquals("string", ArrayOperations.findClosest(array, "sassy"));  // returns new, which is
-        assertEquals("string", ArrayOperations.findClosest(array, "suit", df));
-        assertEquals("string", ArrayOperations.findClosest(array, "z", df));
+        DistanceFunction dfc = new LexicographicDistanceFunction(Mode.COUNT_DIFF_CHARS);
+        assertEquals("new", ArrayOperations.findClosest(array, "nes", dfc));
+        assertEquals("array", ArrayOperations.findClosest(array, "artsy", dfc));
+        assertEquals("new", ArrayOperations.findClosest(array, "newly", dfc));
+        assertEquals("new", ArrayOperations.findClosest(array, "dessert", dfc));
+        assertEquals("int", ArrayOperations.findClosest(array, "int", dfc));
+        assertEquals("string", ArrayOperations.findClosest(array, "strong", dfc));
+        assertEquals("string", ArrayOperations.findClosest(array, "attire", dfc));
+        assertEquals("array", ArrayOperations.findClosest(array, "sassy", dfc));
+        DistanceFunction dfd = new LexicographicDistanceFunction(Mode.DEFAULT);
+        assertEquals("new", ArrayOperations.findClosest(array, "nes", dfd));
+        assertEquals("array", ArrayOperations.findClosest(array, "artsy", dfd));
+        assertEquals("array", ArrayOperations.findClosest(array, "newly", dfd));
+        assertEquals("equals", ArrayOperations.findClosest(array, "dessert", dfd));
+        assertEquals("int", ArrayOperations.findClosest(array, "int", dfd));
+        assertEquals("string", ArrayOperations.findClosest(array, "strong", dfd));
+        assertEquals("assert", ArrayOperations.findClosest(array, "attire", dfd));
+        assertEquals("array", ArrayOperations.findClosest(array, "sassy", dfd));
+        DistanceFunction edf = new StringEditDistanceFunction(StringEditDistanceFunction.Mode.DEFAULT);
+        assertEquals("new", ArrayOperations.findClosest(array, "nes", edf));
+        assertEquals("array", ArrayOperations.findClosest(array, "artsy", edf));
+        assertEquals("new", ArrayOperations.findClosest(array, "newly", edf));
+        assertEquals("assert", ArrayOperations.findClosest(array, "dessert", edf));
+        assertEquals("int", ArrayOperations.findClosest(array, "int", edf));
+        assertEquals("string", ArrayOperations.findClosest(array, "strong", edf));
+        assertEquals("string", ArrayOperations.findClosest(array, "attire", edf));
+        assertEquals("equals", ArrayOperations.findClosest(array, "because", edf));
+        assertEquals("array", ArrayOperations.findClosest(array, "sassy", edf));
+        DistanceFunction edfa = new StringEditDistanceFunction(StringEditDistanceFunction.Mode.ALPHABETIC_REPLACE);
+        assertEquals("new", ArrayOperations.findClosest(array, "nes", edfa));
+        assertEquals("array", ArrayOperations.findClosest(array, "artsy", edfa));
+        assertEquals("new", ArrayOperations.findClosest(array, "newly", edfa));
+        assertEquals("assert", ArrayOperations.findClosest(array, "dessert", edfa));
+        assertEquals("int", ArrayOperations.findClosest(array, "int", edfa));
+        assertEquals("string", ArrayOperations.findClosest(array, "strong", edfa));
+        assertEquals("assert", ArrayOperations.findClosest(array, "attire", edfa));
+        assertEquals("assert", ArrayOperations.findClosest(array, "because", edfa));
+        assertEquals("array", ArrayOperations.findClosest(array, "sassy", edfa));
+        DistanceFunction edfk = new StringEditDistanceFunction(StringEditDistanceFunction.Mode.KEYBOARD_REPLACE);
+        assertEquals("new", ArrayOperations.findClosest(array, "nes", edfk));
+        assertEquals("array", ArrayOperations.findClosest(array, "artsy", edfk));
+        assertEquals("new", ArrayOperations.findClosest(array, "newly", edfk));
+        assertEquals("assert", ArrayOperations.findClosest(array, "dessert", edfk));
+        assertEquals("int", ArrayOperations.findClosest(array, "int", edfk));
+        assertEquals("string", ArrayOperations.findClosest(array, "strong", edfk));
+        assertEquals("string", ArrayOperations.findClosest(array, "attire", edfk));
+        assertEquals("equals", ArrayOperations.findClosest(array, "because", edfk));
+        assertEquals("array", ArrayOperations.findClosest(array, "sassy", edfk));
+        AlphabeticDistanceFunction adf = new AlphabeticDistanceFunction();
+        assertEquals("array", ArrayOperations.findClosest(array, "a", adf));
+        assertEquals("array", ArrayOperations.findClosest(array, "artsy", adf));
+        assertEquals("assert", ArrayOperations.findClosest(array, "because", adf));
+        assertEquals("equals", ArrayOperations.findClosest(array, "d", adf));
+        assertEquals("new", ArrayOperations.findClosest(array, "new", adf));
+        assertEquals("int", ArrayOperations.findClosest(array, "kind", adf));
+        assertEquals("string", ArrayOperations.findClosest(array, "sassy", adf));
+        assertEquals("new", ArrayOperations.findClosest(array, "newly", adf));
+        assertEquals("equals", ArrayOperations.findClosest(array, "dessert", adf));
     }
 
     /**
