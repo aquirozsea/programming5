@@ -1663,15 +1663,15 @@ public class ArrayOperationsTest {
     @Test
     public void testFindClosest_StringArr_String() {
         String[] array = new String[] {"string", "array", "new", "int", "assert", "equals"};
-        assertEquals("array", ArrayOperations.findClosest(array, "a"));
-        assertEquals("assert", ArrayOperations.findClosest(array, "artsy"));
-        assertEquals("array", ArrayOperations.findClosest(array, "because"));
-        assertEquals("equals", ArrayOperations.findClosest(array, "d"));
+        assertEquals("new", ArrayOperations.findClosest(array, "a"));
+        assertEquals("array", ArrayOperations.findClosest(array, "artsy"));
+        assertEquals("equals", ArrayOperations.findClosest(array, "because"));
+        assertEquals("new", ArrayOperations.findClosest(array, "d"));
         assertEquals("new", ArrayOperations.findClosest(array, "new"));
-        assertEquals("int", ArrayOperations.findClosest(array, "kind"));
-        assertEquals("new", ArrayOperations.findClosest(array, "sassy"));  // returns new, which is not intuitive
-        assertEquals("string", ArrayOperations.findClosest(array, "suit"));
-        assertEquals("string", ArrayOperations.findClosest(array, "z"));
+        assertEquals("new", ArrayOperations.findClosest(array, "kind"));
+        assertEquals("array", ArrayOperations.findClosest(array, "sassy"));  // returns new, which is not intuitive
+        assertEquals("new", ArrayOperations.findClosest(array, "suit"));
+        assertEquals("new", ArrayOperations.findClosest(array, "z"));
     }
 
     /**
