@@ -21,6 +21,7 @@ public class LexicographicDistanceFunctionTest {
 
     static DistanceFunction<String> df1;
     static DistanceFunction<String> df2;
+    static String arbitrary1, arbitrary2, arbitrary3;
 
     public LexicographicDistanceFunctionTest() {
     }
@@ -29,6 +30,10 @@ public class LexicographicDistanceFunctionTest {
     public static void setUpClass() throws Exception {
         df1 = new LexicographicDistanceFunction();
         df2 = new LexicographicDistanceFunction(LexicographicDistanceFunction.Mode.COUNT_DIFF_CHARS);
+        RandomStringGenerator rsg = new RandomStringGenerator();
+        arbitrary1 = rsg.generateString();
+        arbitrary2 = rsg.generateString();
+        arbitrary3 = rsg.generateString();
     }
 
     @AfterClass
@@ -70,13 +75,17 @@ public class LexicographicDistanceFunctionTest {
     @Test
     public void testEquals() {
         assertEquals(0, (int) df1.distance("equal", "equal"));
-        assertEquals(0, (int) df1.distance("also equal", "also equal"));
         assertEquals(0, (int) df1.distance("", ""));
         assertFalse((int) df1.distance("capssensitive", "CAPSSENSITIVE") == 0);
+        assertEquals(0, df1.distance(arbitrary1, arbitrary1), 1e-15);
+        assertEquals(0, df1.distance(arbitrary2, arbitrary2), 1e-15);
+        assertEquals(0, df1.distance(arbitrary3, arbitrary3), 1e-15);
         assertEquals(0, (int) df2.distance("equal", "equal"));
-        assertEquals(0, (int) df2.distance("also equal", "also equal"));
         assertEquals(0, (int) df2.distance("", ""));
         assertFalse((int) df2.distance("capssensitive", "CAPSSENSITIVE") == 0);
+        assertEquals(0, df2.distance(arbitrary1, arbitrary1), 1e-15);
+        assertEquals(0, df2.distance(arbitrary2, arbitrary2), 1e-15);
+        assertEquals(0, df2.distance(arbitrary3, arbitrary3), 1e-15);
     }
 
     /**
@@ -87,13 +96,15 @@ public class LexicographicDistanceFunctionTest {
         assertTrue("Distance must always be non-negative", df1.distance("s1", "s2") >= 0);
         assertTrue("Distance must always be non-negative", df1.distance("", "s2") >= 0);
         assertTrue("Distance must always be non-negative", df1.distance("other", "") >= 0);
-        assertTrue("Distance must always be non-negative", df1.distance("longer strings", "adding to length") >= 0);
-        assertTrue("Distance must always be non-negative", df1.distance("adding to length", "longer strings") >= 0);
+        assertTrue("Distance must always be non-negative", df1.distance(arbitrary1, arbitrary2) >= 0);
+        assertTrue("Distance must always be non-negative", df1.distance(arbitrary2, arbitrary3) >= 0);
+        assertTrue("Distance must always be non-negative", df1.distance(arbitrary3, arbitrary1) >= 0);
         assertTrue("Distance must always be non-negative", df2.distance("s1", "s2") >= 0);
         assertTrue("Distance must always be non-negative", df2.distance("", "s2") >= 0);
         assertTrue("Distance must always be non-negative", df2.distance("other", "") >= 0);
-        assertTrue("Distance must always be non-negative", df2.distance("longer strings", "adding to length") >= 0);
-        assertTrue("Distance must always be non-negative", df2.distance("adding to length", "longer strings") >= 0);
+        assertTrue("Distance must always be non-negative", df2.distance(arbitrary1, arbitrary2) >= 0);
+        assertTrue("Distance must always be non-negative", df2.distance(arbitrary2, arbitrary3) >= 0);
+        assertTrue("Distance must always be non-negative", df2.distance(arbitrary3, arbitrary1) >= 0);
     }
 
     /**
@@ -103,10 +114,14 @@ public class LexicographicDistanceFunctionTest {
     public void testCommutative() {
         assertEquals(df1.distance("s1", "s2"), df1.distance("s2", "s1"), 0);
         assertEquals(df1.distance("s1", ""), df1.distance("", "s1"), 0);
-        assertEquals(df1.distance("longer strings", "adding to length"), df1.distance("adding to length", "longer strings"), 0);
+        assertEquals(df1.distance(arbitrary1, arbitrary2), df1.distance(arbitrary2, arbitrary1), 0);
+        assertEquals(df1.distance(arbitrary2, arbitrary3), df1.distance(arbitrary3, arbitrary2), 0);
+        assertEquals(df1.distance(arbitrary1, arbitrary3), df1.distance(arbitrary3, arbitrary1), 0);
         assertEquals(df2.distance("s1", "s2"), df2.distance("s2", "s1"), 0);
         assertEquals(df2.distance("s1", ""), df2.distance("", "s1"), 0);
-        assertEquals(df2.distance("longer strings", "adding to length"), df2.distance("adding to length", "longer strings"), 0);
+        assertEquals(df2.distance(arbitrary1, arbitrary2), df2.distance(arbitrary2, arbitrary1), 0);
+        assertEquals(df2.distance(arbitrary2, arbitrary3), df2.distance(arbitrary3, arbitrary2), 0);
+        assertEquals(df2.distance(arbitrary1, arbitrary3), df2.distance(arbitrary3, arbitrary1), 0);
     }
 
     /**
@@ -116,10 +131,10 @@ public class LexicographicDistanceFunctionTest {
     public void testTriangle() {
         assertTrue("Distance must obey the triangle inequality", df1.distance("sa", "sb") + df1.distance("sb", "sc") >= df1.distance("sa", "sc"));
         assertTrue("Distance must obey the triangle inequality", df1.distance("sa", "") + df1.distance("", "sc") >= df1.distance("sa", "sc"));
-        assertTrue("Distance must obey the triangle inequality", df1.distance("arbitrary", "other") + df1.distance("other", "sobering") >= df1.distance("arbitrary", "sobering"));
+        assertTrue("Distance must obey the triangle inequality", df1.distance(arbitrary1, arbitrary2) + df1.distance(arbitrary2, arbitrary3) >= df1.distance(arbitrary1, arbitrary3));
         assertTrue("Distance must obey the triangle inequality", df2.distance("sa", "sb") + df2.distance("sb", "sc") >= df2.distance("sa", "sc"));
         assertTrue("Distance must obey the triangle inequality", df2.distance("sa", "") + df2.distance("", "sc") >= df2.distance("sa", "sc"));
-        assertTrue("Distance must obey the triangle inequality", df2.distance("arbitrary", "other") + df2.distance("other", "sobering") >= df2.distance("arbitrary", "sobering"));
+        assertTrue("Distance must obey the triangle inequality", df2.distance(arbitrary1, arbitrary2) + df2.distance(arbitrary2, arbitrary3) >= df2.distance(arbitrary1, arbitrary3));
     }
 
 }
