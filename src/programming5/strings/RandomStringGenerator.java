@@ -21,8 +21,6 @@
 
 package programming5.strings;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import programming5.arrays.ArrayOperations;
 import programming5.code.RandomIndexGenerator;
