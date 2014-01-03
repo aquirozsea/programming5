@@ -28,6 +28,7 @@ import java.util.Comparator;
 import programming5.code.ObjectMatcher;
 import programming5.code.Replicable;
 import programming5.math.DistanceFunction;
+import programming5.strings.LexicographicDistanceFunction;
 
 /**
  *This class provides additional array manipulation operations to those in java.util.Arrays.
@@ -37,6 +38,7 @@ import programming5.math.DistanceFunction;
 public abstract class ArrayOperations {
 
     public static PrintStream OUT = System.out;
+    public static DistanceFunction<String> DEFAULT_STRING_DISTFUNC = new LexicographicDistanceFunction(LexicographicDistanceFunction.Mode.COUNT_DIFF_CHARS);
     
     /**
      *@return a new copy of the input array
@@ -138,7 +140,7 @@ public abstract class ArrayOperations {
     /**
      *@return the sum of the elements of the input array
      */
-    public static int sum(int[] array) {
+    public static int sum(int... array) {
         int sum = 0;
         for (int elem : array) {
             sum += elem;
@@ -149,7 +151,7 @@ public abstract class ArrayOperations {
     /**
      *@return the sum of the elements of the input array
      */
-    public static float sum(float[] array) {
+    public static float sum(float... array) {
         float sum = 0;
         for (float elem : array) {
             sum += elem;
@@ -160,7 +162,7 @@ public abstract class ArrayOperations {
     /**
      *@return the sum of the elements of the input array
      */
-    public static double sum(double[] array) {
+    public static double sum(double... array) {
         double sum = 0;
         for (double elem : array) {
             sum += elem;
@@ -171,7 +173,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (beware of overflow)
      */
-    public static long product(int[] array) {
+    public static long product(int... array) {
         if (array.length == 0) {return 0;}
         long product = 1;
         for (int elem : array) {
@@ -183,7 +185,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (using a BigInteger in case of overflow)
      */
-    public static BigInteger bigProduct(int[] array) {
+    public static BigInteger bigProduct(int... array) {
         if (array.length == 0) {return BigInteger.ZERO;}
         BigInteger product = BigInteger.ONE;
         for (int elem : array) {
@@ -195,7 +197,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (using a BigInteger in case of overflow)
      */
-    public static BigInteger bigProduct(long[] array) {
+    public static BigInteger bigProduct(long... array) {
         if (array.length == 0) {return BigInteger.ZERO;}
         BigInteger product = BigInteger.ONE;
         for (long elem : array) {
@@ -207,7 +209,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (beware of overflow)
      */
-    public static double product(float[] array) {
+    public static double product(float... array) {
         if (array.length == 0) {return 0;}
         double product = 1;
         for (float elem : array) {
@@ -219,7 +221,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (beware of overflow)
      */
-    public static double product(double[] array) {
+    public static double product(double... array) {
         if (array.length == 0) {return 0;}
         double product = 1;
         for (double elem : array) {
@@ -231,7 +233,7 @@ public abstract class ArrayOperations {
     /**
      *@return the average of the elements of the input array
      */
-    public static double avg(int[] array) {
+    public static double avg(int... array) {
         if (array.length == 0) {return 0;}
         return (double)sum(array)/(double)array.length;
     }
@@ -239,7 +241,7 @@ public abstract class ArrayOperations {
     /**
      *@return the average of the elements of the input array
      */
-    public static double avg(float[] array) {
+    public static double avg(float... array) {
         if (array.length == 0) {return 0;}
         return (double)sum(array)/(double)array.length;
     }
@@ -247,7 +249,7 @@ public abstract class ArrayOperations {
     /**
      *@return the average of the elements of the input array
      */
-    public static double avg(double[] array) {
+    public static double avg(double... array) {
         if (array.length == 0) {return 0;}
         return sum(array)/(double)array.length;
     }
@@ -255,7 +257,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array
      */
-    public static int max(int[] array) {
+    public static int max(int... array) {
         int ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] > ret) {
@@ -268,7 +270,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array
      */
-    public static float max(float[] array) {
+    public static float max(float... array) {
         float ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] > ret) {
@@ -281,7 +283,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array
      */
-    public static double max(double[] array) {
+    public static double max(double... array) {
         double ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] > ret) {
@@ -379,7 +381,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array
      */
-    public static float min(float[] array) {
+    public static float min(float... array) {
         float ret = array[0];
         for (int i = 1; i < array.length; i++) {
             if (array[i] < ret)
@@ -901,7 +903,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static void print(int[] array) {
+    public static void print(int... array) {
         for (int elem : array)
             OUT.println(elem);
     }
@@ -909,7 +911,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static void print(float[] array) {
+    public static void print(float... array) {
         for (float elem : array)
             OUT.println(elem);
     }
@@ -917,7 +919,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static void print(double[] array) {
+    public static void print(double... array) {
         for (double elem : array)
             OUT.println(elem);
     }
@@ -925,7 +927,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static void print(char[] array) {
+    public static void print(char... array) {
         for (char elem : array)
             OUT.println(elem);
     }
@@ -933,7 +935,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
-    public static void print(String[] array) {
+    public static void print(String... array) {
         for (String elem : array)
             OUT.println(elem);
     }
@@ -941,7 +943,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line, using objects' toString method
      */
-    public static void print(Object[] array) {
+    public static void print(Object... array) {
         for (Object elem : array) {
             OUT.println(elem.toString());
         }
@@ -961,7 +963,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static void printHorizontal(int[] array) {
+    public static void printHorizontal(int... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
             OUT.print(", " + array[i]);
@@ -972,7 +974,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static void printHorizontal(float[] array) {
+    public static void printHorizontal(float... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
             OUT.print(", " + array[i]);
@@ -983,7 +985,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static void printHorizontal(double[] array) {
+    public static void printHorizontal(double... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
             OUT.print(", " + array[i]);
@@ -994,7 +996,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static void printHorizontal(char[] array) {
+    public static void printHorizontal(char... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
             OUT.print(", " + array[i]);
@@ -1005,7 +1007,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static void printHorizontal(String[] array) {
+    public static void printHorizontal(String... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
             OUT.print(", " + array[i]);
@@ -1016,7 +1018,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream, using objects' toString method
      */
-    public static void printHorizontal(Object[] array) {
+    public static void printHorizontal(Object... array) {
         OUT.print(array[0].toString());
         for (int i = 1; i < array.length; i++) {
             OUT.print(", " + array[i].toString());
@@ -1027,7 +1029,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
-    public static void printHorizontal(boolean[] array) {
+    public static void printHorizontal(boolean... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
             OUT.print(", " + array[i]);
@@ -1038,7 +1040,7 @@ public abstract class ArrayOperations {
     /**
      *@return true if all of the elements of the input array are true
      */
-    public static boolean tautology(boolean[] array) {
+    public static boolean tautology(boolean... array) {
         boolean ret = (array.length > 0) ? true : false;
         for (boolean ind : array) {
             if (!ind) {
@@ -1052,7 +1054,7 @@ public abstract class ArrayOperations {
     /**
      *@return true if all the elements of the input array are false, or if the array is empty
      */
-    public static boolean contradiction(boolean[] array) {
+    public static boolean contradiction(boolean... array) {
         boolean ret = true;
         for (boolean ind : array) {
             if (ind) {
@@ -1323,7 +1325,7 @@ public abstract class ArrayOperations {
     
     /**
      * Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
-     *@return the element of array that is closest to value
+     * @return the element of array that is closest to value
      * @deprecated Known cases where overflow can cause the wrong result.
      */
     @Deprecated
@@ -1367,7 +1369,7 @@ public abstract class ArrayOperations {
     
     /**
      * Works with current tests, but be wary of precision issues. Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
-     *@return the element of array that is closest to value 
+     * @return the element of array that is closest to value
      */
     public static float findClosest(float[] array, float value) {
         float ret = array[0];
@@ -1408,23 +1410,16 @@ public abstract class ArrayOperations {
     }
     
     /**
-     * @return the element of array that is closest to value, using the String.compareTo method (lexicographic distance)
-     * @deprecated the distance function for this method is not guaranteed to be well-defined: currently compareTo uses a lexicographic distance function, but a comparison function is only required to have the correct sign in the result of the application to two values, and therefore may be changed. Use findClosest method with explicit distance function instead. Note that lexicographic distance may give un-intuitive results if alphabetic distance is expected
+     * @return the element of array that is closest to value, using a lexicographic distance function that counts the number of characters that are different between the two strings (with left alignment)
      */
-    @Deprecated
     public static String findClosest(String[] array, String value) {
-        String ret = array[0];
-        int minDiff = Math.abs(value.compareTo(array[0]));
-        int diff;
-        for (int i = 1; i < array.length; i++) {
-            if ((diff = Math.abs(value.compareTo(array[i]))) < minDiff) {
-                ret = array[i];
-                minDiff = diff;
-            }
-        }
-        return ret;
+        return findClosest(array, value, DEFAULT_STRING_DISTFUNC);
     }
 
+    /**
+     * This method takes a custom distance function for a parameterized object class. There are a number of distance functions provided for strings in the programming5.strings package
+     * @return the element of the array that is closest to the given object, using the given distance function
+     */
     public static <T> T findClosest(T[] array, T value, DistanceFunction<T> df) {
         T ret = array[0];
         double minDiff = df.distance(value, array[0]);
@@ -1439,21 +1434,29 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the element of array that is closest to value
+     *@return the index of the element of array that is closest to value, using a lexicographic distance function that counts the number of characters that are different between the two strings (with left alignment)
      */
     public static int findClosestIndex(String[] array, String value) {
+        return findClosestIndex(array, value, DEFAULT_STRING_DISTFUNC);
+    }
+    
+    /**
+     * This method takes a custom distance function for a parameterized object class. There are a number of distance functions provided for strings in the programming5.strings package
+     * @return the index of the element of array that is closest to the given object, using the given distance function
+     */
+    public static <T> int findClosestIndex(T[] array, T value, DistanceFunction<T> df) {
         int ret = 0;
-        int minDiff = Math.abs(value.compareTo(array[0]));
-        int diff;
+        double minDiff = df.distance(value, array[0]);
+        double diff;
         for (int i = 1; i < array.length; i++) {
-            if ((diff = Math.abs(value.compareTo(array[i]))) < minDiff) {
+            if ((diff = df.distance(value, array[i])) < minDiff) {
                 ret = i;
                 minDiff = diff;
             }
         }
         return ret;
     }
-    
+
     /**
      *@return the element of array that is closest to value, using lexicographic distance (difference in the char code values)
      */
