@@ -27,6 +27,7 @@ import programming5.math.DistanceFunction;
  * Implements a distance function that compares strings alphabetically (i.e. in dictionary order, where words that 
  * share a prefix are closer than those that don't and letter distance is the distance in the alphabet). Will
  * accept non-alphabetic strings, but the distance is not well defined.
+ * // TODO: Determine precision vs string length
  * @author Andres Quiroz Hernandez
  * @version 6.9
  */
