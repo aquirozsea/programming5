@@ -28,9 +28,9 @@ public class AlphabeticDistanceFunctionTest {
     public static void setUpClass() throws Exception {
         adf = new AlphabeticDistanceFunction();
         RandomStringGenerator rsg = new RandomStringGenerator();
-        arbitrary1 = rsg.generateAlphabeticMixedCaseString();
-        arbitrary2 = rsg.generateAlphabeticMixedCaseString();
-        arbitrary3 = rsg.generateAlphabeticMixedCaseString();
+        arbitrary1 = rsg.generateAlphabeticMixedCaseString(10);
+        arbitrary2 = rsg.generateAlphabeticMixedCaseString(10);
+        arbitrary3 = rsg.generateAlphabeticMixedCaseString(10);
     }
 
     @AfterClass
