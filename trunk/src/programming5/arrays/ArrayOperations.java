@@ -1312,10 +1312,10 @@ public abstract class ArrayOperations {
      */
     public static int findClosestIndex(int[] array, int value) {
         int ret = 0;
-        int minDiff = Math.abs(value - array[0]);
-        int diff;
+        long minDiff = Math.abs((long) value - array[0]);
+        long diff;
         for (int i = 1; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) < minDiff) {
+            if ((diff = Math.abs((long) value - array[i])) < minDiff) {
                 ret = i;
                 minDiff = diff;
             }
@@ -1326,7 +1326,7 @@ public abstract class ArrayOperations {
     /**
      * Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
      * @return the element of array that is closest to value
-     * @deprecated Known cases where overflow can cause the wrong result.
+     * @deprecated Known cases where overflow can cause the wrong result (good precision to about 10^-15)
      */
     @Deprecated
     public static double findClosest(double[] array, double value) {
@@ -1352,8 +1352,11 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the element of array that is closest to value
+     * Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
+     * @return the index of the element of array that is closest to value
+     * @deprecated Known cases where overflow can cause the wrong result (good precision to about 15 significant digits)
      */
+    @Deprecated
     public static int findClosestIndex(double[] array, double value) {
         int ret = 0;
         double minDiff = Math.abs(value - array[0]);
@@ -1363,12 +1366,21 @@ public abstract class ArrayOperations {
                 ret = i;
                 minDiff = diff;
             }
+            else if (diff == minDiff && array[i] != array[ret]) {  // This is for rare occasions where the differences are so large that the precision isn't enough to differentiate them
+                if (((array[i] > array[ret]) && (array[i] < value && array[ret] < value))
+                 || ((array[i] < array[ret]) && (array[i] > value && array[ret] > value))
+                 || (array[i] < 0 && value < 0 && array[ret] > 0)
+                 || (array[i] > 0 && value > 0 && array[ret] < 0))
+                {
+                    ret = i;
+                }
+            }
         }
         return ret;
     }
     
     /**
-     * Works with current tests, but be wary of precision issues. Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
+     * Works with current tests, but be wary of precision issues (good precision to about eight significant digits). Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
      * @return the element of array that is closest to value
      */
     public static float findClosest(float[] array, float value) {
@@ -1394,16 +1406,26 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the element of array that is closest to value
+     * Works with current tests, but be wary of precision issues (good precision to about eight significant digits). Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
+     * @return the index of the element of array that is closest to value
      */
     public static int findClosestIndex(float[] array, float value) {
         int ret = 0;
-        float minDiff = Math.abs(value - array[0]);
-        float diff;
+        double minDiff = Math.abs((double) value - array[0]);
+        double diff;
         for (int i = 1; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) < minDiff) {
+            if ((diff = Math.abs((double) value - array[i])) < minDiff) {
                 ret = i;
                 minDiff = diff;
+            }
+            else if (diff == minDiff && array[i] != array[ret]) {  // This is for rare occasions where the differences are so large that the precision isn't enough to differentiate them
+                if (((array[i] > array[ret]) && (array[i] < value && array[ret] < value))
+                 || ((array[i] < array[ret]) && (array[i] > value && array[ret] > value))
+                 || (array[i] < 0 && value < 0 && array[ret] > 0)
+                 || (array[i] > 0 && value > 0 && array[ret] < 0))
+                {
+                    ret = i;
+                }
             }
         }
         return ret;
@@ -1490,9 +1512,14 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the element of a sorted array that is closest to value
+     * This method is faster in general than the corresponding findClosest method, because it uses binary search (the
+     * java.util.Arrays implementation) for the sorted array. Note that this method is not functionally equivalent to
+     * the binarySearch method, since the position returned by the latter would not be that of the closest element in
+     * the case that the value is greater than it (and, indeed, it may not even be a valid position of the array if
+     * the value is greater than the last element).
+     * @return the element of a sorted array that is closest to the given value
      */
-    public static final int findClosestInOrder(int[] array, int value) {
+    public static int findClosestInOrder(int[] array, int value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
             int position = -ret - 1;
@@ -1503,8 +1530,8 @@ public abstract class ArrayOperations {
                 ret = position - 1;
             }
             else {
-                int diffLeft = value - array[position-1];
-                int diffRight = array[position] - value;
+                long diffLeft = value - array[position-1];
+                long diffRight = array[position] - value;
                 if (diffLeft <= diffRight) {
                     ret = position - 1;
                 }
@@ -1517,9 +1544,14 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the element of a sorted array that is closest to value
+     * This method is faster in general than the corresponding findClosestIndex method, because it uses binary search (the
+     * java.util.Arrays implementation) for the sorted array. Note that this method is not functionally equivalent to
+     * the binarySearch method, since the position returned by the latter would not be that of the closest element in
+     * the case that the value is greater than it (and, indeed, it may not even be a valid position of the array if
+     * the value is greater than the last element).
+     * @return the index of the element of a sorted array that is closest to the given value
      */
-    public static final int findClosestIndexInOrder(int[] array, int value) {
+    public static int findClosestIndexInOrder(int[] array, int value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
             int position = -ret - 1;
@@ -1530,8 +1562,8 @@ public abstract class ArrayOperations {
                 ret = position - 1;
             }
             else {
-                int diffLeft = value - array[position-1];
-                int diffRight = array[position] - value;
+                long diffLeft = value - array[position-1];
+                long diffRight = array[position] - value;
                 if (diffLeft <= diffRight) {
                     ret = position - 1;
                 }
