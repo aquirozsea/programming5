@@ -1607,6 +1607,21 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosestIndex_intArr_int() {
+        int[] array = new int[] {1, 50, 10, 15, Integer.MAX_VALUE};
+        int[] array2 = new int[] {Integer.MIN_VALUE, -100, 0, 55};
+        assertEquals(0, ArrayOperations.findClosestIndex(array, Integer.MIN_VALUE));
+        assertEquals(0, ArrayOperations.findClosestIndex(array2, Integer.MIN_VALUE));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, -51));
+        assertEquals(1, ArrayOperations.findClosestIndex(array2, -51));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, 2));
+        assertEquals(2, ArrayOperations.findClosestIndex(array2, 2));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, 6));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, 15));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, 25));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, 40));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, 51));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, Integer.MAX_VALUE));
+        assertEquals(3, ArrayOperations.findClosestIndex(array2, Integer.MAX_VALUE));
     }
 
     /**
@@ -1614,11 +1629,13 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosest_doubleArr_double() {
-        double[] array = new double[] {1, 50, 10, 15};
+        double[] array = new double[] {1, 50, 10, 15, 9.9, 9.90000000000001};
         assertEquals(1, ArrayOperations.findClosest(array, Double.MIN_VALUE), 0);
         assertEquals(1, ArrayOperations.findClosest(array, -51), 0);
         assertEquals(1, ArrayOperations.findClosest(array, 2), 0);
-        assertEquals(10, ArrayOperations.findClosest(array, 6), 0);
+        assertEquals(9.9, ArrayOperations.findClosest(array, 6), 0);
+        assertEquals(9.9, ArrayOperations.findClosest(array, 9.9), 0);
+        assertEquals(9.90000000000001, ArrayOperations.findClosest(array, 9.91), 0);
         assertEquals(15, ArrayOperations.findClosest(array, 15), 0);
         assertEquals(15, ArrayOperations.findClosest(array, 25), 0);
         assertEquals(50, ArrayOperations.findClosest(array, 40), 0);
@@ -1631,6 +1648,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosestIndex_doubleArr_double() {
+        double[] array = new double[] {1, 50, 10, 15, 9.9, 9.90000000000001};
+        assertEquals(0, ArrayOperations.findClosestIndex(array, Double.MIN_VALUE), 0);
+        assertEquals(0, ArrayOperations.findClosestIndex(array, -51), 0);
+        assertEquals(0, ArrayOperations.findClosestIndex(array, 2), 0);
+        assertEquals(4, ArrayOperations.findClosestIndex(array, 6), 0);
+        assertEquals(4, ArrayOperations.findClosestIndex(array, 9.9), 0);
+        assertEquals(5, ArrayOperations.findClosestIndex(array, 9.91), 0);
+        assertEquals(3, ArrayOperations.findClosestIndex(array, 15), 0);
+        assertEquals(3, ArrayOperations.findClosestIndex(array, 25), 0);
+        assertEquals(1, ArrayOperations.findClosestIndex(array, 40), 0);
+        assertEquals(1, ArrayOperations.findClosestIndex(array, 51), 0);
+        assertEquals(1, ArrayOperations.findClosestIndex(array, Double.MAX_VALUE), 0);
     }
 
     /**
@@ -1638,11 +1667,13 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosest_floatArr_float() {
-        float[] array = new float[] {1, 50, 10, 15};
+        float[] array = new float[] {1, 50, 10, 15, 9.9f, 9.9000001f};
         assertEquals(1, ArrayOperations.findClosest(array, Float.MIN_VALUE), 0);
         assertEquals(1, ArrayOperations.findClosest(array, -51), 0);
         assertEquals(1, ArrayOperations.findClosest(array, 2), 0);
-        assertEquals(10, ArrayOperations.findClosest(array, 6), 0);
+        assertEquals(9.9f, ArrayOperations.findClosest(array, 6), 0);
+        assertEquals(9.9f, ArrayOperations.findClosest(array, 9.9f), 0);
+        assertEquals(9.9000001f, ArrayOperations.findClosest(array, 9.91f), 0);
         assertEquals(15, ArrayOperations.findClosest(array, 15), 0);
         assertEquals(15, ArrayOperations.findClosest(array, 25), 0);
         assertEquals(50, ArrayOperations.findClosest(array, 40), 0);
@@ -1655,6 +1686,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosestIndex_floatArr_float() {
+        float[] array = new float[] {1, 50, 10, 15, 9.9f, 9.9000001f};
+        assertEquals(0, ArrayOperations.findClosestIndex(array, Float.MIN_VALUE), 0);
+        assertEquals(0, ArrayOperations.findClosestIndex(array, -51), 0);
+        assertEquals(0, ArrayOperations.findClosestIndex(array, 2), 0);
+        assertEquals(4, ArrayOperations.findClosestIndex(array, 6), 0);
+        assertEquals(4, ArrayOperations.findClosestIndex(array, 9.9f), 0);
+        assertEquals(5, ArrayOperations.findClosestIndex(array, 9.91f), 0);
+        assertEquals(3, ArrayOperations.findClosestIndex(array, 15), 0);
+        assertEquals(3, ArrayOperations.findClosestIndex(array, 25), 0);
+        assertEquals(1, ArrayOperations.findClosestIndex(array, 40), 0);
+        assertEquals(1, ArrayOperations.findClosestIndex(array, 51), 0);
+        assertEquals(1, ArrayOperations.findClosestIndex(array, Float.MAX_VALUE), 0);
     }
 
     /**
@@ -1745,6 +1788,82 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosestIndex_StringArr_String() {
+        String[] array = new String[] {"string", "array", "new", "int", "assert", "equals"};
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "a"));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "artsy"));
+        assertEquals(5, ArrayOperations.findClosestIndex(array, "because"));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "d"));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "new"));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "kind"));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "sassy"));  // returns new, which is not intuitive
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "suit"));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "z"));
+    }
+
+    /**
+     * Test of findClosest method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindClosestIndex_ObjectArr_Object() {
+        String[] array = new String[] {"string", "array", "new", "int", "assert", "equals"};
+        DistanceFunction dfc = new LexicographicDistanceFunction(Mode.COUNT_DIFF_CHARS);
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "nes", dfc));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "artsy", dfc));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "newly", dfc));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "dessert", dfc));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, "int", dfc));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, "strong", dfc));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, "attire", dfc));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "sassy", dfc));
+        DistanceFunction dfd = new LexicographicDistanceFunction(Mode.DEFAULT);
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "nes", dfd));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "artsy", dfd));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "newly", dfd));
+        assertEquals(5, ArrayOperations.findClosestIndex(array, "dessert", dfd));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, "int", dfd));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, "strong", dfd));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, "attire", dfd));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "sassy", dfd));
+        DistanceFunction edf = new StringEditDistanceFunction(StringEditDistanceFunction.Mode.DEFAULT);
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "nes", edf));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "artsy", edf));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "newly", edf));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, "dessert", edf));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, "int", edf));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, "strong", edf));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, "attire", edf));
+        assertEquals(5, ArrayOperations.findClosestIndex(array, "because", edf));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "sassy", edf));
+        DistanceFunction edfa = new StringEditDistanceFunction(StringEditDistanceFunction.Mode.ALPHABETIC_REPLACE);
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "nes", edfa));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "artsy", edfa));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "newly", edfa));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, "dessert", edfa));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, "int", edfa));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, "strong", edfa));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, "attire", edfa));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, "because", edfa));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "sassy", edfa));
+        DistanceFunction edfk = new StringEditDistanceFunction(StringEditDistanceFunction.Mode.KEYBOARD_REPLACE);
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "nes", edfk));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "artsy", edfk));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "newly", edfk));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, "dessert", edfk));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, "int", edfk));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, "strong", edfk));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, "attire", edfk));
+        assertEquals(5, ArrayOperations.findClosestIndex(array, "because", edfk));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "sassy", edfk));
+        AlphabeticDistanceFunction adf = new AlphabeticDistanceFunction();
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "a", adf));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, "artsy", adf));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, "because", adf));
+        assertEquals(5, ArrayOperations.findClosestIndex(array, "d", adf));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "new", adf));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, "kind", adf));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, "sassy", adf));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, "newly", adf));
+        assertEquals(5, ArrayOperations.findClosestIndex(array, "dessert", adf));
     }
 
     /**
@@ -1767,6 +1886,14 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosestIndex_charArr_char() {
+        char[] array = new char[] {'s', 'A', 'n', 'i', 'a', 'e'};
+        assertEquals(4, ArrayOperations.findClosestIndex(array, 'a'));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, 'b'));
+        assertEquals(5, ArrayOperations.findClosestIndex(array, 'd'));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, 'n'));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, 'k'));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, 's'));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, 'z'));
     }
 
     /**
@@ -1774,6 +1901,21 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosestInOrder_intArr_int() {
+        int[] array = new int[] {1, 10, 15, 50, Integer.MAX_VALUE};
+        int[] array2 = new int[] {Integer.MIN_VALUE, -100, 0, 55};
+        assertEquals(1, ArrayOperations.findClosestInOrder(array, Integer.MIN_VALUE));
+        assertEquals(Integer.MIN_VALUE, ArrayOperations.findClosestInOrder(array2, Integer.MIN_VALUE));
+        assertEquals(1, ArrayOperations.findClosestInOrder(array, -51));
+        assertEquals(-100, ArrayOperations.findClosestInOrder(array2, -51));
+        assertEquals(1, ArrayOperations.findClosestInOrder(array, 2));
+        assertEquals(0, ArrayOperations.findClosestInOrder(array2, 2));
+        assertEquals(10, ArrayOperations.findClosestInOrder(array, 6));
+        assertEquals(15, ArrayOperations.findClosestInOrder(array, 15));
+        assertEquals(15, ArrayOperations.findClosestInOrder(array, 25));
+        assertEquals(50, ArrayOperations.findClosestInOrder(array, 40));
+        assertEquals(50, ArrayOperations.findClosestInOrder(array, 51));
+        assertEquals(Integer.MAX_VALUE, ArrayOperations.findClosestInOrder(array, Integer.MAX_VALUE));
+        assertEquals(55, ArrayOperations.findClosestInOrder(array2, Integer.MAX_VALUE));
     }
 
     /**
@@ -1781,6 +1923,21 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosestIndexInOrder_intArr_int() {
+        int[] array = new int[] {1, 10, 15, 50, Integer.MAX_VALUE};
+        int[] array2 = new int[] {Integer.MIN_VALUE, -100, 0, 55};
+        assertEquals(0, ArrayOperations.findClosestIndexInOrder(array, Integer.MIN_VALUE));
+        assertEquals(0, ArrayOperations.findClosestIndex(array2, Integer.MIN_VALUE));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, -51));
+        assertEquals(1, ArrayOperations.findClosestIndex(array2, -51));
+        assertEquals(0, ArrayOperations.findClosestIndex(array, 2));
+        assertEquals(2, ArrayOperations.findClosestIndex(array2, 2));
+        assertEquals(1, ArrayOperations.findClosestIndex(array, 6));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, 15));
+        assertEquals(2, ArrayOperations.findClosestIndex(array, 25));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, 40));
+        assertEquals(3, ArrayOperations.findClosestIndex(array, 51));
+        assertEquals(4, ArrayOperations.findClosestIndex(array, Integer.MAX_VALUE));
+        assertEquals(3, ArrayOperations.findClosestIndex(array2, Integer.MAX_VALUE));
     }
 
     /**
