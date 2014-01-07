@@ -22,6 +22,7 @@
 package programming5.arrays;
 
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -1292,7 +1293,7 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the element of array that is closest to value
+     *@return the element of array that is closest to the given value (the first one encountered if multiple elements are equally close)
      */
     public static int findClosest(int[] array, int value) {
         int ret = array[0];
@@ -1308,7 +1309,7 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the element of array that is closest to value
+     *@return the index of the element of array that is closest to value (the first one encountered if multiple elements are equally close)
      */
     public static int findClosestIndex(int[] array, int value) {
         int ret = 0;
@@ -1322,33 +1323,29 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    // TODO: findClosest(long)
     
     /**
-     * Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
-     * @return the element of array that is closest to value
-     * @deprecated Known cases where overflow can cause the wrong result (good precision to about 10^-15)
+     * Uses the BigDecimal class to obtain the difference between values (and as such is expected to incur a performance penalty, which is unmeasured, over
+     * using straight floating point arithmetic). This prevents inaccuracies in cases where there would be overflows in the difference
+     * between two values, but it does not compensate for the precision in the input (e.g. two values in the array intended to be different, but that are equal
+     * in the floating point representation).
+     * @return the element of array that is closest to the given value (the first one encountered if multiple elements are equally close, within double floating
+     * point precision)
      */
-    @Deprecated
     public static double findClosest(double[] array, double value) {
-        double ret = array[0];
-        double minDiff = Math.abs(value - array[0]);
-        double diff;
+        int retIndex = 0;
+        BigDecimal auxValue = new BigDecimal(value);
+        BigDecimal minDiff = auxValue.subtract(new BigDecimal(array[0])).abs();
         for (int i = 1; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) < minDiff) {
-                ret = array[i];
+            BigDecimal diff = auxValue.subtract(new BigDecimal(array[i])).abs();
+            if (diff.compareTo(minDiff) < 0) {  // diff < minDiff
+                retIndex = i;
                 minDiff = diff;
             }
-            else if (diff == minDiff && array[i] != ret) {  // This is for rare occasions where the differences are so large that the precision isn't enough to differentiate them
-                if (((array[i] > ret) && (array[i] < value && ret < value))
-                 || ((array[i] < ret) && (array[i] > value && ret > value))
-                 || (array[i] < 0 && value < 0 && ret > 0)
-                 || (array[i] > 0 && value > 0 && ret < 0))
-                {
-                    ret = array[i];
-                }
-            }
         }
-        return ret;
+        return array[retIndex];
     }
     
     /**
@@ -1578,7 +1575,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of a sorted array that is closest to value
      */
-    public static final double findClosestInOrder(double[] array, double value) {
+    public static double findClosestInOrder(double[] array, double value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
             int position = -ret - 1;
