@@ -1630,6 +1630,7 @@ public class ArrayOperationsTest {
     @Test
     public void testFindClosest_doubleArr_double() {
         double[] array = new double[] {1, 50, 10, 15, 9.9, 9.90000000000001};
+        double[] array2 = new double[] {-Double.MAX_VALUE, Double.MAX_VALUE};
         assertEquals(1, ArrayOperations.findClosest(array, Double.MIN_VALUE), 0);
         assertEquals(1, ArrayOperations.findClosest(array, -51), 0);
         assertEquals(1, ArrayOperations.findClosest(array, 2), 0);
@@ -1641,6 +1642,7 @@ public class ArrayOperationsTest {
         assertEquals(50, ArrayOperations.findClosest(array, 40), 0);
         assertEquals(50, ArrayOperations.findClosest(array, 51), 0);
         assertEquals(50, ArrayOperations.findClosest(array, Double.MAX_VALUE), 0);
+        assertEquals(Double.MAX_VALUE, ArrayOperations.findClosest(array2, 5), 0);
     }
 
     /**
@@ -1945,6 +1947,22 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosestInOrder_doubleArr_double() {
+        double[] array = new double[] {1, 9.9, 9.90000000000001, 10, 15, 50, Double.MAX_VALUE};
+        double[] array2 = new double[] {-Double.MAX_VALUE, Double.MAX_VALUE};
+//        assertEquals(Double.MAX_VALUE, ArrayOperations.findClosestInOrder(array2, 2), 0);
+//        assertTrue(Math.abs(-Double.MAX_VALUE - 2) > Math.abs(Double.MAX_VALUE - 2));
+        assertEquals(1, ArrayOperations.findClosestInOrder(array, Double.MIN_VALUE), 0);
+        assertEquals(1, ArrayOperations.findClosestInOrder(array, -51), 0);
+        assertEquals(1, ArrayOperations.findClosestInOrder(array, 2), 0);
+        assertEquals(9.9, ArrayOperations.findClosestInOrder(array, 6), 0);
+        assertEquals(9.9, ArrayOperations.findClosestInOrder(array, 9.9), 0);
+        assertEquals(9.90000000000001, ArrayOperations.findClosestInOrder(array, 9.91), 0);
+        assertEquals(15, ArrayOperations.findClosestInOrder(array, 15), 0);
+        assertEquals(15, ArrayOperations.findClosestInOrder(array, 25), 0);
+        assertEquals(50, ArrayOperations.findClosestInOrder(array, 40), 0);
+        assertEquals(50, ArrayOperations.findClosestInOrder(array, 51), 0);
+        assertEquals(Double.MAX_VALUE, ArrayOperations.findClosestInOrder(array, Double.MAX_VALUE), 0);
+        assertEquals(Double.MAX_VALUE, ArrayOperations.findClosestInOrder(array, Double.MAX_VALUE-1), 0);
     }
 
     /**
