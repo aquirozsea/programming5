@@ -96,6 +96,8 @@ public class MathSet<E> extends HashSet<E> {
 		viewRand = new Random(System.currentTimeMillis());
 	}
 
+        // TODO: Avoid converting to array
+
 	/**
          *@return a new MathSet that is the intersection of this set with the given set
          */
@@ -113,6 +115,8 @@ public class MathSet<E> extends HashSet<E> {
 		MathSet<T> mset1 = new MathSet<T>(set1);
 		return mset1.intersect(set2);
 	}
+
+        // TODO: Union method necessary?
 
 	/**
          *@return a new MathSet that is the union of this set with the given set
