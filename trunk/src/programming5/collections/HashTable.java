@@ -87,6 +87,18 @@ public class HashTable<E, D> extends HashMap<E, D> implements PMap<E, D> {
         return retKey;
     }
 
+    @Override
+    public Map<E, E> safePutAll(Map<? extends E, ? extends D> otherMap, MapKeyGenerator<E> keyGenerator) {
+        Map<E, E> changedKeys = new HashMap<E, E>();
+        for (Entry<? extends E, ? extends D> otherEntry : otherMap.entrySet()) {
+            E newKey = this.safePut(otherEntry.getKey(), otherEntry.getValue(), keyGenerator);
+            if (!newKey.equals(otherEntry.getKey())) {
+                changedKeys.put(otherEntry.getKey(), newKey);
+            }
+        }
+        return changedKeys;
+    }
+
     /**
      * Implementation of the randomPut method of the PMap interface
      * @param value the value to insert

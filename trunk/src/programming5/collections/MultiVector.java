@@ -1151,6 +1151,10 @@ public class MultiVector<E, D> implements Serializable, Cloneable, PMap<E, D> {
         }
     }
 
+    public Map<E, E> safePutAll(Map<? extends E, ? extends D> otherMap, MapKeyGenerator<E> keyGenerator) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * Implementation of the Map.Entry interface
      */
