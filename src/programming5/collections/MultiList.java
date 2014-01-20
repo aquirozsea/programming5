@@ -24,6 +24,7 @@ package programming5.collections;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -123,6 +124,18 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
         }
         this.put(retKey, value);
         return retKey;
+    }
+
+    @Override
+    public Map<E, E> safePutAll(Map<? extends E, ? extends D> otherMap, MapKeyGenerator<E> keyGenerator) {
+        Map<E, E> changedKeys = new HashMap<E, E>();
+        for (Entry<? extends E, ? extends D> otherEntry : otherMap.entrySet()) {
+            E newKey = this.safePut(otherEntry.getKey(), otherEntry.getValue(), keyGenerator);
+            if (!newKey.equals(otherEntry.getKey())) {
+                changedKeys.put(otherEntry.getKey(), newKey);
+            }
+        }
+        return changedKeys;
     }
 
     /**
