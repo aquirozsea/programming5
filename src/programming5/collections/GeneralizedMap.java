@@ -45,7 +45,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         return endTableGet(key, defaultValue);
     }
 
-    public V safeGet(List<K> keys, V defaultValue) {
+    public V safeGetList(List<K> keys, V defaultValue) {
         // Edge cases
         if (keys == null) return defaultValue;
         if (keys.isEmpty()) return defaultValue;
@@ -62,7 +62,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         }
     }
 
-    public V safeGet(V defaultValue, K... keys) {
+    public V safeGetArray(V defaultValue, K... keys) {
         // Edge cases
         if (keys == null) return defaultValue;
         if (keys.length == 0) return defaultValue;
@@ -83,7 +83,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         return endTableSafePut(key, value, keyGenerator);
     }
 
-    public K safePut(V value, MapKeyGenerator<K> keyGenerator, K... keys) {
+    public K safePutArray(V value, MapKeyGenerator<K> keyGenerator, K... keys) {
         // Edge cases
         if (keys == null) return this.safePut(keyGenerator.generateKey(), value, keyGenerator);
         if (keys.length == 0) return this.safePut(keyGenerator.generateKey(), value, keyGenerator);
@@ -200,7 +200,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         return endTableGet((K) key, null);
     }
 
-    public V get(List<K> keys) {
+    public V getList(List<K> keys) {
         // Edge cases
         if (keys == null) return null;
         if (keys.isEmpty()) return null;
@@ -234,7 +234,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         }
     }
 
-    public GeneralizedMap<K, V> getMap(List<K> keys) {
+    public GeneralizedMap<K, V> getMapList(List<K> keys) {
         // Edge cases
         if (keys == null) return new GeneralizedMap<K, V>();
         if (keys.isEmpty()) return new GeneralizedMap<K, V>();
@@ -255,7 +255,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         return endTablePut(key, value);
     }
 
-    public V put(V value, K... keys) {
+    public V putArray(V value, K... keys) {
         // Edge cases
         if (keys == null) return null;
         if (keys.length == 0) return null;
@@ -279,7 +279,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         return mapTablePut(key, gmap);
     }
 
-    public Object putMap(GeneralizedMap<K, V> gmap, K... keys) {
+    public Object putMapArray(GeneralizedMap<K, V> gmap, K... keys) {
         // Edge cases
         if (keys == null) return null;
         if (keys.length == 0) return null;
