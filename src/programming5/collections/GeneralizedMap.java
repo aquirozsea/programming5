@@ -21,10 +21,10 @@
 
 package programming5.collections;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -118,13 +118,15 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
     }
 
     @Override
+    // Only works with key clashes at the first level
     public Map<K, K> safePutAll(Map<? extends K, ? extends V> otherMap, MapKeyGenerator<K> keyGenerator) {
         Map<K, K> changedKeys = new HashMap<K, K>();
-        for (Entry<? extends K, ? extends V> otherEntry : otherMap.entrySet()) {
-            K newKey = this.safePut(otherEntry.getKey(), otherEntry.getValue(), keyGenerator);
-            if (!newKey.equals(otherEntry.getKey())) {
-                changedKeys.put(otherEntry.getKey(), newKey);
-            }
+        if (otherMap instanceof GeneralizedMap) {
+            changedKeys.putAll(this.mapTable.safePutAll(((GeneralizedMap) otherMap).mapTable, keyGenerator));
+            changedKeys.putAll(this.endTable.safePutAll(((GeneralizedMap) otherMap).endTable, keyGenerator));
+        }
+        else {
+            changedKeys.putAll(this.endTable.safePutAll(otherMap, keyGenerator));
         }
         return changedKeys;
     }
@@ -157,21 +159,29 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         return size;
     }
 
+    // Embedded empty tables still contribute to being not empty
     public boolean isEmpty() {
-        boolean empty = endTable.isEmpty();
-        if (empty) {
-            for (GeneralizedMap<K, V> embedded : mapTable.values()) {
-                empty = embedded.isEmpty();
-                if (!empty) {
-                    break;
-                }
-            }
-        }
-        return empty;
+        return endTable.isEmpty() && mapTable.isEmpty();
     }
 
     public boolean containsKey(Object key) {
-        boolean contains = endTable.containsKey(key);
+        if (key instanceof String) {
+            if (((String) key).contains(separator)) {
+                String mapKey = ((String) key).substring(0, ((String) key).lastIndexOf(separator));
+                String elementKey = ((String) key).substring(((String) key).lastIndexOf(separator) + 1);
+                try {
+                    return this.getMap((K) mapKey).containsKey(elementKey);
+                }
+                catch (NullPointerException npe) {
+                    return false;
+                }
+                catch (ClassCastException cce) {
+                    // Default to regular object search
+                }
+            }
+        }
+        // Default search 
+        boolean contains = endTable.containsKey(key) || mapTable.containsKey(key);
         if (!contains) {
             for (GeneralizedMap<K, V> embedded : mapTable.values()) {
                 contains = embedded.containsKey(key);
@@ -197,7 +207,16 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
     }
 
     public V get(Object key) {
-        return endTableGet((K) key, null);
+        try {
+            return endTableGet((K) key, null);
+        }
+        catch (ClassCastException cce) {
+            return null;
+        }
+    }
+
+    public V getArray(K... keys) {
+        return safeGetArray(null, keys);
     }
 
     public V getList(List<K> keys) {
@@ -219,8 +238,8 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
 
     public GeneralizedMap<K, V> getMap(K... keys) {
         // Edge cases
-        if (keys == null) return new GeneralizedMap<K, V>();
-        if (keys.length == 0) return new GeneralizedMap<K, V>();
+        if (keys == null) return mapTableGet(null);
+        if (keys.length == 0) return mapTableGet(null);
         // Have keys
         if (keys.length == 1) {
             return mapTableGet(keys[0]);
@@ -236,8 +255,8 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
 
     public GeneralizedMap<K, V> getMapList(List<K> keys) {
         // Edge cases
-        if (keys == null) return new GeneralizedMap<K, V>();
-        if (keys.isEmpty()) return new GeneralizedMap<K, V>();
+        if (keys == null) return mapTableGet(null);
+        if (keys.isEmpty()) return mapTableGet(null);
         // Have keys
         if (keys.size() == 1) {
             return mapTableGet(keys.get(0));
@@ -257,8 +276,8 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
 
     public V putArray(V value, K... keys) {
         // Edge cases
-        if (keys == null) return null;
-        if (keys.length == 0) return null;
+        if (keys == null) throw new IllegalArgumentException("GeneralizedMap: Cannot putArray: No key(s) provided");
+        if (keys.length == 0) throw new IllegalArgumentException("GeneralizedMap: Cannot putArray: No key(s) provided");
         // Have keys
         if (keys.length == 1) {
             return this.put(keys[0], value);
@@ -275,14 +294,14 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
 
     // TODO: put with List<K>?
 
-    public Object putMap(K key, GeneralizedMap<K, V> gmap) {
+    public GeneralizedMap<K, V> putMap(K key, GeneralizedMap<K, V> gmap) {
         return mapTablePut(key, gmap);
     }
 
-    public Object putMapArray(GeneralizedMap<K, V> gmap, K... keys) {
+    public GeneralizedMap<K, V> putMapArray(GeneralizedMap<K, V> gmap, K... keys) {
         // Edge cases
-        if (keys == null) return null;
-        if (keys.length == 0) return null;
+        if (keys == null) throw new IllegalArgumentException("GeneralizedMap: Cannot putMapArray: No key(s) provided");;
+        if (keys.length == 0) throw new IllegalArgumentException("GeneralizedMap: Cannot putMapArray: No key(s) provided");;
         // Have keys
         if (keys.length == 1) {
             return this.putMap(keys[0], gmap);
@@ -312,8 +331,8 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
 
     public boolean generalizedRemove(K... keys) {
         // Edge cases
-        if (keys == null) return false;
-        if (keys.length == 0) return false;
+        if (keys == null) return generalizedTableRemove(null);
+        if (keys.length == 0) return generalizedTableRemove(null);
         // Have keys
         if (keys.length == 1) {
             return generalizedTableRemove(keys[0]);
@@ -327,9 +346,13 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         }
     }
 
-    public void putAll(Map<? extends K, ? extends V> map) {
-        for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
-            this.put(entry.getKey(), entry.getValue());
+    public void putAll(Map<? extends K, ? extends V> otherMap) {
+        if (otherMap instanceof GeneralizedMap) {
+            this.mapTable.putAll(((GeneralizedMap) otherMap).mapTable);
+            this.endTable.putAll(((GeneralizedMap) otherMap).endTable);
+        }
+        else {
+            this.endTable.putAll(otherMap);
         }
     }
 
@@ -338,14 +361,33 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         endTable.clear();
     }
 
-    // Non-recursive, even for compound strings
     public boolean isMap(K key) {
+        if (key instanceof String) {
+            String[] stringKeys = ((String) key).split(separator, -1);
+            if (stringKeys.length > 1) {
+                GeneralizedMap<K, V> aux = mapTable.get((K) stringKeys[0]);
+                for (int i = 1; i < stringKeys.length-1; i++) {
+                    if (aux != null) {
+                        aux = aux.mapTable.get((K) stringKeys[i]);
+                    }
+                    else {
+                        break;
+                    }
+                }
+                if (aux != null) {
+                    return aux.mapTable.containsKey(stringKeys[stringKeys.length-1]);
+                }
+                else {
+                    return false;
+                }
+            }
+        }
         return mapTable.containsKey(key);
     }
 
     // Only first level keys, for both primitive elements and embedded maps
     public Set<K> keySet() {
-        Set<K> keySet = mapTable.keySet();
+        Set<K> keySet = new HashSet<K>(mapTable.keySet());
         keySet.addAll(endTable.keySet());
         return keySet;
     }
@@ -353,18 +395,16 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
     public Set<List<K>> compoundKeySet() {
         Set<List<K>> keySet = new HashSet<List<K>>();
         for (K endKey : endTable.keySet()) {
-            List<K> singleList = new ArrayList<K>();
+            List<K> singleList = new LinkedList<K>();
             singleList.add(endKey);
             keySet.add(singleList);
         }
         for (K mapKey : mapTable.keySet()) {
-            List<K> compoundList = new ArrayList<K>();
-            compoundList.add(mapKey);
             GeneralizedMap<K, V> embedded = mapTable.get(mapKey);
             for (List<K> compoundKey : embedded.compoundKeySet()) {
-                compoundList.addAll(compoundKey);   // TODO: Check the order is correct
+                ((LinkedList) compoundKey).addFirst(mapKey);
+                keySet.add(compoundKey);
             }
-            keySet.add(compoundList);
         }
         return keySet;
     }
@@ -396,16 +436,14 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
     public Set<Entry<List<K>, V>> compoundEntrySet() {
         Set<Entry<List<K>, V>> entrySet = new HashSet<Entry<List<K>, V>>();
         for (Entry<K, V> endEntry : endTable.entrySet()) {
-            List<K> singleKey = new ArrayList<K>();
+            List<K> singleKey = new LinkedList<K>();
             singleKey.add(endEntry.getKey());
             entrySet.add(new EntryObject<List<K>, V>(singleKey, endEntry.getValue()));
         }
         for (Entry<K, GeneralizedMap<K, V>> mapEntry : mapTable.entrySet()) {
-            List<K> compoundKey = new ArrayList<K>();
-            compoundKey.add(mapEntry.getKey());
             for (Entry<List<K>, V> embeddedEntry : mapEntry.getValue().compoundEntrySet()) {
-                compoundKey.addAll(embeddedEntry.getKey());
-                entrySet.add(new EntryObject<List<K>, V>(compoundKey, embeddedEntry.getValue()));
+                ((LinkedList<K>) embeddedEntry.getKey()).addFirst(mapEntry.getKey());
+                entrySet.add(embeddedEntry);
             }
         }
         return entrySet;
@@ -413,7 +451,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
 
     private GeneralizedMap<K, V> mapTableGet(K key) {
         if (key instanceof String) {
-            String[] stringKeys = ((String) key).split(separator);
+            String[] stringKeys = ((String) key).split(separator, -1);
             if (stringKeys.length > 1) {
                 GeneralizedMap<K, V> aux = mapTable.safeGet((K) stringKeys[0], new GeneralizedMap<K, V>());
                 for (int i = 1; i < stringKeys.length; i++) {
@@ -427,7 +465,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
 
     private V endTableGet(K key, V defaultValue) {
         if (key instanceof String) {
-            String[] stringKeys = ((String) key).split(separator);
+            String[] stringKeys = ((String) key).split(separator, -1);
             if (stringKeys.length > 1) {
                 GeneralizedMap<K, V> aux = mapTable.safeGet((K) stringKeys[0], new GeneralizedMap<K, V>());
                 for (int i = 1; i < stringKeys.length-1; i++) {
@@ -441,7 +479,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
     
     private V endTablePut(K key, V value) {
         if (key instanceof String) {
-            String[] stringKeys = ((String) key).split(separator);
+            String[] stringKeys = ((String) key).split(separator, -1);
             if (stringKeys.length > 1) {
                 GeneralizedMap<K, V> aux = mapTable.safeGet((K) stringKeys[0], new GeneralizedMap<K, V>());
                 for (int i = 1; i < stringKeys.length-1; i++) {
@@ -455,7 +493,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
 
     private K endTableSafePut(K key, V value, MapKeyGenerator<K> keyGenerator) {
         if (key instanceof String) {
-            String[] stringKeys = ((String) key).split(separator);
+            String[] stringKeys = ((String) key).split(separator, -1);
             if (stringKeys.length > 1) {
                 GeneralizedMap<K, V> aux = mapTable.safeGet((K) stringKeys[0], new GeneralizedMap<K, V>());
                 for (int i = 1; i < stringKeys.length-1; i++) {
@@ -467,10 +505,9 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         return endTable.safePut(key, value, keyGenerator);
     }
 
-    // Fulfills the regular map put contract, but the return value could either be a final element or an embedded map
-    private Object mapTablePut(K key, GeneralizedMap<K, V> gmap) {
+    private GeneralizedMap<K, V> mapTablePut(K key, GeneralizedMap<K, V> gmap) {
         if (key instanceof String) {
-            String[] stringKeys = ((String) key).split(separator);
+            String[] stringKeys = ((String) key).split(separator, -1);
             if (stringKeys.length > 1) {
                 GeneralizedMap<K, V> aux = mapTable.safeGet((K) stringKeys[0], new GeneralizedMap<K, V>());
                 for (int i = 1; i < stringKeys.length-1; i++) {
@@ -484,7 +521,7 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
 
     private K mapTableSafePut(K key, GeneralizedMap<K, V> gmap, MapKeyGenerator<K> keyGenerator) {
         if (key instanceof String) {
-            String[] stringKeys = ((String) key).split(separator);
+            String[] stringKeys = ((String) key).split(separator, -1);
             if (stringKeys.length > 1) {
                 GeneralizedMap<K, V> aux = mapTable.safeGet((K) stringKeys[0], new GeneralizedMap<K, V>());
                 for (int i = 1; i < stringKeys.length-1; i++) {
