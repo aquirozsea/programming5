@@ -426,4 +426,31 @@ public abstract class StringOperations {
         }
     }
 
+    public static Number parseNumber(String string) {
+        try {
+            return Integer.parseInt(string);
+        }
+        catch (Exception ei) {}
+        try {
+            return Long.parseLong(string);
+        }
+        catch (Exception el) {}
+        try {
+            Float f = Float.parseFloat(string);
+            if (f.toString().equals(string)) {
+                return f;
+            }
+            else {
+                throw new Exception();
+            }
+        }
+        catch (Exception ef) {}
+        try {
+            return Double.parseDouble(string);
+        }
+        catch (Exception ed) {
+            throw new IllegalArgumentException("StringOperations: Cannot parse string " + string + " as number");
+        }
+    }
+
 }
