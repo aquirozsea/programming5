@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import programming5.arrays.ArrayOperations;
 import programming5.collections.CollectionUtils;
+import programming5.collections.EntryObject;
 import programming5.math.NumberRange;
 
 /**
@@ -193,9 +194,10 @@ public abstract class StringOperations {
         return decodeElements;
     }
 
-    public static Map<String, String> newDecodePattern(String string, String regexPattern) {
+    public static Map<String, String> newDecodePattern(String line, String regexPattern) {
+        String string = line;
         Map<String, String> decoding = new HashMap<String, String>();
-        List<String> labels = cleanRegexLabels(extract(regexPattern, ".<\\w+(:(.+))?.>"));
+        List<String> labels = cleanRegexLabels(extract(regexPattern, ".<\\w+(:(.*))?.>"));
         if (labels.isEmpty()) { // No labels given, decode as regular regex
             Pattern jPattern = Pattern.compile(regexPattern);
             Matcher jMatcher = jPattern.matcher(string);
@@ -205,7 +207,7 @@ public abstract class StringOperations {
                 }
             }
             else {
-                throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + string + ") does not match given pattern: " + regexPattern);
+                throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + line + ") does not match given pattern: " + regexPattern);
             }
         }
         else {  // Decode with labels
@@ -216,46 +218,53 @@ public abstract class StringOperations {
                 regexSeparators[i] = split[0];    // The pre-label part
                 auxRegex = split[1];    // The rest
             }
-            // Second pass to actually extract matches
-            for (int i = 0; i < regexSeparators.length-1; i++) {    // Iterate through all but last separator (where each separator precedes a label)
-                if (regexSeparators[i].length() > 0) {
-                    string = string.replaceFirst(regexSeparators[i], "");
-                    // Any way to tell this matched the separator at the beginning of the string?
-                }
-                Entry<String, String> labelEntry = decodeLabel(labels.get(i));
-                boolean matchedLabel = false;
-                int start = 0;
-                while (!matchedLabel && start < string.length()) {
-                    int limit = regexSeparators[i+1].length() > 0 ?
-                        start + StringOperations.findFirstRegex(string.substring(start), regexSeparators[i+1]) :
-                        string.length();    // Two labels were put together and can't use separator to limit parsing for label
-                    String labelParse = StringOperations.extractFirst(string.substring(0, limit), labelEntry.getValue());
-                    if (labelParse != null) {   // Found match for label
-                        matchedLabel = true;
-                        decoding.put(labelEntry.getKey(), labelParse);
-                        if (limit < string.length()) {
-                            string = string.substring(limit);   // Keep searching from where separator was found
+            if (string.startsWith(StringOperations.extractFirst(string, regexSeparators[0]))) { // Ensure invariant for loop where the current separator has been found to match the current place in the string
+                // Second pass to actually extract matches
+                for (int i = 0; i < regexSeparators.length-1; i++) {    // Iterate through all but last separator (where each separator precedes a label)
+                    if (regexSeparators[i].length() > 0) {
+                        string = string.replaceFirst(regexSeparators[i], "");
+                    }
+                    Entry<String, String> labelEntry = decodeLabel(labels.get(i));
+                    boolean matchedLabel = false;
+                    int start = 0;
+                    while (!matchedLabel && start < string.length()) {
+                        int limit = regexSeparators[i+1].length() > 0 ?
+                            start + StringOperations.findFirstRegex(string.substring(start), regexSeparators[i+1]) :
+                            string.length();    // Two labels were put together and can't use separator to limit parsing for label
+                        String labelParse = StringOperations.extractFirst(string.substring(0, limit), labelEntry.getValue());
+                        if (labelParse != null) {   // Found match for label
+                            matchedLabel = true;
+                            decoding.put(labelEntry.getKey(), labelParse);
+                            if (limit < string.length()) {
+                                string = string.substring(limit);   // Keep searching from where separator was found
+                            }
+                            else {
+                                string = string.substring(labelParse.length()); // No known separator position, keep searching from after label match
+                            }
                         }
                         else {
-                            string = string.substring(labelParse.length()); // No known separator position, keep searching from after label match
+                            start = limit + 1;
                         }
                     }
-                    else {
-                        start = limit + 1;
+                }
+                // Match last separator
+                if (!regexSeparators[regexSeparators.length-1].isEmpty()) {
+                    string = string.replaceFirst(regexSeparators[regexSeparators.length-1], "");
+                    if (!string.isEmpty()) {
+                        // TODO: Best effort that does not throw exception, since valuable info may still have been extracted
+                        throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + line + ") does not match given pattern: " + regexPattern + " at end of string " + string + " with end of pattern " + regexSeparators[regexSeparators.length-1]);
                     }
                 }
-            }
-            // Match last separator
-            if (!regexSeparators[regexSeparators.length-1].isEmpty()) {
-                string = string.replaceFirst(regexSeparators[regexSeparators.length-1], "");
-                if (!string.isEmpty()) {
-                    // Throw exception?
+                else {
+                    if (!string.isEmpty()) {
+                        // TODO: Best effort that does not throw exception, since valuable info may still have been extracted
+                        throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + line + ") does not match given pattern: " + regexPattern + " at end of string " + string);
+                    }
                 }
             }
             else {
-                if (!string.isEmpty()) {
-                    // Throw exception?
-                }
+                // TODO: Best effort that does not throw exception, since valuable info may still be extracted
+                throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + line + ") does not match given pattern: " + regexPattern + " at start of pattern " + regexSeparators[0]);
             }
         }
         return decoding;
@@ -532,6 +541,20 @@ public abstract class StringOperations {
             }
         }
         return ret;
+    }
+
+    private static Entry<String, String> decodeLabel(String patternLabel) {
+        String labelKey;
+        String labelRegex = ".*";
+        int colonPos = patternLabel.indexOf(":");
+        if (colonPos >= 0) {
+            labelKey = patternLabel.substring(1, colonPos);
+            labelRegex = patternLabel.substring(colonPos+1, patternLabel.length()-1);
+        }
+        else {
+            labelKey = patternLabel.substring(1, patternLabel.length()-1);
+        }
+        return new EntryObject<String, String>(labelKey, labelRegex);
     }
 
 }
