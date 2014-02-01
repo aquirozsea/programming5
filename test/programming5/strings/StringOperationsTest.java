@@ -5,6 +5,8 @@
 
 package programming5.strings;
 
+import java.util.List;
+import programming5.io.Debug;
 import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -24,10 +26,12 @@ public class StringOperationsTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        Debug.enable(StringOperations.class);
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
+        Debug.disable(StringOperations.class);
     }
 
     @Before
@@ -82,6 +86,45 @@ public class StringOperationsTest {
         assertEquals("11/14/2003", decoded.get("date"));
         assertEquals("1234", decoded.get("id"));
         assertEquals("Something", decoded.get("name"));
+    }
+
+    /**
+     * Test of newDecodePattern method, of class StringOperations.
+     */
+    @Test
+    public void testNewDecodePattern() {
+        // Should decode the same as original decode pattern method
+        Map<String, Object> decoded = StringOperations.newDecodePattern("11/14/2003 INFO: id=1234, name=\"Something\"", "<date> INFO: id=<id>, name=\"<name>\"");
+        assertEquals("11/14/2003", decoded.get("date"));
+        assertEquals("1234", decoded.get("id"));
+        assertEquals("Something", decoded.get("name"));
+        // Should allow for specifying inner regular expressions for labels
+        decoded = StringOperations.newDecodePattern("11/14/2003 INFO: id=1234, name=\"Something\"", "<date:\\d{2}/\\d{2}/\\d{4}> INFO: <idpart:id=\\d+>, name=\"<name>\"");
+        assertEquals("11/14/2003", decoded.get("date"));
+        assertEquals("id=1234", decoded.get("idpart"));
+        assertEquals("Something", decoded.get("name"));
+        // Should allow for specifying java regular expressions and accessing by group number (-1)
+        decoded = StringOperations.newDecodePattern("11/14/2003 INFO: id=1234, name=\"Something\"", "(\\d{2}/\\d{2}/\\d{4}) INFO: id=(\\d+), name=\"(\\w+)\"");
+        assertEquals("11/14/2003", decoded.get("0"));
+        assertEquals("1234", decoded.get("1"));
+        assertEquals("Something", decoded.get("2"));
+        // Should allow for list expressions
+        decoded = StringOperations.newDecodePattern("11/14/2003 INFO: id=1234, name=\"Something\"", "<date:\\d{2}/\\d{2}/\\d{4}> INFO: <taglist:[],(\\w+=[\\w\"]+)>");
+        assertEquals("11/14/2003", decoded.get("date"));
+        assertEquals("id=1234", decoded.get("taglist:0"));
+        assertEquals("name=\"Something\"", decoded.get("taglist:1"));
+        assertTrue((decoded.get("taglist") instanceof List));
+        assertEquals(2, ((List) decoded.get("taglist")).size());
+        // With default
+        decoded = StringOperations.newDecodePattern("List 3: One, Two, Three, 4,%, - *** GOOD", "List <listid:[]>: <list:[]> \\*\\*\\* <status>");
+        assertEquals("3", decoded.get("listid:0"));   // List of one
+        assertEquals("Two", decoded.get("list:1"));
+        assertEquals("%", decoded.get("list:4"));
+        List<String> list = (List<String>) decoded.get("list");
+        assertEquals(decoded.get("list:0"), list.get(0));
+        assertEquals(decoded.get("list:3"), list.get(3));
+        assertEquals("-", decoded.get("list:" + Integer.toString(list.size()-1)));
+        assertEquals("GOOD", decoded.get("status"));
     }
 
     /**
