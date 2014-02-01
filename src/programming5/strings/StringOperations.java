@@ -33,6 +33,7 @@ import programming5.arrays.ArrayOperations;
 import programming5.collections.CollectionUtils;
 import programming5.collections.EntryObject;
 import programming5.io.Debug;
+import programming5.io.LogUtil;
 import programming5.math.NumberRange;
 
 /**
@@ -169,7 +170,10 @@ public abstract class StringOperations {
      * @throws IllegalArgumentException if the string (i.e. the immutable portion outside the tags) does not match the 
      * given pattern (the pattern used for matching the string is equivalent to the pattern given, where the tags have 
      * been replaced by (.*)
+     * @deprecated the use of newDecodePattern is preferred. In a future release, the implementation of newDecodePattern will replace the current 
+     * implementation of decodePattern, and the return signature will change accordingly
      */
+    @Deprecated
     public static Map<String, String> decodePattern(String string, String regexPattern) {
         Map<String, String> decodeElements = new HashMap<String, String>();
         String[] fields = extractAndReplace(regexPattern, "<\\w+>", ".*");
@@ -195,10 +199,11 @@ public abstract class StringOperations {
         return decodeElements;
     }
 
-    public static Map<String, String> newDecodePattern(String line, String regexPattern) {
+    public static Map<String, Object> newDecodePattern(String line, String regexPattern) {
         String string = line;
-        Map<String, String> decoding = new HashMap<String, String>();
-        List<String> labels = cleanRegexLabels(extract(regexPattern, "\\\\?\\<\\w+(:([^\\>]+))?\\\\?\\>"));
+        Map<String, Object> decoding = new HashMap<String, Object>();
+        String labelRegex = "\\\\?\\<\\w+(:(\\[\\])?([^\\>]+))?\\\\?\\>";
+        List<String> labels = cleanRegexLabels(extract(regexPattern, labelRegex));
         if (labels.isEmpty()) { // No labels given, decode as regular regex
             Pattern jPattern = Pattern.compile(regexPattern);
             Matcher jMatcher = jPattern.matcher(string);
@@ -212,23 +217,7 @@ public abstract class StringOperations {
             }
         }
         else {  // Decode with labels
-            String[] regexSeparators = regexPattern.split("\\\\?\\<\\w+(:([^\\>]+))?\\\\?\\>", -1);
-//            String[] regexSeparators = new String[labels.size() + 1];
-//            String auxRegex = regexPattern;
-//            for (int i = 0; i < labels.size(); i++) {
-//                String[] split = auxRegex.split(labels.get(i), 2);
-//                if (Debug.isEnabled()) {
-//                    System.out.print("Split with " + labels.get(i) + ": ");
-//                    ArrayOperations.printHorizontal(split);
-//                }
-//                regexSeparators[i] = split[0];    // The pre-label part
-//                if (i < labels.size()-1) {
-//                    auxRegex = split[1];    // The rest
-//                }
-//                else {
-//                    regexSeparators[i+1] = split[1];    // We're done
-//                }
-//            }
+            String[] regexSeparators = regexPattern.split(labelRegex, -1);
             Debug.println("String is " + string);
             Debug.println("First separator: " + regexSeparators[0] + "$");
             if (string.startsWith(StringOperations.extractFirst(string, regexSeparators[0]))) { // Ensure invariant for loop where the current separator has been found to match the current place in the string
@@ -238,6 +227,7 @@ public abstract class StringOperations {
                         string = string.replaceFirst(regexSeparators[i], "");
                     }
                     Entry<String, String> labelEntry = decodeLabel(labels.get(i));
+                    Entry<String, String> arrayExpression = isArrayExpression(labelEntry.getValue()) ? decodeArrayExpression(labelEntry.getValue()) : null;
                     boolean matchedLabel = false;
                     int start = 0;
                     Debug.println("Entering while loop with " + string);
@@ -256,20 +246,44 @@ public abstract class StringOperations {
                             limit = string.length();
                         }
                         Debug.println("Limit for (" + regexSeparators[i+1] + ") is " + limit);
-                        String labelParse = StringOperations.extractFirst(string.substring(0, limit), labelEntry.getValue());
-                        Debug.println("Label parse: " + labelParse);
-                        if (labelParse != null) {   // Found match for label
-                            matchedLabel = true;
-                            decoding.put(labelEntry.getKey(), labelParse);
-                            if (limit < string.length()) {
-                                string = string.substring(limit);   // Keep searching from where separator was found
+                        if (arrayExpression == null) { // Normal parsing
+                            String labelParse = StringOperations.extractFirst(string.substring(0, limit), labelEntry.getValue());
+                            Debug.println("Label parse: " + labelParse);
+                            if (labelParse != null) {   // Found match for label
+                                matchedLabel = true;
+                                decoding.put(labelEntry.getKey(), labelParse);
+                                if (limit < string.length()) {
+                                    string = string.substring(limit);   // Keep searching from where separator was found
+                                }
+                                else {
+                                    string = string.substring(labelParse.length()); // No known separator position, keep searching from after label match
+                                }
                             }
                             else {
-                                string = string.substring(labelParse.length()); // No known separator position, keep searching from after label match
+                                start = limit + 1;
                             }
                         }
-                        else {
-                            start = limit + 1;
+                        else {  // Parsing array (i.e. list)
+                            Debug.println("Splitting array " + string.substring(0, limit) + " with separator " + arrayExpression.getKey());
+                            String[] labelParse = string.substring(0, limit).split("\\s*" + arrayExpression.getKey()/* Separator */ + "\\s*");  // TODO: Consider not eating white space?
+                            List<String> arrayList = new ArrayList<String>();
+                            for (int li = 0; li < labelParse.length; li++) {    // li stands for list item
+                                if (labelParse[li].matches(arrayExpression.getValue() /* array item regex */)) {
+                                    decoding.put(labelEntry.getKey() + ":" + Integer.toString(li), labelParse[li]);
+                                    arrayList.add(labelParse[li]);   // TODO: Explore mismatch between decoding numbering and array list numbering
+                                }
+                                else {
+                                    LogUtil.warn("Not adding item " + labelParse[li] + " from list " + string.substring(0, limit) + " for not matching pattern " + arrayExpression.getValue());
+                                }
+                            }
+                            if (!arrayList.isEmpty()) { // Found valid list items, can continue
+                                matchedLabel = true;
+                                decoding.put(labelEntry.getKey(), arrayList);
+                                string = string.substring(limit);
+                            }
+                            else {
+                                start = limit + 1;
+                            }
                         }
                     }
                     Debug.println("Exited while loop with " + string);
@@ -584,6 +598,32 @@ public abstract class StringOperations {
             labelKey = patternLabel.substring(1, patternLabel.length()-1);
         }
         return new EntryObject<String, String>(labelKey, labelRegex);
+    }
+
+    private static boolean isArrayExpression(String labelExpression) {
+        return labelExpression.startsWith("[]");
+    }
+
+    private static Entry<String, String> decodeArrayExpression(String arrayExpression) {
+        String separator;
+        String listItemRegex = ".*";
+        if (arrayExpression.length() > 2) {
+            Pattern p = Pattern.compile("([^\\(]+)(\\((.+)\\))?");
+            Matcher m = p.matcher(arrayExpression.substring(2));
+            if (m.matches()) {
+                separator = m.group(1);
+                if (m.group(3) != null) {
+                    listItemRegex = m.group(3);
+                }
+            }
+            else {
+                throw new IllegalArgumentException("StringOperations: Cannot decode array expression " + arrayExpression + ": Invalid syntax");
+            }
+        }
+        else {
+            separator = ",";    // Default separator
+        }
+        return new EntryObject<String, String>(separator, listItemRegex);
     }
 
 }
