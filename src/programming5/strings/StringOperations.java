@@ -220,7 +220,17 @@ public abstract class StringOperations {
             String[] regexSeparators = regexPattern.split(labelRegex, -1);
             Debug.println("String is " + string);
             Debug.println("First separator: " + regexSeparators[0] + "$");
-            if (string.startsWith(StringOperations.extractFirst(string, regexSeparators[0]))) { // Ensure invariant for loop where the current separator has been found to match the current place in the string
+            // Ensure invariant for loop where the current separator has been found to match the current place in the string
+            boolean invariantIn = false;
+            // To be true, must verify that the first regex separator matches the start of the string
+            // TODO: Better way to do this?
+            String firstMatch = StringOperations.extractFirst(string, regexSeparators[0]);
+            if (firstMatch != null) {
+                if (string.startsWith(firstMatch)) {
+                    invariantIn = true;
+                }
+            }
+            if (invariantIn) {
                 // Second pass to actually extract matches
                 for (int i = 0; i < regexSeparators.length-1; i++) {    // Iterate through all but last separator (where each separator precedes a label)
                     if (regexSeparators[i].length() > 0) {
