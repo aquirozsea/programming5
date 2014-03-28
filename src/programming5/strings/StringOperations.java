@@ -305,7 +305,7 @@ public abstract class StringOperations {
                                 String[] labelParse = string.substring(0, limit).split("\\s*" + arrayExpression.getKey()/* Separator */ + "\\s*");  // TODO: Consider not eating white space?
                                 List<String> arrayList = new ArrayList<String>();
                                 for (int li = 0; li < labelParse.length; li++) {    // li stands for list item
-                                    if (labelParse[li].matches(arrayExpression.getValue() /* array item regex */)) {
+                                    if (!labelParse[li].isEmpty() && labelParse[li].matches(arrayExpression.getValue() /* array item regex */)) {
                                         decoding.put(labelEntry.getKey() + ":" + Integer.toString(li), labelParse[li]);
                                         arrayList.add(labelParse[li]);   // TODO: Explore mismatch between decoding numbering and array list numbering
                                     }
