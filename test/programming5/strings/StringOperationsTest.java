@@ -125,6 +125,9 @@ public class StringOperationsTest {
         assertEquals(decoded.get("list:3"), list.get(3));
         assertEquals("-", decoded.get("list:" + Integer.toString(list.size()-1)));
         assertEquals("GOOD", decoded.get("status"));
+        decoded = StringOperations.newDecodePattern("best(field3.rate(1&&10))", "<aggregator:\\w+(\\.\\w+)?>\\(<fieldselector:[^\\(\\)]+|([^\\(\\)]+\\([^\\(\\)]*\\))>\\)");
+        assertEquals("best", decoded.get("aggregator"));
+        assertEquals("field3.rate(1&&10)", decoded.get("fieldselector"));
     }
 
     /**
