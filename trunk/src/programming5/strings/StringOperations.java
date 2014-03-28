@@ -247,6 +247,41 @@ public abstract class StringOperations {
                             int separatorPos = StringOperations.findFirstRegex(string.substring(start), regexSeparators[i+1]);
                             if (separatorPos >= 0) {    // Separator found
                                 limit = start + separatorPos;
+                                Debug.println("Limit for (" + regexSeparators[i+1] + ") is " + limit);
+                                if (arrayExpression == null) { // Normal parsing
+                                    String labelParse = string.substring(0, limit);
+                                    Debug.println("Label parse: " + labelParse);
+                                    if (labelParse.matches(labelEntry.getValue())) {   // Found match for label
+                                        matchedLabel = true;
+                                        decoding.put(labelEntry.getKey(), labelParse);
+                                        string = string.substring(limit);   // Keep searching from where separator was found
+                                    }
+                                    else {
+                                        start = limit + 1;
+                                    }
+                                }
+                                else {  // Parsing array (i.e. list)
+                                    Debug.println("Splitting array " + string.substring(0, limit) + " with separator " + arrayExpression.getKey());
+                                    String[] labelParse = string.substring(0, limit).split("\\s*" + arrayExpression.getKey()/* Separator */ + "\\s*");  // TODO: Consider not eating white space?
+                                    List<String> arrayList = new ArrayList<String>();
+                                    for (int li = 0; li < labelParse.length; li++) {    // li stands for list item
+                                        if (labelParse[li].matches(arrayExpression.getValue() /* array item regex */)) {
+                                            decoding.put(labelEntry.getKey() + ":" + Integer.toString(li), labelParse[li]);
+                                            arrayList.add(labelParse[li]);   // TODO: Explore mismatch between decoding numbering and array list numbering
+                                        }
+                                        else {
+                                            LogUtil.warn("Not adding item " + labelParse[li] + " from list " + string.substring(0, limit) + " for not matching pattern " + arrayExpression.getValue());
+                                        }
+                                    }
+                                    if (!arrayList.isEmpty()) { // Found valid list items, can continue
+                                        matchedLabel = true;
+                                        decoding.put(labelEntry.getKey(), arrayList);
+                                        string = string.substring(limit);
+                                    }
+                                    else {
+                                        start = limit + 1;
+                                    }
+                                }
                             }
                             else {  // Separator not found
                                 throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + line + ") does not match given pattern: " + regexPattern + " at " + string + " with " + regexSeparators[i+1]);
@@ -254,47 +289,40 @@ public abstract class StringOperations {
                         }
                         else {  // Two labels were put together and can't use separator to limit parsing for label
                             limit = string.length();
-                        }
-                        Debug.println("Limit for (" + regexSeparators[i+1] + ") is " + limit);
-                        if (arrayExpression == null) { // Normal parsing
-                            String labelParse = StringOperations.extractFirst(string.substring(0, limit), labelEntry.getValue());
-                            Debug.println("Label parse: " + labelParse);
-                            if (labelParse != null) {   // Found match for label
-                                matchedLabel = true;
-                                decoding.put(labelEntry.getKey(), labelParse);
-                                if (limit < string.length()) {
-                                    string = string.substring(limit);   // Keep searching from where separator was found
-                                }
-                                else {
+                            if (arrayExpression == null) {  // Normal parsing
+                                String labelParse = StringOperations.extractFirst(string.substring(0, limit), labelEntry.getValue());
+                                if (labelParse != null) {   // Found match for label
+                                    matchedLabel = true;
+                                    decoding.put(labelEntry.getKey(), labelParse);
                                     string = string.substring(labelParse.length()); // No known separator position, keep searching from after label match
                                 }
+                                else {
+                                    throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + line + ") does not match pattern (" + labelEntry.getValue() + ") for label " + labelEntry.getKey() + " at " + string);
+                                }
                             }
-                            else {
-                                start = limit + 1;
-                            }
-                        }
-                        else {  // Parsing array (i.e. list)
-                            Debug.println("Splitting array " + string.substring(0, limit) + " with separator " + arrayExpression.getKey());
-                            String[] labelParse = string.substring(0, limit).split("\\s*" + arrayExpression.getKey()/* Separator */ + "\\s*");  // TODO: Consider not eating white space?
-                            List<String> arrayList = new ArrayList<String>();
-                            for (int li = 0; li < labelParse.length; li++) {    // li stands for list item
-                                if (labelParse[li].matches(arrayExpression.getValue() /* array item regex */)) {
-                                    decoding.put(labelEntry.getKey() + ":" + Integer.toString(li), labelParse[li]);
-                                    arrayList.add(labelParse[li]);   // TODO: Explore mismatch between decoding numbering and array list numbering
+                            else {// Parsing array (i.e. list) // TODO: Refactor
+                                Debug.println("Splitting array " + string.substring(0, limit) + " with separator " + arrayExpression.getKey());
+                                String[] labelParse = string.substring(0, limit).split("\\s*" + arrayExpression.getKey()/* Separator */ + "\\s*");  // TODO: Consider not eating white space?
+                                List<String> arrayList = new ArrayList<String>();
+                                for (int li = 0; li < labelParse.length; li++) {    // li stands for list item
+                                    if (labelParse[li].matches(arrayExpression.getValue() /* array item regex */)) {
+                                        decoding.put(labelEntry.getKey() + ":" + Integer.toString(li), labelParse[li]);
+                                        arrayList.add(labelParse[li]);   // TODO: Explore mismatch between decoding numbering and array list numbering
+                                    }
+                                    else {
+                                        LogUtil.warn("Not adding item " + labelParse[li] + " from list " + string.substring(0, limit) + " for not matching pattern " + arrayExpression.getValue());
+                                    }
+                                }
+                                if (!arrayList.isEmpty()) { // Found valid list items, can continue
+                                    matchedLabel = true;
+                                    decoding.put(labelEntry.getKey(), arrayList);
+                                    string = string.substring(limit);
                                 }
                                 else {
-                                    LogUtil.warn("Not adding item " + labelParse[li] + " from list " + string.substring(0, limit) + " for not matching pattern " + arrayExpression.getValue());
+                                    throw new IllegalArgumentException("StringOperations: Cannot decode string: Line (" + line + ") does not match array pattern " + labelEntry.getValue() + " at " + string);
                                 }
                             }
-                            if (!arrayList.isEmpty()) { // Found valid list items, can continue
-                                matchedLabel = true;
-                                decoding.put(labelEntry.getKey(), arrayList);
-                                string = string.substring(limit);
-                            }
-                            else {
-                                start = limit + 1;
-                            }
-                        }
+                        }                  
                     }
                     Debug.println("Exited while loop with " + string);
                 }
