@@ -52,7 +52,7 @@ public class CountingTable<E> {
     }
 
     /**
-     * Adds one to the current value stored for the given key, or adds the key with a value of 1 if it was not 
+     * Adds one to the current value stored for the given key, or adds the key to the table with a value of 1 if it was not
      * previously in the table.
      * @param key the key of the item to increase
      */
@@ -61,13 +61,40 @@ public class CountingTable<E> {
     }
 
     /**
-     * Adds the given value to the current value stored for the given key, or adds the key with the given value if
+     * Adds the given value to the current value stored for the given key, or adds the key to the table with the given value if
      * it was not previously in the table.
      * @param key the key of the item to increase
      * @param value the value to add to the current value for the key
      */
     public void increaseCount(E key, int value) {
         baseTable.put(key, baseTable.safeGet(key, 0) + value);
+    }
+
+    /**
+     * Convenience method that adds one to the current value stored for the given key, or adds the key to the table with a value of 1 if it was not
+     * previously in the table, immediately returning the new (increased) value.
+     * <p>Equivalent to calling increaseCount(key) followed by getCount(key)
+     * @param key the key of the item to increase
+     * @return the new (increased) count value for the key (1 if the key was not previously in the table)
+     */
+    public int increaseAndGetCount(E key) {
+        int newCount = baseTable.safeGet(key, 0) + 1;
+        baseTable.put(key, newCount);
+        return newCount;
+    }
+
+    /**
+     * Convenience method that adds the given value to the current value stored for the given key, or adds the key with the given value to the table if it was not
+     * previously in the table, immediately returning the new (increased) value.
+     * <p>Equivalent to calling increaseCount(key) followed by getCount(key)
+     * @param key the key of the item to increase
+     * @param value the value to add to the current value for the key
+     * @return the new (increased) count value for the key (1 if the key was not previously in the table)
+     */
+    public int increaseAndGetCount(E key, int value) {
+        int newCount = baseTable.safeGet(key, 0) + value;
+        baseTable.put(key, newCount);
+        return newCount;
     }
 
     /**
@@ -87,6 +114,68 @@ public class CountingTable<E> {
      */
     public void decreaseCount(E key, int value) {
         baseTable.put(key, baseTable.safeGet(key, 0) - value);
+    }
+
+    /**
+     * Convenience method that subtracts one from the current value stored for the given key, or adds the key to the table with a value of -1 if it was not
+     * previously in the table, immediately returning the new (decreased) value.
+     * <p>Equivalent to calling decreaseCount(key) followed by getCount(key)
+     * @param key the key of the item to decrease
+     * @return the new decreased) count value for the key (-1 if the key was not previously in the table)
+     */
+    public int decreaseAndGetCount(E key) {
+        int newCount = baseTable.safeGet(key, 0) - 1;
+        baseTable.put(key, newCount);
+        return newCount;
+    }
+
+    /**
+     * Convenience method that subtracts the given value from the current value stored for the given key, or adds the key to the table with a value of -value if it was not
+     * previously in the table, immediately returning the new (decreased) value.
+     * <p>Equivalent to calling decreaseCount(key) followed by getCount(key)
+     * @param key the key of the item to decrease
+     * @param value the value to subtract from the current value for the key
+     * @return the new (decreased) count value for the key (-value if the key was not previously in the table)
+     */
+    public int decreaseAndGetCount(E key, int value) {
+        int newCount = baseTable.safeGet(key, 0) - value;
+        baseTable.put(key, newCount);
+        return newCount;
+    }
+
+    /**
+     * Subtracts one from the current value stored for the given key, only if the result is not negative, or adds the key with a value of 0 if it was not
+     * previously in the table. If the result is negative, the stored count will remain at 0.
+     * @param key the key of the item to decrease
+     * @return the new (decreased) count value for the key (0 if the key was not previously in the table or had a count of 0)
+     */
+    public int decreaseOrZero(E key) {
+        int newCount = baseTable.safeGet(key, 0) - 1;
+        if (newCount < 0) {
+            return 0;
+        }
+        else {
+            baseTable.put(key, newCount);
+            return newCount;
+        }
+    }
+
+    /**
+     * Subtracts the given value from the current value stored for the given key, only if the result is not negative, or adds the key to the table with a value of 0 if it was not
+     * previously in the table. If the result is negative, the stored count will remain at 0.
+     * @param key the key of the item to decrease
+     * @param value the value to subtract from the current value of the key
+     * @return the new (decreased) count value for the key (0 if the key was not previously in the table or had a count of less than value)
+     */
+    public int decreaseOrZero(E key, int value) {
+        int newCount = baseTable.safeGet(key, 0) - value;
+        if (newCount < 0) {
+            return 0;
+        }
+        else {
+            baseTable.put(key, newCount);
+            return newCount;
+        }
     }
 
     /**
