@@ -434,6 +434,22 @@ public abstract class StringOperations {
         return ret;
     }
 
+    public static String toList(Object[] items) {
+        String ret = "";
+        for (Object item : items) {
+            ret = addToList(ret, ",", item.toString());
+        }
+        return ret;
+    }
+
+    public static String toList(Object[] items, String separator) {
+        String ret = "";
+        for (Object item : items) {
+            ret = addToList(ret, separator, item.toString());
+        }
+        return ret;
+    }
+
     /**
      * @param value a string representation of an integer
      * @return equivalent to Integer.toString(Integer.parseInt(value) + 1);
