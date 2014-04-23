@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import programming5.arrays.ArrayOperations;
 import programming5.math.MathOperations;
@@ -745,9 +747,20 @@ public abstract class CollectionUtils {
         }
     }
 
+    @Deprecated
     public static <T, U> List<T> findMatch(List<T> list, U feature, Comparator comp) {
         List<T> matches = new ArrayList<T>();
         for (T element : list) {
+            if (comp.compare(element, feature) == 0) {
+                matches.add(element);
+            }
+        }
+        return matches;
+    }
+
+    public static <T, U> Set<T> findMatches(Collection<T> collection, U feature, Comparator comp) {
+        Set<T> matches = new HashSet<T>();
+        for (T element : collection) {
             if (comp.compare(element, feature) == 0) {
                 matches.add(element);
             }
