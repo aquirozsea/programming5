@@ -35,46 +35,55 @@ import java.util.Set;
  * @version 6.0
  * TODO: Implement Map interface?
  */
-public class ListMap<K, V> {
-
-    protected HashTable<K, List<V>> baseTable;
+public class ListMap<K, V> extends CollectionMap<K, V> {
 
     public ListMap() {
-        baseTable = new HashTable<K, List<V>>();
+        super();
     }
 
     public ListMap(Map<? extends K, ? extends List<V>> baseMap) {
-        baseTable = new HashTable<K, List<V>>(baseMap);
+        super(baseMap);
     }
 
     public ListMap(int initialSize) {
-        baseTable = new HashTable<K, List<V>>(initialSize);
+        super(initialSize);
     }
 
     public ListMap(int initialSize, float loadFactor) {
-        baseTable = new HashTable<K, List<V>>(initialSize, loadFactor);
+        super(initialSize, loadFactor);
     }
+    
+    @Override
+    protected Collection<V> newCollection() {
+        return new ArrayList<V>();
+    }
+
 
     /**
      * Adds a new element to the list for the given key. If the list does not exist (first element added for that key), it will 
      * be created to hold the element
      * @param listKey the key for the list
      * @param element the element to add
+     * @deprecated replaced by functionality as CollectionMap#addToCollection
      */
+    @Deprecated
     public void addToList(K listKey, V element) {
         baseTable.safeGet(listKey, new ArrayList<V>()).add(element);
     }
 
     /**
+     * Convenience method that saves having to cast the return value from CollectionMap#getCollection
      * @return the list associated with the given key, or null if no elements for that key have been added
      */
     public List<V> getList(K listKey) {
-        return baseTable.get(listKey);
+        return (List<V>) this.getCollection(listKey);
     }
 
     /**
      * Associates the given list with the given key, replacing the previous list, if any
+     * @deprecated replaced by functionality of CollectionMap#putCollection
      */
+    @Deprecated
     public void putList(K listKey, List<V> list) {
         baseTable.put(listKey, list);
     }
@@ -86,7 +95,7 @@ public class ListMap<K, V> {
     public V getListElement(K listKey, int listIndex) throws IndexOutOfBoundsException {
         V ret = null;
         try {
-            ret = baseTable.get(listKey).get(listIndex);
+            ret = ((List<V>) baseTable.get(listKey)).get(listIndex);
         }
         catch (NullPointerException npe) {
             throw new IndexOutOfBoundsException("ListMap: Could not get element from list: List does not exist for given key");
@@ -97,15 +106,17 @@ public class ListMap<K, V> {
     }
 
     /**
+     * @deprecated replaced by functionality as CollectionMap#matchCollectionElement
      * @param listKey the key associated with the list to search
      * @param pattern the pattern object to compare elements in the list against
      * @param comp implementation of Comparator interface
      * @return the first element in the list with the given key matching the given pattern, as determined by the given comparator
      * @throws IndexOutOfBoundsException if no such element (or list) exists
      */
+    @Deprecated
     public V matchListElement(K listKey, Object pattern, Comparator comp) throws IndexOutOfBoundsException {
         V ret = null;
-        List<V> list = baseTable.get(listKey);
+        List<V> list = (List<V>) baseTable.get(listKey);
         if (list != null) {
             List<V> matches = CollectionUtils.findMatch(list, pattern, comp);
             if (!matches.isEmpty()) {
@@ -119,15 +130,17 @@ public class ListMap<K, V> {
     }
 
     /**
+     * @deprecated replaced by functionality as CollectionMap#matchesCollectionElement
      * @param listKey the key associated with the list to search
      * @param pattern the pattern object to compare elements in the list against
      * @param comp implementation of Comparator interface
      * @return all of the elements in the list with the given key matching the given pattern, as determined by the given comparator
      * @throws IndexOutOfBoundsException if no such element (or list) exists
      */
+    @Deprecated
     public List<V> matchesListElement(K listKey, Object pattern, Comparator comp) throws IndexOutOfBoundsException {
         List<V> ret = null;
-        List<V> list = baseTable.get(listKey);
+        List<V> list = (List<V>) baseTable.get(listKey);
         if (list != null) {
             ret = CollectionUtils.findMatch(list, pattern, comp);
         }
@@ -138,14 +151,16 @@ public class ListMap<K, V> {
     }
 
     /**
+     * @deprecated replaced by functionality as CollectionMap#matchAllCollectionElement
      * @param pattern the pattern object to compare elements against
      * @param comp implementation of Comparator interface
      * @return any element matching the given pattern, as determined by the given comparator, among all of the lists
      * @throws IndexOutOfBoundsException if no such elements exist
      */
+    @Deprecated
     public V matchAllListElement(Object pattern, Comparator comp) throws IndexOutOfBoundsException {
         V ret = null;
-        List<V> list = this.getAll();
+        List<V> list = (List<V>) this.getAll();
         if (list != null) {
             List<V> matches = CollectionUtils.findMatch(list, pattern, comp);
             if (!matches.isEmpty()) {
@@ -159,14 +174,16 @@ public class ListMap<K, V> {
     }
 
     /**
+     * @deprecated replaced by functionality as CollectionMap#matchesAllCollectionElement
      * @param pattern the pattern object to compare elements against
      * @param comp implementation of Comparator interface
      * @return all elements matching the given pattern, as determined by the given comparator, among all of the lists
      * @throws IndexOutOfBoundsException if no such elements exist
      */
+    @Deprecated
     public List<V> matchesAllListElement(Object pattern, Comparator comp) throws IndexOutOfBoundsException {
         List<V> ret = null;
-        List<V> list = this.getAll();
+        List<V> list = (List<V>) this.getAll();
         if (list != null) {
             ret = CollectionUtils.findMatch(list, pattern, comp);
         }
@@ -174,94 +191,6 @@ public class ListMap<K, V> {
             throw new IndexOutOfBoundsException("ListMap: Could not match element from list: List does not exist for given key");
         }
         return ret;
-    }
-
-    /**
-     * @return a list with all elements, regardless of the keys
-     */
-    public List<V> getAll() {
-        List<V> ret = new ArrayList<V>();
-        for (List<V> list : baseTable.values()) {
-            ret.addAll(list);
-        }
-        return ret;
-    }
-
-    /**
-     * @return true if the map contains a value for the given key; false otherwise
-     */
-    public boolean containsKey(K key) {
-        return baseTable.containsKey(key);
-    }
-
-    /**
-     * @return true if the value is contained in at least one of the lists in the map; false otherwise
-     */
-    public boolean containsValue(V value) {
-        try {
-            this.matchAllListElement(value, new Comparator() {
-
-                public int compare(Object o1, Object o2) {
-                    return ((o1.equals(o2)) ? 0 : -1);
-                }
-
-            });
-            return true;
-        }
-        catch (IndexOutOfBoundsException iobe) {
-            return false;
-        }
-    }
-
-    /**
-     * @return the size (number of keys) stored
-     */
-    public int size() {
-        return baseTable.size();
-    }
-
-    /**
-     * @return true if no keys are stored (size() == 0); false otherwise
-     */
-    public boolean isEmpty() {
-        return baseTable.isEmpty();
-    }
-
-    /**
-     * Removes the list associated with the given key, if it exists
-     * @return the list that was removed (null if no list was associated with the given key)
-     */
-    public List<V> remove(K listKey) {
-        return baseTable.remove(listKey);
-    }
-
-    /**
-     * Remove all elements from the map
-     */
-    public void clear() {
-        baseTable.clear();
-    }
-
-    /**
-     * @return the set of keys stored in this map
-     */
-    public Set<K> keySet() {
-        return baseTable.keySet();
-    }
-
-    /**
-     * Compare to getAll, which returns all elements from all lists in a single list; values preserves individual lists
-     * @return a collection with all the lists associated with keys in this map
-     */
-    public Collection<List<V>> values() {
-        return baseTable.values();
-    }
-
-    /**
-     * @return the set of entries in this map
-     */
-    public Set<Entry<K, List<V>>> entrySet() {
-        return baseTable.entrySet();
     }
 
 }
