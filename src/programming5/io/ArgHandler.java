@@ -1013,4 +1013,8 @@ public class ArgHandler {
     public void setWarningForDefaults(boolean doWarn) {
         warnDefault = doWarn;
     }
+
+    public void printUsage() {
+        System.out.println(usage);
+    }
 }
