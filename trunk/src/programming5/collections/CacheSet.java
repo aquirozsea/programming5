@@ -8,7 +8,8 @@ package programming5.collections;
 import java.util.HashSet;
 
 /**
- *
+ * Hash set that keeps the last inserted of equal versions. Useful when items have extra data not used
+ * in the equals comparison.
  * @author andresqh
  */
 public class CacheSet<T> extends HashSet<T> {
