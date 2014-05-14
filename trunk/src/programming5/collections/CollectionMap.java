@@ -83,9 +83,9 @@ public abstract class CollectionMap<K, V> {
      * @param pattern the pattern object to compare elements in the Collection against
      * @param comp implementation of Comparator interface
      * @return the "first" element in the Collection with the given key matching the given pattern, as determined by the given comparator
-     * @throws IndexOutOfBoundsException if no such element (or Collection) exists
+     * @throws NotFoundException if no such element (or Collection) exists
      */
-    public V matchCollectionElement(K collectionKey, Object pattern, Comparator comp) throws IndexOutOfBoundsException {
+    public V matchCollectionElement(K collectionKey, Object pattern, Comparator comp) throws NotFoundException {
         V ret = null;
         Collection<V> collection = baseTable.get(collectionKey);
         if (collection != null) {
@@ -93,9 +93,12 @@ public abstract class CollectionMap<K, V> {
             if (!matches.isEmpty()) {
                 ret = matches.iterator().next();
             }
+            else {
+                throw new NotFoundException("CollectionMap: Could not match element from Collection: No element exists in collection " + collectionKey + " for pattern " + pattern);
+            }
         }
         else {
-            throw new IndexOutOfBoundsException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
+            throw new NotFoundException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
         }
         return ret;
     }
@@ -105,16 +108,17 @@ public abstract class CollectionMap<K, V> {
      * @param pattern the pattern object to compare elements in the Collection against
      * @param comp implementation of Comparator interface
      * @return all of the elements in the Collection with the given key matching the given pattern, as determined by the given comparator
-     * @throws IndexOutOfBoundsException if no such element (or Collection) exists
+     * (may return an empty collection if no elements match)
+     * @throws NotFoundException if no collection with the given key exists
      */
-    public Collection<V> matchesCollectionElement(K collectionKey, Object pattern, Comparator comp) throws IndexOutOfBoundsException {
+    public Collection<V> matchesCollectionElement(K collectionKey, Object pattern, Comparator comp) throws NotFoundException {
         Collection<V> ret = null;
         Collection<V> collection = baseTable.get(collectionKey);
         if (collection != null) {
             ret = CollectionUtils.findMatches(collection, pattern, comp);
         }
         else {
-            throw new IndexOutOfBoundsException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
+            throw new NotFoundException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
         }
         return ret;
     }
@@ -123,9 +127,9 @@ public abstract class CollectionMap<K, V> {
      * @param pattern the pattern object to compare elements against
      * @param comp implementation of Comparator interface
      * @return any element matching the given pattern, as determined by the given comparator, among all of the Collections
-     * @throws IndexOutOfBoundsException if no such elements exist
+     * @throws NotFoundException if no such elements exist
      */
-    public V matchAllCollectionElement(Object pattern, Comparator comp) throws IndexOutOfBoundsException {
+    public V matchAllCollectionElement(Object pattern, Comparator comp) throws NotFoundException {
         V ret = null;
         Collection<V> collection = this.getAll();
         if (collection != null) {
@@ -133,9 +137,12 @@ public abstract class CollectionMap<K, V> {
             if (!matches.isEmpty()) {
                 ret = matches.iterator().next();
             }
+            else {
+                throw new NotFoundException("CollectionMap: Could not match element from all collections: No such element exists that matches pattern " + pattern);
+            }
         }
         else {
-            throw new IndexOutOfBoundsException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
+            throw new NotFoundException("CollectionMap: Could not match element from Collection: CollectionMap is empty");
         }
         return ret;
     }
@@ -144,16 +151,16 @@ public abstract class CollectionMap<K, V> {
      * @param pattern the pattern object to compare elements against
      * @param comp implementation of Comparator interface
      * @return all elements matching the given pattern, as determined by the given comparator, among all of the Collections
-     * @throws IndexOutOfBoundsException if no such elements exist
+     * @throws NotFoundException if no such elements exist
      */
-    public Collection<V> matchesAllCollectionElement(Object pattern, Comparator comp) throws IndexOutOfBoundsException {
+    public Collection<V> matchesAllCollectionElement(Object pattern, Comparator comp) throws NotFoundException {
         Collection<V> ret = null;
         Collection<V> collection = this.getAll();
         if (collection != null) {
             ret = CollectionUtils.findMatches(collection, pattern, comp);
         }
         else {
-            throw new IndexOutOfBoundsException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
+            throw new NotFoundException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
         }
         return ret;
     }
@@ -190,7 +197,7 @@ public abstract class CollectionMap<K, V> {
             });
             return true;
         }
-        catch (IndexOutOfBoundsException iobe) {
+        catch (NotFoundException iobe) {
             return false;
         }
     }
