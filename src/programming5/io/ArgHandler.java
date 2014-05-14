@@ -25,7 +25,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import programming5.math.NumberRange;
 import programming5.arrays.ArrayOperations;
 
@@ -982,6 +984,108 @@ public class ArgHandler {
             ret = defaultValue;
         }
         return ret;
+    }
+
+    /**
+     * Pairs up all arguments and returns a key/value new map with even arguments as keys (tags) and odd arguments as values.
+     * If the number of arguments is odd, the last argument is ignored
+     */
+    public Map<String, String> collect() {
+        return collect(new HashMap<String, String>());
+    }
+
+    /**
+     * Same as collect method, but adds arguments to the existing given map. The input map is modified by the method call and its reference is returned (a new map is not created)
+     */
+    public Map<String, String> collect(Map<String, String> mapIn) {
+        Map<String, String> retMap = mapIn;
+        for (int i = 0; i < args.length-1; i += 2) {
+            retMap.put(args[i], args[i+1]);
+        }
+        return retMap;
+    }
+
+    /**
+     * Same as collectOptional method, but adds arguments to the existing given map. The input map is modified by the method call and its reference is returned (a new map is not created)
+     */
+    public Map<String, String> collectOptional(Map<String, String> mapIn, String... tags) {
+        Map<String, String> retMap = mapIn;
+        for (String tag : tags) {
+            String[] from;
+            String to;
+            if (tag.contains(":")) {
+                String[] aux = tag.split(":");
+                to = aux[1];    // collect name
+                from = aux[0].split(";");
+            }
+            else {
+                from = tag.split(";");
+                to = from[0];
+            }
+            for (int i = 0; i < from.length; i++) {
+                if (this.getSwitchArg(from[i])) {
+                    retMap.put(to, this.getStringArg(from[i]));
+                    break;
+                }
+            }
+        }
+        return retMap;
+    }
+
+    /**
+     * Puts input arguments into a new map, given the argument names. If any arguments do not exist, they are ignored
+     * @param tags Argument tag names, where each tag is of the form <tag-name>{;<tag-name>}[:<collect-name>],
+     * where tag-name(s) are used in the input (some tags have aliases for user convenience) and collect-name is the
+     * key to use in the collect map (if different). For tags with multiple aliases, first alias will be used as
+     * collect-name if none is given.
+     * @return a new map with the arguments that exist in the input
+     */
+    public Map<String, String> collectOptional(String... tags) {
+        return collectOptional(new HashMap<String, String>(), tags);
+    }
+
+    /**
+     * Same as collectRequired method, but adds arguments to the existing given map. The input map is modified by the method call and its reference is returned (a new map is not created)
+     */
+    public Map<String, String> collectRequired(Map<String, String> mapIn, String... tags) {
+        Map<String, String> retMap = mapIn;
+        for (String tag : tags) {
+            String[] from;
+            String to;
+            if (tag.contains(":")) {
+                String[] aux = tag.split(":");
+                to = aux[1];    // collect name
+                from = aux[0].split(";");
+            }
+            else {
+                from = tag.split(";");
+                to = from[0];
+            }
+            boolean found = false;
+            for (int i = 1; i < from.length; i++) {
+                if (this.getSwitchArg(from[i])) {
+                    retMap.put(to, this.getStringArg(from[i]));
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                retMap.put(to, this.getStringArg(from[0]));
+            }
+        }
+        return retMap;
+    }
+
+    /**
+     * Puts input arguments into a new map, given the argument names. If any arguments do not exist, the exception strategy is applied
+     * @param tags Argument tag names, where each tag is of the form <tag-name>{;<tag-name>}[:<collect-name>],
+     * where tag-name(s) are used in the input (some tags have aliases for user convenience) and collect-name is the
+     * key to use in the collect map (if different). For tags with multiple aliases, first alias will be used as
+     * collect-name if none is given.
+     * @return a new map with the arguments that exist in the input
+     */
+    public Map<String, String> collectRequired(String... tags) {
+        return collectRequired(new HashMap<String, String>(), tags);
     }
 
     /**
