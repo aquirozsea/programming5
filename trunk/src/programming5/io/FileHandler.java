@@ -1110,6 +1110,25 @@ public class FileHandler {
                 FileHandler.fileTreeTraversal(path, new FileDelete());
             }
         }
+
+        /**
+         * Renames a file or directory
+         * @param path the path of the file or directory
+         * @param newName the new file or directory name (should not be a full path, just a name)
+         * @throws IOException if unable to rename the files
+         */
+        public static void rename(String path, String newName) throws IOException {
+            File toRename = new File(path);
+            File renaming = new File(path.substring(0, path.lastIndexOf("/") + 1) + newName);
+            try {
+                if (!toRename.renameTo(renaming)) {
+                    throw new Exception("FS exception");
+                }
+            }
+            catch (Exception e) {
+                throw new IOException("FileHandler: Could not rename file at " + path + " to " + newName + ": " + e.getMessage(), e);
+            }
+        }
 	
 	/**
          * Finds all files recursively, from a given root path
