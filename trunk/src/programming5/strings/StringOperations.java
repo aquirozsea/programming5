@@ -23,10 +23,13 @@ package programming5.strings;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import programming5.arrays.ArrayOperations;
@@ -678,6 +681,74 @@ public abstract class StringOperations {
             separator = ",";    // Default separator
         }
         return new EntryObject<String, String>(separator, listItemRegex);
+    }
+    
+    public static String sort(String string) {
+        char[] chars = string.toCharArray();
+        Arrays.sort(chars);
+        return new String(chars);
+    }
+    
+    public static String charset(String string) {
+        Set<Character> charset = new HashSet<Character>();
+        char[] stringChars = string.toCharArray();
+        for (char c : stringChars) {
+            charset.add(c);
+        }
+        char[] charArray = new char[charset.size()];
+        int i = 0;
+        for (Character c : charset) {
+            charArray[i++] = c;
+        }
+        return new String(charArray);
+    }
+
+    public static String intersect(String s1, String s2) {
+        char[] s1char = s1.toCharArray();
+        char[] s2char = s2.toCharArray();
+        Arrays.sort(s1char);
+        Arrays.sort(s2char);
+        Set<Character> intersection = new HashSet<Character>();
+        int i = 0; // s1 index
+        int j = 0; // s2 index
+        while (i < s1char.length && j < s2char.length) {
+            if (s1char[i] < s2char[j]) {
+                try {
+                    while (s1char[i] < s2char[j]) {
+                        i++;
+                    }
+                }
+                catch (IndexOutOfBoundsException iobe) {
+                    break;
+                }
+                if (s1char[i] == s2char[j]) {
+                    intersection.add(s1char[i]);
+                    i++;
+                    j++;
+                }
+            }
+            else {
+                try {
+                    while (s1char[i] > s2char[j]) {
+                        j++;
+                    }
+                }
+                catch (IndexOutOfBoundsException iobe) {
+                    break;
+                }
+                if (s1char[i] == s2char[j]) {
+                    intersection.add(s1char[i]);
+                    i++;
+                    j++;
+                }
+            }
+        }
+        char[] retArray = new char[intersection.size()];
+        i = 0;  // retArrayIndex
+        for (Character c : intersection) {
+            retArray[i++] = c;
+        }
+        return new String(retArray);
     }
 
 }
