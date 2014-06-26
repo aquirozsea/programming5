@@ -321,6 +321,21 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     *@return the index of the element of maximum value in the input array
+     */
+    public static int maxIndex(long[] array) {
+        int ret = 0;
+        long maxval = array[0];
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > maxval) {
+                maxval = array[i];
+                ret = i;
+            }
+        }
+        return ret;
+    }
     
     /**
      *@return the index of the element of maximum value in the input array
