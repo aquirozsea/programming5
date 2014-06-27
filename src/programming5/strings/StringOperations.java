@@ -631,6 +631,10 @@ public abstract class StringOperations {
         }
     }
 
+    public static String charAt(String s, int index) {
+        return s.substring(index, index+1);
+    }
+
     private static List<String> cleanRegexLabels(String[] labels) {
         List<String> ret = new ArrayList<String>();
         for (String label : labels) {
@@ -751,16 +755,28 @@ public abstract class StringOperations {
         return new String(retArray);
     }
 
-    public String safeReplaceAll(String string, String toReplace, String replacement) {
+    public static String safeReplaceAll(String string, String toReplace, String replacement) {
         char escapeChar = (char) ((toReplace.charAt(0) % 95) + 32);
         String escape = new String(new char[] {escapeChar});
         return string.replaceAll(replacement, escape + replacement).replaceAll(toReplace, replacement);
     }
 
-    public String safeRestoreAll(String string, String toRestore, String replacement) {
+    public static String safeRestoreAll(String string, String toRestore, String replacement) {
         char escapeChar = (char) ((toRestore.charAt(0) % 95) + 32);
         String escape = new String(new char[] {escapeChar});
-        return string.replaceAll("[^+" + escape + "]" + replacement, toRestore).replaceAll(escape + replacement, replacement);
+        int replacementPos = string.indexOf(replacement);
+        while (replacementPos >= 0) {
+            String prefix = string.substring(0, replacementPos);
+            if (!prefix.endsWith(escape)) {
+                String suffix = string.substring(replacementPos);
+                string = prefix + suffix.replaceFirst(replacement, toRestore);
+                replacementPos = string.indexOf(replacement, replacementPos + toRestore.length());
+            }
+            else {
+                replacementPos = string.indexOf(replacement, replacementPos + replacement.length());
+            }
+        }
+        return string.replaceAll(escape + replacement, replacement);
     }
 
 }
