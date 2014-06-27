@@ -752,11 +752,15 @@ public abstract class StringOperations {
     }
 
     public String safeReplaceAll(String string, String toReplace, String replacement) {
-        return string.replaceAll(replacement, "/" + replacement).replaceAll(toReplace, replacement);
+        char escapeChar = (char) ((toReplace.charAt(0) % 95) + 32);
+        String escape = new String(new char[] {escapeChar});
+        return string.replaceAll(replacement, escape + replacement).replaceAll(toReplace, replacement);
     }
 
     public String safeRestoreAll(String string, String toRestore, String replacement) {
-        return string.replaceAll("[^/]" + replacement, toRestore).replaceAll("/" + replacement, replacement);
+        char escapeChar = (char) ((toRestore.charAt(0) % 95) + 32);
+        String escape = new String(new char[] {escapeChar});
+        return string.replaceAll("[^+" + escape + "]" + replacement, toRestore).replaceAll(escape + replacement, replacement);
     }
 
 }
