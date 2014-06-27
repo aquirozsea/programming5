@@ -751,4 +751,12 @@ public abstract class StringOperations {
         return new String(retArray);
     }
 
+    public String safeReplaceAll(String string, String toReplace, String replacement) {
+        return string.replaceAll(replacement, "/" + replacement).replaceAll(toReplace, replacement);
+    }
+
+    public String safeRestoreAll(String string, String toRestore, String replacement) {
+        return string.replaceAll("[^/]" + replacement, toRestore).replaceAll("/" + replacement, replacement);
+    }
+
 }
