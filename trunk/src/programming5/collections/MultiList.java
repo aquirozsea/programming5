@@ -640,12 +640,12 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
             vector1.remove(index);
             if (isSorted1) {
                 int sortedPos = ArrayOperations.seqFind(index, sortedOrder1);
-                ArrayOperations.delete(sortedOrder1, sortedPos);
+                sortedOrder1 = ArrayOperations.delete(sortedOrder1, sortedPos);
             }
             vector2.remove(index);
             if (isSorted2) {
                 int sortedPos = ArrayOperations.seqFind(index, sortedOrder2);
-                ArrayOperations.delete(sortedOrder2, sortedPos);
+                sortedOrder2 = ArrayOperations.delete(sortedOrder2, sortedPos);
             }
             removed = true;
         }
@@ -664,12 +664,12 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
             vector1.remove(index);
             if (isSorted1) {
                 int sortedPos = ArrayOperations.seqFind(index, sortedOrder1);
-                ArrayOperations.delete(sortedOrder1, sortedPos);
+                sortedOrder1 = ArrayOperations.delete(sortedOrder1, sortedPos);
             }
             vector2.remove(index);
             if (isSorted2) {
                 int sortedPos = ArrayOperations.seqFind(index, sortedOrder2);
-                ArrayOperations.delete(sortedOrder2, sortedPos);
+                sortedOrder2 = ArrayOperations.delete(sortedOrder2, sortedPos);
             }
             removed = true;
         }
