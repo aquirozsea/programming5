@@ -779,4 +779,8 @@ public abstract class StringOperations {
         return string.replaceAll(escape + replacement, replacement);
     }
 
+    public static String[] charSplit(String string) {
+        return ArrayOperations.suffix(string.split(""), 1);
+    }
+
 }
