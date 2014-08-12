@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import programming5.math.NumberRange;
 import programming5.arrays.ArrayOperations;
+import programming5.collections.NotFoundException;
 
 /**
  *This class is meant to receive the argument array of an application to provide methods to get arguments of different 
@@ -67,6 +68,26 @@ public class ArgHandler {
         strategy = es;
         if (strategy == ExceptionStrategy.PROMPT) {
             in = new BufferedReader(new InputStreamReader(System.in));
+        }
+    }
+
+    public int getArgIndex(String tag) throws NotFoundException {
+        int ret = ArrayOperations.seqFind(tag, args);
+        if (ret >= 0) {
+            return ret;
+        }
+        else {
+            throw new NotFoundException();
+        }
+    }
+
+    public int getArgIndex(String tag, int from) throws NotFoundException {
+        int ret = ArrayOperations.seqFind(tag, args, from);
+        if (ret >= 0) {
+            return ret;
+        }
+        else {
+            throw new NotFoundException();
         }
     }
     
