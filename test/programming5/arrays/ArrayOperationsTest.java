@@ -5,24 +5,18 @@
 
 package programming5.arrays;
 
-import programming5.strings.StringEditDistanceFunction;
-import programming5.strings.LexicographicDistanceFunction.Mode;
-import programming5.strings.AlphabeticDistanceFunction;
-import programming5.math.DistanceFunction;
-import programming5.strings.LexicographicDistanceFunction;
-import programming5.strings.KeyValuePairMatcher;
-import java.util.Arrays;
-import java.util.Random;
-import programming5.strings.NumericStringComparator;
-import java.math.BigInteger;
+import org.junit.*;
 import programming5.code.ReplicableObject;
+import programming5.math.DistanceFunction;
+import programming5.strings.*;
+import programming5.strings.LexicographicDistanceFunction.Mode;
+
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.util.Random;
+
 import static org.junit.Assert.*;
 
 /**
@@ -1970,6 +1964,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindClosestIndexInOrder_doubleArr_double() {
+        double[] array = new double[] {1, 9.9, 9.90000000000001, 10, 15, 50};
+        assertEquals(0, ArrayOperations.findClosestIndexInOrder(array, Double.MIN_VALUE), 0);
+        assertEquals(0, ArrayOperations.findClosestIndexInOrder(array, -51), 0);
+        assertEquals(0, ArrayOperations.findClosestIndexInOrder(array, 2), 0);
+        assertEquals(1, ArrayOperations.findClosestIndexInOrder(array, 6), 0);
+        assertEquals(1, ArrayOperations.findClosestIndexInOrder(array, 9.9), 0);
+        assertEquals(2, ArrayOperations.findClosestIndexInOrder(array, 9.91), 0);
+        assertEquals(4, ArrayOperations.findClosestIndexInOrder(array, 15), 0);
+        assertEquals(4, ArrayOperations.findClosestIndexInOrder(array, 25), 0);
+        assertEquals(5, ArrayOperations.findClosestIndexInOrder(array, 40), 0);
+        assertEquals(5, ArrayOperations.findClosestIndexInOrder(array, 51), 0);
+        assertEquals(5, ArrayOperations.findClosestIndexInOrder(array, Double.MAX_VALUE), 0);
     }
 
     /**

@@ -21,15 +21,17 @@
 
 package programming5.arrays;
 
+import programming5.code.ObjectMatcher;
+import programming5.code.Replicable;
+import programming5.collections.NotFoundException;
+import programming5.math.DistanceFunction;
+import programming5.strings.LexicographicDistanceFunction;
+
 import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Comparator;
-import programming5.code.ObjectMatcher;
-import programming5.code.Replicable;
-import programming5.math.DistanceFunction;
-import programming5.strings.LexicographicDistanceFunction;
 
 /**
  *This class provides additional array manipulation operations to those in java.util.Arrays.
@@ -1057,7 +1059,7 @@ public abstract class ArrayOperations {
      *@return true if all of the elements of the input array are true
      */
     public static boolean tautology(boolean... array) {
-        boolean ret = (array.length > 0) ? true : false;
+        boolean ret = (array.length > 0);
         for (boolean ind : array) {
             if (!ind) {
                 ret = false;
@@ -1083,7 +1085,7 @@ public abstract class ArrayOperations {
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(byte b, byte[] array) {
@@ -1096,10 +1098,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array
+     * @throws NotFoundException if b is not found in the array
+     */
+    public static int findInSequence(byte b, byte[] array) throws NotFoundException {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(int b, int[] array) {
@@ -1112,10 +1127,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array
+     * @throws NotFoundException if b is not found in the array
+     */
+    public static int findInSequence(int b, int[] array) throws NotFoundException {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(float b, float[] array) {
@@ -1128,10 +1156,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array
+     * @throws NotFoundException if b is not found in the array
+     */
+    public static int findInSequence(float b, float[] array) throws NotFoundException {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(double b, double[] array) {
@@ -1144,10 +1185,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array
+     * @throws NotFoundException if b is not found in the array
+     */
+    public static int findInSequence(double b, double[] array) throws NotFoundException {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(char b, char[] array) {
@@ -1160,10 +1214,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array
+     * @throws NotFoundException if b is not found in the array
+     */
+    public static int findInSequence(char b, char[] array) throws NotFoundException {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(Object b, Object[] array) {
@@ -1178,8 +1245,21 @@ public abstract class ArrayOperations {
     }
 
     /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     * @return the index of the first b in the array
+     * @throws NotFoundException if b is not found in the array
+     */
+    public static int findInSequence(Object b, Object[] array) throws NotFoundException {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
+
+    /**
+     *@return the index of the first b in the array using the given matcher, or -1 if not found
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(Object b, Object[] array, ObjectMatcher matcher) {
@@ -1192,10 +1272,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array using the given matcher
+     * @throws NotFoundException if b is not found in the array
+     */
+    public static <T> int findInSequence(T b, T[] array, ObjectMatcher<T> matcher) throws NotFoundException {
+        for (int i = 0; i < array.length; i++) {
+            if (matcher.matches(array[i], b)) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(byte b, byte[] array, int from) {
@@ -1208,10 +1301,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array after and including the given starting index
+     * @throws NotFoundException if b is not found from the starting position
+     */
+    public static int findInSequence(byte b, byte[] array, int from) throws NotFoundException {
+        for (int i = from; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(int b, int[] array, int from) {
@@ -1224,10 +1330,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array after and including the given starting index
+     * @throws NotFoundException if b is not found from the starting position
+     */
+    public static int findInSequence(int b, int[] array, int from) throws NotFoundException {
+        for (int i = from; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(float b, float[] array, int from) {
@@ -1240,10 +1359,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array after and including the given starting index
+     * @throws NotFoundException if b is not found from the starting position
+     */
+    public static int findInSequence(float b, float[] array, int from) throws NotFoundException {
+        for (int i = from; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(double b, double[] array, int from) {
@@ -1256,10 +1388,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array after and including the given starting index
+     * @throws NotFoundException if b is not found from the starting position
+     */
+    public static int findInSequence(double b, double[] array, int from) throws NotFoundException {
+        for (int i = from; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(char b, char[] array, int from) {
@@ -1272,10 +1417,23 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    /**
+     * @return the index of the first b in the array after and including the given starting index
+     * @throws NotFoundException if b is not found from the starting position
+     */
+    public static int findInSequence(char b, char[] array, int from) throws NotFoundException {
+        for (int i = from; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
     
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(Object b, Object[] array, int from) {
@@ -1289,11 +1447,22 @@ public abstract class ArrayOperations {
         return ret;
     }
 
-
+    /**
+     * @return the index of the first b in the array after and including the given starting index
+     * @throws NotFoundException if b is not found from the starting position
+     */
+    public static int findInSequence(Object b, Object[] array, int from) throws NotFoundException {
+        for (int i = from; i < array.length; i++) {
+            if (array[i] == b) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
+    }
 
     /**
      *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and will be replaced with a NotFoundException in the next major version
+     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
      */
     @Deprecated
     public static int seqFind(Object b, Object[] array, int from, ObjectMatcher matcher) {
@@ -1305,6 +1474,19 @@ public abstract class ArrayOperations {
             }
         }
         return ret;
+    }
+
+    /**
+     * @return the index of the first b in the array after and including the given starting index
+     * @throws NotFoundException if b is not found from the starting position
+     */
+    public static <T> int findInSequence(T b, T[] array, int from, ObjectMatcher<T> matcher) throws NotFoundException {
+        for (int i = from; i < array.length; i++) {
+            if (matcher.matches(array[i], b)) {
+                return i;
+            }
+        }
+        throw new NotFoundException();
     }
     
     /**
@@ -1617,7 +1799,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
-    public static final int findClosestIndexInOrder(double[] array, double value) {
+    public static int findClosestIndexInOrder(double[] array, double value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
             int position = -ret - 1;
