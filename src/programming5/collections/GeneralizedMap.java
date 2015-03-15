@@ -449,6 +449,11 @@ public class GeneralizedMap<K, V> implements PMap<K, V> {
         return entrySet;
     }
 
+    @Override
+    public String toString() {
+        return mapTable.toString() + " && " + endTable.toString();
+    }
+
     private GeneralizedMap<K, V> mapTableGet(K key) {
         if (key instanceof String) {
             String[] stringKeys = ((String) key).split(separator, -1);

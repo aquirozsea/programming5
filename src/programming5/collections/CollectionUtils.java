@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import programming5.arrays.ArrayOperations;
@@ -884,6 +886,25 @@ public abstract class CollectionUtils {
             throw new IllegalArgumentException("CollectionUtils: Cannot complete binary search: Given list elements not comparable", e);
         }
         return ret;
+    }
+    
+    /**
+     * @param mapString ex. {key1:value1,key2:value2,...}
+     * @return 
+     */
+    public static Map<String, String> mapFromString(String mapString) {
+        HashMap<String, String> retMap = new HashMap();
+        String[] entries = mapString.split("\\s*;\\s*");
+        for (String entry : entries) {
+            String[] pair = entry.split("\\s*:\\s*");
+            if (pair.length == 2) {
+                retMap.put(pair[0] /* key */, pair[1] /* value */);
+            }
+            else {
+                throw new IllegalArgumentException("CollectionUtils: Could not construct map from string: Bad entry (" + entry + ")");
+            }
+        }
+        return retMap;
     }
 
 }
