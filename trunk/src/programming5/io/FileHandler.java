@@ -1140,6 +1140,32 @@ public class FileHandler {
             FileHandler.fileTreeTraversal(path, list);
             return list.getCurrentList();
         }
+    
+        public static String extractFileName(String filepath) {
+            return filepath.substring(filepath.lastIndexOf("/") + 1);   // TODO: File separator?
+        }
+    
+        public static String extractFilePath(String filepath) {
+            return filepath.substring(0, filepath.lastIndexOf("/"));   // TODO: 
+        }
+    
+        public static String[] splitPath(String filepath) {
+            int sepPos = filepath.lastIndexOf("/");
+            return new String[] {filepath.substring(0, sepPos), filepath.substring(sepPos+1)};
+        }
+        
+        public static String removeExtension(String fileName) {
+            return fileName.substring(0, fileName.lastIndexOf("."));
+        }
+        
+        public static String extractExtension(String fileName) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1);   // TODO: File separator?
+        }
+        
+        public static String[] splitExtension(String fileName) {
+            int sepPos = fileName.lastIndexOf(".");
+            return new String[] {fileName.substring(0, sepPos), fileName.substring(sepPos+1)};
+        }
 
 	/**
 	 *Sets or resets the file for the handler
