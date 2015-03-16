@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.function.IntToDoubleFunction;
 
 /**
  *This class provides additional array manipulation operations to those in java.util.Arrays.
@@ -1966,7 +1967,8 @@ public abstract class ArrayOperations {
     
     /**
      * @param array an array of string sorted in lexicographic order
-     * @return the element of a sorted array that is closest to value, according to lexicographic distance with different character counting (@see programming5.strings.LexicographicDistanceFunction)
+     * @return the element of a sorted array that is closest to value, according to lexicographic distance with different character counting
+     * @see programming5.strings.LexicographicDistanceFunction
      */
     public static String findClosestInOrder(String[] array, String value) {
         return findClosestInOrder(array, value, DEFAULT_STRING_DISTFUNC, DEFAULT_STRING_COMPARATOR);
@@ -2004,7 +2006,8 @@ public abstract class ArrayOperations {
 
     /**
      * @param array an array of string sorted in lexicographic order
-     * @return the index of the element of a sorted array that is closest to value, according to lexicographic distance with different character counting (@see programming5.strings.LexicographicDistanceFunction)
+     * @return the index of the element of a sorted array that is closest to value, according to lexicographic distance with different character counting
+     * @see programming5.strings.LexicographicDistanceFunction
      */
     public static int findClosestIndexInOrder(String[] array, String value) {
         return findClosestIndexInOrder(array, value, DEFAULT_STRING_DISTFUNC, DEFAULT_STRING_COMPARATOR);
@@ -2015,7 +2018,7 @@ public abstract class ArrayOperations {
      *(null if the value is larger than all values in the array)
      *@see java.lang.Comparable
      */
-    public static final <T extends Comparable, S extends T> T findNextInOrder(T[] array, S value) {
+    public static <T extends Comparable, S extends T> T findNextInOrder(T[] array, S value) {
         T ret;
         if (value.compareTo(array[0]) <= 0) {
             ret = array[0];
@@ -2047,7 +2050,7 @@ public abstract class ArrayOperations {
      *array if the value is greater than all values in the array.
      *@see java.lang.Comparable
      */
-    public static final <T extends Comparable, S extends T> int findPositionInOrder(T[] array, S value) {
+    public static <T extends Comparable, S extends T> int findPositionInOrder(T[] array, S value) {
         int ret;
         if (value.compareTo(array[0]) <= 0) {
             ret = 0;
@@ -2074,97 +2077,40 @@ public abstract class ArrayOperations {
     }
 
     /**
-     *@return the position in the sorted array of comparable elements of the element that follows (or is equal to) the given
+     *@return the position in the sorted array of numeric elements of the element that follows (or is equal to) the given
      *value in order, which is the position where the value should be inserted in the array. The position is the length of the
      *array if the value is greater than all values in the array.
-     *@see java.lang.Comparable
      */
-    public static final int findPositionInOrder(int[] array, int value) {
-        int ret;
-        if (value <= array[0]) {
-            ret = 0;
-        } 
-        else if (value > array[array.length-1]) {
-            ret = array.length;
-        } 
-        else {
-            int a = 0;
-            int b = array.length-1;
-            int middle;
-            while (b - a > 1) {
-                middle = (a+b) / 2;
-                if (value > array[middle]) {
-                    a = middle;
-                } 
-                else {
-                    b = middle;
-                }
-            }
-            ret = b;
+    public static int findPositionInOrder(int[] array, int value) {
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            ret = -ret - 1;
         }
         return ret;
     }
 
     /**
-     *@return the position in the sorted array of comparable elements of the element that follows (or is equal to) the given
+     *@return the position in the sorted array of numeric elements of the element that follows (or is equal to) the given
      *value in order, which is the position where the value should be inserted in the array. The position is the length of the
      *array if the value is greater than all values in the array.
-     *@see java.lang.Comparable
      */
-    public static final int findPositionInOrder(float[] array, float value) {
-        int ret;
-        if (value <= array[0]) {
-            ret = 0;
-        } 
-        else if (value > array[array.length-1]) {
-            ret = array.length;
-        } 
-        else {
-            int a = 0;
-            int b = array.length-1;
-            int middle;
-            while (b - a > 1) {
-                middle = (a+b) / 2;
-                if (value > array[middle]) {
-                    a = middle;
-                } 
-                else {
-                    b = middle;
-                }
-            }
-            ret = b;
+    public static int findPositionInOrder(float[] array, float value) {
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            ret = -ret - 1;
         }
         return ret;
     }
-    
+
     /**
-     *@return the position in the sorted array of comparable elements of the element that follows (or is equal to) the given
+     *@return the position in the sorted array of numeric elements of the element that follows (or is equal to) the given
      *value in order, which is the position where the value should be inserted in the array. The position is the length of the
      *array if the value is greater than all values in the array.
-     *@see java.lang.Comparable
      */
-    public static final int findPositionInOrder(double[] array, double value) {
-        int ret;
-        if (value <= array[0]) {
-            ret = 0;
-        }
-        else if (value > array[array.length-1]) {
-            ret = array.length;
-        }
-        else {
-            int a = 0;
-            int b = array.length-1;
-            int middle;
-            while (b - a > 1) {
-                middle = (a+b) / 2;
-                if (value > array[middle]) {
-                    a = middle;
-                }
-                else {
-                    b = middle;
-                }
-            }
-            ret = b;
+    public static int findPositionInOrder(double[] array, double value) {
+        int ret = Arrays.binarySearch(array, value);
+        if (ret < 0) {
+            ret = -ret - 1;
         }
         return ret;
     }
@@ -2173,60 +2119,25 @@ public abstract class ArrayOperations {
      *@return the element of a sorted array that follows (or is equal to) the given value in order
      *(null if the value is larger than all values in the array), using the given comparator
      */
-    public static final <T, S extends T, U extends T> S findNextInOrder(S[] array, U value, Comparator<T> comp) {
-        S ret;
-        if (comp.compare(value, array[0]) <= 0) {
-            ret = array[0];
-        } 
-        else if (comp.compare(value, array[array.length-1]) > 0) {
-            ret = null;
-        } 
-        else {
-            int a = 0;
-            int b = array.length-1;
-            int middle;
-            while (b - a > 1) {
-                middle = (a+b) / 2;
-                if (comp.compare(value, array[middle]) > 0) {
-                    a = middle;
-                } 
-                else {
-                    b = middle;
-                }
-            }
-            ret = array[b];
+    public static <T, S extends T, U extends T> S findNextInOrder(S[] array, U value, Comparator<T> comp) {
+        int pos = findPositionInOrder(array, value, comp);
+        if (pos < array.length) {
+            return array[pos];
         }
-        return ret;
+        else {
+            return null;
+        }
     }
     
     /**
      *@return the position in the sorted array of the element that follows (or is equal to) the given
      *value in order, using the given comparator, which is the position where the value should be inserted in the array.
      *The position is the length of the array if the value is greater than all values in the array.
-     *@see java.lang.Comparable
      */
-    public static final <T, S extends T, U extends T> int findPositionInOrder(S[] array, U value, Comparator<T> comp) {
-        int ret;
-        if (comp.compare(value, array[0]) <= 0) {
-            ret = 0;
-        } 
-        else if (comp.compare(value, array[array.length-1]) > 0) {
-            ret = array.length;
-        } 
-        else {
-            int a = 0;
-            int b = array.length-1;
-            int middle;
-            while (b - a > 1) {
-                middle = (a+b) / 2;
-                if (comp.compare(value, array[middle]) > 0) {
-                    a = middle;
-                } 
-                else {
-                    b = middle;
-                }
-            }
-            ret = b;
+    public static <T, S extends T, U extends T> int findPositionInOrder(S[] array, U value, Comparator<T> comp) {
+        int ret = Arrays.binarySearch(array, value, comp);
+        if (ret < 0) {
+            ret = -ret - 1;
         }
         return ret;
     }
@@ -2234,7 +2145,7 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the max value of array
      */
-    public static final double[] normalizeMax(int[] array) {
+    public static double[] normalizeMax(int[] array) {
         double[] ret = new double[array.length];
         double maxval = (double)(max(array));
         for (int i = 0; i < array.length; i++) {
@@ -2242,11 +2153,15 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
+
+    public static IntToDoubleFunction normalizer(double norm) {
+        return (value) -> {return (double) value / norm;};
+    }
     
     /**
      *@return new array with normalized values of array with respect to the sum of the values of array
      */
-    public static final double[] normalizeSum(int[] array) {
+    public static double[] normalizeSum(int[] array) {
         double[] ret = new double[array.length];
         double arraysum = (double)(sum(array));
         for (int i = 0; i < array.length; i++) {
@@ -2258,7 +2173,7 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the value given
      */
-    public static final double[] normalizeVal(int[] array, double maxval) {
+    public static double[] normalizeVal(int[] array, double maxval) {
         double[] ret = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = (double)array[i]/maxval;
@@ -2269,7 +2184,7 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the max value of array
      */
-    public static final double[] normalizeMax(float[] array) {
+    public static double[] normalizeMax(float[] array) {
         double[] ret = new double[array.length];
         double maxval = (double)(max(array));
         for (int i = 0; i < array.length; i++) {
@@ -2281,7 +2196,7 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the sum of the values of array
      */
-    public static final double[] normalizeSum(float[] array) {
+    public static double[] normalizeSum(float[] array) {
         double[] ret = new double[array.length];
         double arraysum = (double)(sum(array));
         for (int i = 0; i < array.length; i++) {
@@ -2293,7 +2208,7 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the value given
      */
-    public static final double[] normalizeVal(float[] array, double maxval) {
+    public static double[] normalizeVal(float[] array, double maxval) {
         double[] ret = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = (double)array[i]/maxval;
@@ -2304,7 +2219,7 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the max value of array
      */
-    public static final double[] normalizeMax(double[] array) {
+    public static double[] normalizeMax(double[] array) {
         double[] ret = new double[array.length];
         double maxval = max(array);
         for (int i = 0; i < array.length; i++) {
@@ -2316,7 +2231,7 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the sum of the values of array
      */
-    public static final double[] normalizeSum(double[] array) {
+    public static double[] normalizeSum(double[] array) {
         double[] ret = new double[array.length];
         double arraysum = sum(array);
         for (int i = 0; i < array.length; i++) {
@@ -2328,7 +2243,7 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the value given
      */
-    public static final double[] normalizeVal(double[] array, double maxval) {
+    public static double[] normalizeVal(double[] array, double maxval) {
         double[] ret = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i]/maxval;

@@ -1913,24 +1913,25 @@ public class ArrayOperationsTest {
 
     /**
      * Test of findClosestIndexInOrder method, of class ArrayOperations.
+     * TODO: FIX
      */
     @Test
     public void testFindClosestIndexInOrder_intArr_int() {
         int[] array = new int[] {1, 10, 15, 50, Integer.MAX_VALUE};
         int[] array2 = new int[] {Integer.MIN_VALUE, -100, 0, 55};
         assertEquals(0, ArrayOperations.findClosestIndexInOrder(array, Integer.MIN_VALUE));
-        assertEquals(0, ArrayOperations.findClosestIndex(array2, Integer.MIN_VALUE));
-        assertEquals(0, ArrayOperations.findClosestIndex(array, -51));
-        assertEquals(1, ArrayOperations.findClosestIndex(array2, -51));
-        assertEquals(0, ArrayOperations.findClosestIndex(array, 2));
-        assertEquals(2, ArrayOperations.findClosestIndex(array2, 2));
-        assertEquals(1, ArrayOperations.findClosestIndex(array, 6));
-        assertEquals(2, ArrayOperations.findClosestIndex(array, 15));
-        assertEquals(2, ArrayOperations.findClosestIndex(array, 25));
-        assertEquals(3, ArrayOperations.findClosestIndex(array, 40));
-        assertEquals(3, ArrayOperations.findClosestIndex(array, 51));
-        assertEquals(4, ArrayOperations.findClosestIndex(array, Integer.MAX_VALUE));
-        assertEquals(3, ArrayOperations.findClosestIndex(array2, Integer.MAX_VALUE));
+        assertEquals(0, ArrayOperations.findClosestIndexInOrder(array2, Integer.MIN_VALUE));
+        assertEquals(0, ArrayOperations.findClosestIndexInOrder(array, -51));
+        assertEquals(1, ArrayOperations.findClosestIndexInOrder(array2, -51));
+        assertEquals(0, ArrayOperations.findClosestIndexInOrder(array, 2));
+        assertEquals(2, ArrayOperations.findClosestIndexInOrder(array2, 2));
+        assertEquals(1, ArrayOperations.findClosestIndexInOrder(array, 6));
+        assertEquals(2, ArrayOperations.findClosestIndexInOrder(array, 15));
+        assertEquals(2, ArrayOperations.findClosestIndexInOrder(array, 25));
+        assertEquals(3, ArrayOperations.findClosestIndexInOrder(array, 40));
+        assertEquals(3, ArrayOperations.findClosestIndexInOrder(array, 51));
+        assertEquals(4, ArrayOperations.findClosestIndexInOrder(array, Integer.MAX_VALUE));
+        assertEquals(3, ArrayOperations.findClosestIndexInOrder(array2, Integer.MAX_VALUE));
     }
 
     /**
@@ -2121,6 +2122,16 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindNextInOrder_GenericType_GenericType() {
+        String[] array = new String[] {"array", "assert", "equals", "int", "new", "string"};
+        assertEquals("array", ArrayOperations.findNextInOrder(array, "a"));
+        assertEquals("assert", ArrayOperations.findNextInOrder(array, "artsy"));
+        assertEquals("equals", ArrayOperations.findNextInOrder(array, "because"));
+        assertEquals("equals", ArrayOperations.findNextInOrder(array, "d"));
+        assertEquals("new", ArrayOperations.findNextInOrder(array, "new"));
+        assertEquals("new", ArrayOperations.findNextInOrder(array, "kind"));
+        assertEquals("string", ArrayOperations.findNextInOrder(array, "sassy"));
+        assertNull(ArrayOperations.findNextInOrder(array, "suit"));
+        assertNull(ArrayOperations.findNextInOrder(array, "z"));
     }
 
     /**
@@ -2128,6 +2139,77 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindPositionInOrder_GenericType_GenericType() {
+        String[] array = new String[] {"array", "assert", "equals", "int", "new", "string"};
+        assertEquals(0, ArrayOperations.findPositionInOrder(array, "a"));
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, "artsy"));
+        assertEquals(2, ArrayOperations.findPositionInOrder(array, "because"));
+        assertEquals(2, ArrayOperations.findPositionInOrder(array, "d"));
+        assertEquals(4, ArrayOperations.findPositionInOrder(array, "new"));
+        assertEquals(4, ArrayOperations.findPositionInOrder(array, "kind"));
+        assertEquals(5, ArrayOperations.findPositionInOrder(array, "sassy"));
+        assertEquals(6, ArrayOperations.findPositionInOrder(array, "suit"));
+        assertEquals(6, ArrayOperations.findPositionInOrder(array, "z"));
+    }
+
+    /**
+     * Test of findPositionInOrder method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindPositionInOrder_intArr_int() {
+        int[] array = new int[] {1, 10, 15, 50, Integer.MAX_VALUE};
+        int[] array2 = new int[] {Integer.MIN_VALUE, -100, 0, 55};
+        assertEquals(0, ArrayOperations.findPositionInOrder(array, Integer.MIN_VALUE));
+        assertEquals(0, ArrayOperations.findPositionInOrder(array2, Integer.MIN_VALUE));
+        assertEquals(0, ArrayOperations.findPositionInOrder(array, -51));
+        assertEquals(2, ArrayOperations.findPositionInOrder(array2, -51));
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, 2));
+        assertEquals(3, ArrayOperations.findPositionInOrder(array2, 2));
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, 6));
+        assertEquals(2, ArrayOperations.findPositionInOrder(array, 15));
+        assertEquals(3, ArrayOperations.findPositionInOrder(array, 25));
+        assertEquals(3, ArrayOperations.findPositionInOrder(array, 40));
+        assertEquals(4, ArrayOperations.findPositionInOrder(array, 51));
+        assertEquals(4, ArrayOperations.findPositionInOrder(array, Integer.MAX_VALUE));
+        assertEquals(4, ArrayOperations.findPositionInOrder(array2, Integer.MAX_VALUE));
+    }
+
+    /**
+     * Test of findPositionInOrder method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindPositionInOrder_floatArr_float() {
+        float[] array = new float[] {1, 9.9f, 9.9000001f, 10, 15, 50};
+        assertEquals(0, ArrayOperations.findPositionInOrder(array, Float.MIN_VALUE), 0);
+        assertEquals(0, ArrayOperations.findPositionInOrder(array, -51), 0);
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, 2), 0);
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, 6), 0);
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, 9.9f), 0);
+        assertEquals(3, ArrayOperations.findPositionInOrder(array, 9.91f), 0);
+        assertEquals(4, ArrayOperations.findPositionInOrder(array, 15), 0);
+        assertEquals(5, ArrayOperations.findPositionInOrder(array, 25), 0);
+        assertEquals(5, ArrayOperations.findPositionInOrder(array, 40), 0);
+        assertEquals(6, ArrayOperations.findPositionInOrder(array, 51), 0);
+        assertEquals(6, ArrayOperations.findPositionInOrder(array, Float.MAX_VALUE), 0);
+    }
+
+    /**
+     * Test of findPositionInOrder method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindPositionInOrder_doubleArr_double() {
+        double[] array = new double[] {1, 9.9, 9.90000000000002, 10, 15, 50};
+        assertEquals(0, ArrayOperations.findPositionInOrder(array, Double.MIN_VALUE), 0);
+        assertEquals(0, ArrayOperations.findPositionInOrder(array, -51), 0);
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, 2), 0);
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, 6), 0);
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, 9.9), 0);
+        assertEquals(3, ArrayOperations.findPositionInOrder(array, 9.91), 0);
+        assertEquals(2, ArrayOperations.findPositionInOrder(array, 9.90000000000001), 0);
+        assertEquals(4, ArrayOperations.findPositionInOrder(array, 15), 0);
+        assertEquals(5, ArrayOperations.findPositionInOrder(array, 25), 0);
+        assertEquals(5, ArrayOperations.findPositionInOrder(array, 40), 0);
+        assertEquals(6, ArrayOperations.findPositionInOrder(array, 51), 0);
+        assertEquals(6, ArrayOperations.findPositionInOrder(array, Double.MAX_VALUE), 0);
     }
 
     /**
@@ -2135,6 +2217,17 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindNextInOrder_3args() {
+        String[] array = new String[] {"array", "assert", "equals", "int", "new", "string"};
+        AlphabeticStringComparator asc = new AlphabeticStringComparator();
+        assertEquals("array", ArrayOperations.findNextInOrder(array, "a", asc));
+        assertEquals("assert", ArrayOperations.findNextInOrder(array, "artsy", asc));
+        assertEquals("equals", ArrayOperations.findNextInOrder(array, "because", asc));
+        assertEquals("equals", ArrayOperations.findNextInOrder(array, "d", asc));
+        assertEquals("new", ArrayOperations.findNextInOrder(array, "new", asc));
+        assertEquals("new", ArrayOperations.findNextInOrder(array, "kind", asc));
+        assertEquals("string", ArrayOperations.findNextInOrder(array, "sassy", asc));
+        assertNull(ArrayOperations.findNextInOrder(array, "suit", asc));
+        assertNull(ArrayOperations.findNextInOrder(array, "z", asc));
     }
 
     /**
@@ -2142,6 +2235,17 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindPositionInOrder_3args() {
+        String[] array = new String[] {"array", "assert", "equals", "int", "new", "string"};
+        AlphabeticStringComparator asc = new AlphabeticStringComparator();
+        assertEquals(0, ArrayOperations.findPositionInOrder(array, "a", asc));
+        assertEquals(1, ArrayOperations.findPositionInOrder(array, "artsy", asc));
+        assertEquals(2, ArrayOperations.findPositionInOrder(array, "because", asc));
+        assertEquals(2, ArrayOperations.findPositionInOrder(array, "d", asc));
+        assertEquals(4, ArrayOperations.findPositionInOrder(array, "new", asc));
+        assertEquals(4, ArrayOperations.findPositionInOrder(array, "kind", asc));
+        assertEquals(5, ArrayOperations.findPositionInOrder(array, "sassy", asc));
+        assertEquals(6, ArrayOperations.findPositionInOrder(array, "suit", asc));
+        assertEquals(6, ArrayOperations.findPositionInOrder(array, "z", asc));
     }
 
     /**
