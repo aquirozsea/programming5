@@ -26,6 +26,7 @@ import programming5.code.Replicable;
 import programming5.collections.NotFoundException;
 import programming5.math.DistanceFunction;
 import programming5.strings.LexicographicDistanceFunction;
+import programming5.strings.LexicographicStringComparator;
 
 import java.io.PrintStream;
 import java.math.BigDecimal;
@@ -42,6 +43,7 @@ public abstract class ArrayOperations {
 
     public static PrintStream OUT = System.out;
     public static DistanceFunction<String> DEFAULT_STRING_DISTFUNC = new LexicographicDistanceFunction(LexicographicDistanceFunction.Mode.COUNT_DIFF_CHARS);
+    public static Comparator<String> DEFAULT_STRING_COMPARATOR = new LexicographicStringComparator();
     
     /**
      *@return a new copy of the input array
@@ -1826,7 +1828,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of a sorted array that is closest to value
      */
-    public static final float findClosestInOrder(float[] array, float value) {
+    public static float findClosestInOrder(float[] array, float value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
             int position = -ret - 1;
@@ -1853,7 +1855,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
-    public static final int findClosestIndexInOrder(float[] array, float value) {
+    public static int findClosestIndexInOrder(float[] array, float value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
             int position = -ret - 1;
@@ -1880,7 +1882,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of a sorted array that is closest to value
      */
-    public static final char findClosestInOrder(char[] array, char value) {
+    public static char findClosestInOrder(char[] array, char value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
             int position = -ret - 1;
@@ -1907,7 +1909,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
-    public static final int findClosestIndexInOrder(char[] array, char value) {
+    public static int findClosestIndexInOrder(char[] array, char value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
             int position = -ret - 1;
@@ -1930,12 +1932,16 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
-    
+
     /**
-     *@return the element of a sorted array that is closest to value
+     * @param array a an array sorted according to the given comparator
+     * @param value the value to search
+     * @param distanceFunction the distance function for the given type
+     * @param comparator the comparator that defines the order for the given type
+     * @return the element in the given sorted array (order determined by given comparator) that is closest (distance determined by given distance function) to the given value
      */
-    public static final String findClosestInOrder(String[] array, String value) {
-        int ret = Arrays.binarySearch(array, value);
+    public static <T> T findClosestInOrder(T[] array, T value, DistanceFunction<T> distanceFunction, Comparator<T> comparator) {
+        int ret = Arrays.binarySearch(array, value, comparator);
         if (ret < 0) {
             int position = -ret - 1;
             if (position == 0) {
@@ -1945,8 +1951,8 @@ public abstract class ArrayOperations {
                 ret = position - 1;
             }
             else {
-                int diffLeft = value.compareTo(array[position-1]);
-                int diffRight = array[position].compareTo(value);
+                double diffLeft = distanceFunction.distance(value, array[position-1]);
+                double diffRight = distanceFunction.distance(array[position], value);
                 if (diffLeft <= diffRight) {
                     ret = position - 1;
                 }
@@ -1959,10 +1965,22 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *@return the index of the element of a sorted array that is closest to value
+     * @param array an array of string sorted in lexicographic order
+     * @return the element of a sorted array that is closest to value, according to lexicographic distance with different character counting (@see programming5.strings.LexicographicDistanceFunction)
      */
-    public static final int findClosestIndexInOrder(String[] array, String value) {
-        int ret = Arrays.binarySearch(array, value);
+    public static String findClosestInOrder(String[] array, String value) {
+        return findClosestInOrder(array, value, DEFAULT_STRING_DISTFUNC, DEFAULT_STRING_COMPARATOR);
+    }
+
+    /**
+     * @param array a an array sorted according to the given comparator
+     * @param value the value to search
+     * @param distanceFunction the distance function for the given type
+     * @param comparator the comparator that defines the order for the given type
+     * @return the index of the element in the given sorted array (order determined by given comparator) that is closest (distance determined by given distance function) to the given value
+     */
+    public static <T> int findClosestIndexInOrder(T[] array, T value, DistanceFunction<T> distanceFunction, Comparator<T> comparator) {
+        int ret = Arrays.binarySearch(array, value, comparator);
         if (ret < 0) {
             int position = -ret - 1;
             if (position == 0) {
@@ -1970,10 +1988,9 @@ public abstract class ArrayOperations {
             }
             else if (position == array.length) {
                 ret = position - 1;
-            }
-            else {
-                int diffLeft = value.compareTo(array[position-1]);
-                int diffRight = array[position].compareTo(value);
+            } else {
+                double diffLeft = distanceFunction.distance(value, array[position-1]);
+                double diffRight = distanceFunction.distance(array[position], value);
                 if (diffLeft <= diffRight) {
                     ret = position - 1;
                 }
@@ -1983,6 +2000,14 @@ public abstract class ArrayOperations {
             }
         }
         return ret;
+    }
+
+    /**
+     * @param array an array of string sorted in lexicographic order
+     * @return the index of the element of a sorted array that is closest to value, according to lexicographic distance with different character counting (@see programming5.strings.LexicographicDistanceFunction)
+     */
+    public static int findClosestIndexInOrder(String[] array, String value) {
+        return findClosestIndexInOrder(array, value, DEFAULT_STRING_DISTFUNC, DEFAULT_STRING_COMPARATOR);
     }
     
     /**
