@@ -26,6 +26,7 @@ package programming5.math;
  * @author Andres Quiroz Hernandez
  * @version 6.9
  */
+@FunctionalInterface
 public interface DistanceFunction<T> {
 
     /**

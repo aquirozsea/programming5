@@ -7,6 +7,7 @@ package programming5.arrays;
 
 import org.junit.*;
 import programming5.code.ReplicableObject;
+import programming5.collections.NotFoundException;
 import programming5.math.DistanceFunction;
 import programming5.strings.*;
 import programming5.strings.LexicographicDistanceFunction.Mode;
@@ -60,7 +61,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new byte[] {'a'}, replica);
         toReplicate = new byte[] {'a', 'b', 'c'};
         replica = ArrayOperations.replicate(toReplicate);
-        assertArrayEquals(new byte[] {'a', 'b', 'c'}, replica);
+        assertArrayEquals(new byte[]{'a', 'b', 'c'}, replica);
     }
 
     /**
@@ -79,7 +80,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new int[] {1}, replica);
         toReplicate = new int[] {1, 2, 3};
         replica = ArrayOperations.replicate(toReplicate);
-        assertArrayEquals(new int[] {1, 2, 3}, replica);
+        assertArrayEquals(new int[]{1, 2, 3}, replica);
     }
 
     /**
@@ -159,7 +160,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new String[] {"a"}, replica);
         toReplicate = new String[] {"a", "b", "c"};
         replica = ArrayOperations.replicate(toReplicate);
-        assertArrayEquals(new String[] {"a", "b", "c"}, replica);
+        assertArrayEquals(new String[]{"a", "b", "c"}, replica);
     }
 
     /**
@@ -178,7 +179,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new long[] {1}, replica);
         toReplicate = new long[] {1, 2, 3};
         replica = ArrayOperations.replicate(toReplicate);
-        assertArrayEquals(new long[] {1, 2, 3}, replica);
+        assertArrayEquals(new long[]{1, 2, 3}, replica);
     }
 
     /**
@@ -536,8 +537,8 @@ public class ArrayOperationsTest {
         assertArrayEquals(new byte[] {'a', 'b'}, prefix);
         prefix = ArrayOperations.prefix(toPrefix, 3);
         assertEquals(3, prefix.length);
-        assertArrayEquals(new byte[] {'a', 'b', 'c'}, prefix);
-        assertArrayEquals(new byte[] {'a', 'b', 'c'}, toPrefix);
+        assertArrayEquals(new byte[]{'a', 'b', 'c'}, prefix);
+        assertArrayEquals(new byte[]{'a', 'b', 'c'}, toPrefix);
         try {
             prefix = ArrayOperations.prefix(toPrefix, 4);
             fail("Prefix failed to throw out of bounds exception");
@@ -558,8 +559,8 @@ public class ArrayOperationsTest {
         assertArrayEquals(new int[] {1, 2}, prefix);
         prefix = ArrayOperations.prefix(toPrefix, 3);
         assertEquals(3, prefix.length);
-        assertArrayEquals(new int[] {1, 2, 3}, prefix);
-        assertArrayEquals(new int[] {1, 2, 3}, toPrefix);
+        assertArrayEquals(new int[]{1, 2, 3}, prefix);
+        assertArrayEquals(new int[]{1, 2, 3}, toPrefix);
         try {
             prefix = ArrayOperations.prefix(toPrefix, 4);
             fail("Prefix failed to throw out of bounds exception");
@@ -617,7 +618,7 @@ public class ArrayOperationsTest {
         assertEquals(0, prefix.length);
         prefix = ArrayOperations.prefix(toPrefix, 2);
         assertEquals(2, prefix.length);
-        assertArrayEquals(new char[] {'a', 'b'}, prefix);
+        assertArrayEquals(new char[]{'a', 'b'}, prefix);
         prefix = ArrayOperations.prefix(toPrefix, 3);
         assertEquals(3, prefix.length);
         assertArrayEquals(new char[]{'a', 'b', 'c'}, prefix);
@@ -639,10 +640,10 @@ public class ArrayOperationsTest {
         assertEquals(0, prefix.length);
         prefix = ArrayOperations.prefix(toPrefix, 2);
         assertEquals(2, prefix.length);
-        assertArrayEquals(new String[] {"a", "b"}, prefix);
+        assertArrayEquals(new String[]{"a", "b"}, prefix);
         prefix = ArrayOperations.prefix(toPrefix, 3);
         assertEquals(3, prefix.length);
-        assertArrayEquals(new String[] {"a", "b", "c"}, prefix);
+        assertArrayEquals(new String[]{"a", "b", "c"}, prefix);
         assertArrayEquals(new String[] {"a", "b", "c"}, toPrefix);
         try {
             prefix = ArrayOperations.prefix(toPrefix, 4);
@@ -664,7 +665,7 @@ public class ArrayOperationsTest {
         assertEquals(0, prefix.length);
         prefix = ArrayOperations.prefix(toPrefix, 2);
         assertEquals(2, prefix.length);
-        assertArrayEquals(new ReplicableObject[] {one, two}, prefix);
+        assertArrayEquals(new ReplicableObject[]{one, two}, prefix);
         prefix = ArrayOperations.prefix(toPrefix, 3);
         assertEquals(3, prefix.length);
         assertArrayEquals(new ReplicableObject[] {one, two, three}, prefix);
@@ -687,7 +688,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new byte[] {'a', 'b', 'c'}, suffix);
         suffix = ArrayOperations.suffix(toSuffix, 2);
         assertEquals(1, suffix.length);
-        assertArrayEquals(new byte[] {'c'}, suffix);
+        assertArrayEquals(new byte[]{'c'}, suffix);
         suffix = ArrayOperations.suffix(toSuffix, 3);
         assertEquals(0, suffix.length);
         assertArrayEquals(new byte[] {'a', 'b', 'c'}, toSuffix);
@@ -710,7 +711,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new int[] {1, 2, 3}, suffix);
         suffix = ArrayOperations.suffix(toSuffix, 2);
         assertEquals(1, suffix.length);
-        assertArrayEquals(new int[] {3}, suffix);
+        assertArrayEquals(new int[]{3}, suffix);
         suffix = ArrayOperations.suffix(toSuffix, 3);
         assertEquals(0, suffix.length);
         assertArrayEquals(new int[] {1, 2, 3}, toSuffix);
@@ -850,7 +851,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new byte[] {'b'}, subArray);
         subArray = ArrayOperations.subArray(toCut, 2, 2);
         assertEquals(0, subArray.length);
-        assertArrayEquals(new byte[] {'a', 'b', 'c'}, toCut);
+        assertArrayEquals(new byte[]{'a', 'b', 'c'}, toCut);
         try {
             subArray = ArrayOperations.subArray(toCut, 0, 4);
             fail("SubArray failed to throw out of bounds exception");
@@ -877,7 +878,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new int[] {2}, subArray);
         subArray = ArrayOperations.subArray(toCut, 2, 2);
         assertEquals(0, subArray.length);
-        assertArrayEquals(new int[] {1, 2, 3}, toCut);
+        assertArrayEquals(new int[]{1, 2, 3}, toCut);
         try {
             subArray = ArrayOperations.subArray(toCut, 0, 4);
             fail("SubArray failed to throw out of bounds exception");
@@ -1011,7 +1012,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new ReplicableObject[] {two}, subArray);
         subArray = ArrayOperations.subArray(toCut, 3, 3);
         assertEquals(0, subArray.length);
-        assertArrayEquals(new ReplicableObject[] {one, two, three}, toCut);
+        assertArrayEquals(new ReplicableObject[]{one, two, three}, toCut);
         try {
             subArray = ArrayOperations.subArray(toCut, 0, 4);
             fail("SubArray failed to throw out of bounds exception");
@@ -1056,10 +1057,10 @@ public class ArrayOperationsTest {
         assertNotSame(joined, empty);
         joined = ArrayOperations.join(empty, single, multiple, empty);
         assertEquals(4, joined.length);
-        assertArrayEquals(new int[] {1, 1, 2, 3}, joined);
+        assertArrayEquals(new int[]{1, 1, 2, 3}, joined);
         joined = ArrayOperations.join(single, single);
         assertEquals(2, joined.length);
-        assertArrayEquals(new int[] {1, 1}, joined);
+        assertArrayEquals(new int[]{1, 1}, joined);
     }
 
     /**
@@ -1109,7 +1110,7 @@ public class ArrayOperationsTest {
         assertNotSame(joined, empty);
         joined = ArrayOperations.join(empty, single, multiple, empty);
         assertEquals(4, joined.length);
-        assertArrayEquals(new char[] {'a', 'a', 'b', 'c'}, joined);
+        assertArrayEquals(new char[]{'a', 'a', 'b', 'c'}, joined);
         joined = ArrayOperations.join(single, single);
         assertEquals(2, joined.length);
         assertArrayEquals(new char[]{'a', 'a'}, joined);
@@ -1170,7 +1171,7 @@ public class ArrayOperationsTest {
         assertArrayEquals(new ReplicableObject[] {one, one, two, three}, joined);
         joined = ArrayOperations.join(single, single);
         assertEquals(2, joined.length);
-        assertArrayEquals(new ReplicableObject[] {one, one}, joined);
+        assertArrayEquals(new ReplicableObject[]{one, one}, joined);
     }
 
     /**
@@ -1199,7 +1200,7 @@ public class ArrayOperationsTest {
         assertEquals(0, deleted.length);
         deleted = ArrayOperations.delete(toDelete, 1);
         assertEquals(2, deleted.length);
-        assertArrayEquals(new byte[] {'a', 'c'}, deleted);
+        assertArrayEquals(new byte[]{'a', 'c'}, deleted);
     }
 
     /**
@@ -1228,7 +1229,7 @@ public class ArrayOperationsTest {
         assertEquals(0, deleted.length);
         deleted = ArrayOperations.delete(toDelete, 1);
         assertEquals(2, deleted.length);
-        assertArrayEquals(new int[] {1, 3}, deleted);
+        assertArrayEquals(new int[]{1, 3}, deleted);
     }
 
     /**
@@ -1340,7 +1341,7 @@ public class ArrayOperationsTest {
         assertEquals(0, deleted.length);
         deleted = ArrayOperations.delete(toDelete, 1);
         assertEquals(2, deleted.length);
-        assertArrayEquals(new String[] {"a", "c"}, deleted);
+        assertArrayEquals(new String[]{"a", "c"}, deleted);
     }
 
     /**
@@ -1369,7 +1370,7 @@ public class ArrayOperationsTest {
         assertEquals(0, deleted.length);
         deleted = ArrayOperations.delete(toDelete, 1);
         assertEquals(2, deleted.length);
-        assertArrayEquals(new Object[] {"a", "c"}, deleted);
+        assertArrayEquals(new Object[]{"a", "c"}, deleted);
     }
 
     /**
@@ -1419,6 +1420,28 @@ public class ArrayOperationsTest {
     }
 
     /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_byte_byteArr() {
+        byte[] findArray = new byte[] {'a', 'b', 'a', 'c'};
+        try {
+            assertEquals(0, ArrayOperations.findInSequence((byte) 'a', findArray));
+            assertEquals(1, ArrayOperations.findInSequence((byte) 'b', findArray));
+            assertEquals(3, ArrayOperations.findInSequence((byte) 'c', findArray));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+        try {
+            ArrayOperations.findInSequence((byte) 'd', findArray);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {
+        }
+    }
+
+    /**
      * Test of seqFind method, of class ArrayOperations.
      */
     @Test
@@ -1428,6 +1451,28 @@ public class ArrayOperationsTest {
         assertEquals(1, ArrayOperations.seqFind(2, findArray));
         assertEquals(3, ArrayOperations.seqFind(3, findArray));
         assertEquals(-1, ArrayOperations.seqFind(4, findArray));
+    }
+
+    /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_int_intArr() {
+        int[] findArray = new int[] {1, 2, 1, 3};
+        try {
+            assertEquals(0, ArrayOperations.findInSequence(1, findArray));
+            assertEquals(1, ArrayOperations.findInSequence(2, findArray));
+            assertEquals(3, ArrayOperations.findInSequence(3, findArray));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+        try {
+            ArrayOperations.findInSequence(4, findArray);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {
+        }
     }
 
     /**
@@ -1443,6 +1488,28 @@ public class ArrayOperationsTest {
     }
 
     /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_float_floatArr() {
+        float[] findArray = new float[] {1, 2, 1, 3};
+        try {
+            assertEquals(0, ArrayOperations.findInSequence(1, findArray));
+            assertEquals(1, ArrayOperations.findInSequence(2, findArray));
+            assertEquals(3, ArrayOperations.findInSequence(3, findArray));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+        try {
+            ArrayOperations.findInSequence(4, findArray);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {
+        }
+    }
+
+    /**
      * Test of seqFind method, of class ArrayOperations.
      */
     @Test
@@ -1452,6 +1519,28 @@ public class ArrayOperationsTest {
         assertEquals(1, ArrayOperations.seqFind(2, findArray));
         assertEquals(3, ArrayOperations.seqFind(3, findArray));
         assertEquals(-1, ArrayOperations.seqFind(4, findArray));
+    }
+
+    /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_double_doubleArr() {
+        double[] findArray = new double[] {1, 2, 1, 3};
+        try {
+            assertEquals(0, ArrayOperations.findInSequence(1, findArray));
+            assertEquals(1, ArrayOperations.findInSequence(2, findArray));
+            assertEquals(3, ArrayOperations.findInSequence(3, findArray));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+        try {
+            ArrayOperations.findInSequence(4, findArray);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {
+        }
     }
 
     /**
@@ -1467,6 +1556,28 @@ public class ArrayOperationsTest {
     }
 
     /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_char_charArr() {
+        char[] findArray = new char[] {'a', 'b', 'a', 'c'};
+        try {
+            assertEquals(0, ArrayOperations.findInSequence('a', findArray));
+            assertEquals(1, ArrayOperations.findInSequence('b', findArray));
+            assertEquals(3, ArrayOperations.findInSequence('c', findArray));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+        try {
+            ArrayOperations.findInSequence('d', findArray);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {
+        }
+    }
+
+    /**
      * Test of seqFind method, of class ArrayOperations.
      */
     @Test
@@ -1479,6 +1590,28 @@ public class ArrayOperationsTest {
     }
 
     /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_String_StringArr() {
+        String[] findArray = new String[] {"a", "b", "a", "c"};
+        try {
+            assertEquals(0, ArrayOperations.findInSequence("a", findArray));
+            assertEquals(1, ArrayOperations.findInSequence("b", findArray));
+            assertEquals(3, ArrayOperations.findInSequence("c", findArray));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+        try {
+            ArrayOperations.findInSequence("d", findArray);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {
+        }
+    }
+
+    /**
      * Test of seqFind method, of class ArrayOperations.
      */
     @Test
@@ -1487,6 +1620,26 @@ public class ArrayOperationsTest {
         KeyValuePairMatcher keyMatcher = new KeyValuePairMatcher();
         assertEquals(-1, ArrayOperations.seqFind("a", findArray, keyMatcher));
         assertEquals(2, ArrayOperations.seqFind("other", findArray, keyMatcher));
+    }
+
+    /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_3args_1() {
+        String[] findArray = new String[] {"first:a", "b:b", "other:a", "c:c"};
+        KeyValuePairMatcher keyMatcher = new KeyValuePairMatcher();
+        try {
+            ArrayOperations.findInSequence("a", findArray, keyMatcher);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            assertEquals(2, ArrayOperations.findInSequence("other", findArray, keyMatcher));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
     }
 
     /**
@@ -1502,6 +1655,31 @@ public class ArrayOperationsTest {
     }
 
     /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_3args_2() {
+        byte[] findArray = new byte[] {'a', 'b', 'a', 'c'};
+        try {
+            ArrayOperations.findInSequence((byte) 'a', findArray, 3);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            ArrayOperations.findInSequence((byte) 'd', findArray, 0);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            assertEquals(0, ArrayOperations.findInSequence((byte) 'a', findArray, 0));
+            assertEquals(2, ArrayOperations.findInSequence((byte) 'a', findArray, 1));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+    }
+
+    /**
      * Test of seqFind method, of class ArrayOperations.
      */
     @Test
@@ -1511,6 +1689,31 @@ public class ArrayOperationsTest {
         assertEquals(2, ArrayOperations.seqFind(1, findArray, 1));
         assertEquals(-1, ArrayOperations.seqFind(1, findArray, 3));
         assertEquals(-1, ArrayOperations.seqFind(4, findArray, 0));
+    }
+
+    /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_3args_3() {
+        int[] findArray = new int[] {1, 2, 1, 3};
+        try {
+            ArrayOperations.findInSequence(1, findArray, 3);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            ArrayOperations.findInSequence(4, findArray, 0);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            assertEquals(0, ArrayOperations.findInSequence(1, findArray, 0));
+            assertEquals(2, ArrayOperations.findInSequence(1, findArray, 1));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
     }
 
     /**
@@ -1526,6 +1729,31 @@ public class ArrayOperationsTest {
     }
 
     /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_3args_4() {
+        float[] findArray = new float[] {1, 2, 1, 3};
+        try {
+            ArrayOperations.findInSequence(1, findArray, 3);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            ArrayOperations.findInSequence(4, findArray, 0);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            assertEquals(0, ArrayOperations.findInSequence(1, findArray, 0));
+            assertEquals(2, ArrayOperations.findInSequence(1, findArray, 1));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+    }
+
+    /**
      * Test of seqFind method, of class ArrayOperations.
      */
     @Test
@@ -1538,15 +1766,65 @@ public class ArrayOperationsTest {
     }
 
     /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_3args_5() {
+        double[] findArray = new double[] {1, 2, 1, 3};
+        try {
+            ArrayOperations.findInSequence(1, findArray, 3);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            ArrayOperations.findInSequence(4, findArray, 0);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            assertEquals(0, ArrayOperations.findInSequence(1, findArray, 0));
+            assertEquals(2, ArrayOperations.findInSequence(1, findArray, 1));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+    }
+
+    /**
      * Test of seqFind method, of class ArrayOperations.
      */
     @Test
     public void testSeqFind_3args_6() {
         char[] findArray = new char[] {'a', 'b', 'a', 'c'};
-        assertEquals(0, ArrayOperations.seqFind( 'a', findArray, 0));
+        assertEquals(0, ArrayOperations.seqFind('a', findArray, 0));
         assertEquals(2, ArrayOperations.seqFind('a', findArray, 1));
         assertEquals(-1, ArrayOperations.seqFind('a', findArray, 3));
         assertEquals(-1, ArrayOperations.seqFind('d', findArray, 0));
+    }
+
+    /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_3args_6() {
+        char[] findArray = new char[] {'a', 'b', 'a', 'c'};
+        try {
+            ArrayOperations.findInSequence('a', findArray, 3);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            ArrayOperations.findInSequence('d', findArray, 0);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            assertEquals(0, ArrayOperations.findInSequence('a', findArray, 0));
+            assertEquals(2, ArrayOperations.findInSequence('a', findArray, 1));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
     }
 
     /**
@@ -1562,6 +1840,31 @@ public class ArrayOperationsTest {
     }
 
     /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_3args_7() {
+        String[] findArray = new String[] {"a", "b", "a", "c"};
+        try {
+            ArrayOperations.findInSequence("a", findArray, 3);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            ArrayOperations.findInSequence("d", findArray, 0);
+            fail("findInSequence did not throw not found exception as expected");
+        }
+        catch (NotFoundException nfe) {}
+        try {
+            assertEquals(0, ArrayOperations.findInSequence("a", findArray, 0));
+            assertEquals(2, ArrayOperations.findInSequence("a", findArray, 1));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
+    }
+
+    /**
      * Test of seqFind method, of class ArrayOperations.
      */
     @Test
@@ -1569,6 +1872,21 @@ public class ArrayOperationsTest {
         String[] findArray = new String[] {"first:a", "b:b", "other:a", "c:c"};
         KeyValuePairMatcher keyMatcher = new KeyValuePairMatcher();
         assertEquals(2, ArrayOperations.seqFind("other", findArray, 1, keyMatcher));
+    }
+
+    /**
+     * Test of findInSequence method, of class ArrayOperations.
+     */
+    @Test
+    public void testFindInSequence_4args() {
+        String[] findArray = new String[] {"first:a", "b:b", "other:a", "c:c"};
+        KeyValuePairMatcher keyMatcher = new KeyValuePairMatcher();
+        try {
+            assertEquals(2, ArrayOperations.findInSequence("other", findArray, 1, keyMatcher));
+        }
+        catch (NotFoundException nfe) {
+            fail("findInSequence did not find existing element");
+        }
     }
 
     /**
@@ -2248,74 +2566,28 @@ public class ArrayOperationsTest {
         assertEquals(6, ArrayOperations.findPositionInOrder(array, "z", asc));
     }
 
-    /**
-     * Test of normalizeMax method, of class ArrayOperations.
-     */
-    @Test
-    public void testNormalizeMax_intArr() {
-    }
-
-    /**
-     * Test of normalizeSum method, of class ArrayOperations.
-     */
-    @Test
-    public void testNormalizeSum_intArr() {
-    }
-
-    /**
-     * Test of normalizeVal method, of class ArrayOperations.
-     */
-    @Test
-    public void testNormalizeVal_intArr_double() {
-    }
-
-    /**
-     * Test of normalizeMax method, of class ArrayOperations.
-     */
-    @Test
-    public void testNormalizeMax_floatArr() {
-    }
-
-    /**
-     * Test of normalizeSum method, of class ArrayOperations.
-     */
-    @Test
-    public void testNormalizeSum_floatArr() {
-    }
-
-    /**
-     * Test of normalizeVal method, of class ArrayOperations.
-     */
-    @Test
-    public void testNormalizeVal_floatArr_double() {
-    }
-
-    /**
-     * Test of normalizeMax method, of class ArrayOperations.
-     */
-    @Test
-    public void testNormalizeMax_doubleArr() {
-    }
-
-    /**
-     * Test of normalizeSum method, of class ArrayOperations.
-     */
-    @Test
-    public void testNormalizeSum_doubleArr() {
-    }
-
-    /**
-     * Test of normalizeVal method, of class ArrayOperations.
-     */
-    @Test
-    public void testNormalizeVal_doubleArr_double() {
-    }
+    // Not testing normalize methods
 
     /**
      * Test of reverse method, of class ArrayOperations.
      */
     @Test
     public void testReverse_intArr() {
+        int[] array = new int[] {1, 10, 15, 50, Integer.MAX_VALUE};
+        int[] reversedArray = ArrayOperations.reverse(array);
+        assertEquals(5, reversedArray.length);
+        assertEquals(Integer.MAX_VALUE, reversedArray[0]);
+        assertEquals(50, reversedArray[1]);
+        assertEquals(15, reversedArray[2]);
+        assertEquals(10, reversedArray[3]);
+        assertEquals(1, reversedArray[4]);
+        ArrayOperations.reverseInPlace(array);
+        assertEquals(5, array.length);
+        assertEquals(Integer.MAX_VALUE, array[0]);
+        assertEquals(50, array[1]);
+        assertEquals(15, array[2]);
+        assertEquals(10, array[3]);
+        assertEquals(1, array[4]);
     }
 
     /**
@@ -2323,6 +2595,23 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testReverse_floatArr() {
+        float[] array = new float[] {1, 9.9f, 9.9000001f, 10, 15, 50};
+        float[] reversedArray = ArrayOperations.reverse(array);
+        assertEquals(6, reversedArray.length);
+        assertEquals(50, reversedArray[0], 0);
+        assertEquals(15, reversedArray[1], 0);
+        assertEquals(10, reversedArray[2], 0);
+        assertEquals(9.9000001f, reversedArray[3], 0);
+        assertEquals(9.9f, reversedArray[4], 0);
+        assertEquals(1, reversedArray[5], 0);
+        ArrayOperations.reverseInPlace(array);
+        assertEquals(6, array.length);
+        assertEquals(50, array[0], 0);
+        assertEquals(15, array[1], 0);
+        assertEquals(10, array[2], 0);
+        assertEquals(9.9000001f, array[3], 0);
+        assertEquals(9.9f, array[4], 0);
+        assertEquals(1, array[5], 0);
     }
 
     /**
@@ -2330,6 +2619,23 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testReverse_doubleArr() {
+        double[] array = new double[] {1, 9.9, 9.90000000000002, 10, 15, 50};
+        double[] reversedArray = ArrayOperations.reverse(array);
+        assertEquals(6, reversedArray.length);
+        assertEquals(50, reversedArray[0], 0);
+        assertEquals(15, reversedArray[1], 0);
+        assertEquals(10, reversedArray[2], 0);
+        assertEquals(9.90000000000002, reversedArray[3], 0);
+        assertEquals(9.9, reversedArray[4], 0);
+        assertEquals(1, reversedArray[5], 0);
+        ArrayOperations.reverseInPlace(array);
+        assertEquals(6, array.length);
+        assertEquals(50, array[0], 0);
+        assertEquals(15, array[1], 0);
+        assertEquals(10, array[2], 0);
+        assertEquals(9.90000000000002, array[3], 0);
+        assertEquals(9.9, array[4], 0);
+        assertEquals(1, array[5], 0);
     }
 
     /**
@@ -2337,6 +2643,23 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testReverse_charArr() {
+        char[] array = new char[] {'A', 'a', 'e', 'i', 'n', 's'};
+        char[] reversedArray = ArrayOperations.reverse(array);
+        assertEquals(6, reversedArray.length);
+        assertEquals('s', reversedArray[0]);
+        assertEquals('n', reversedArray[1]);
+        assertEquals('i', reversedArray[2]);
+        assertEquals('e', reversedArray[3]);
+        assertEquals('a', reversedArray[4]);
+        assertEquals('A', reversedArray[5]);
+        ArrayOperations.reverseInPlace(array);
+        assertEquals(6, array.length);
+        assertEquals('s', array[0]);
+        assertEquals('n', array[1]);
+        assertEquals('i', array[2]);
+        assertEquals('e', array[3]);
+        assertEquals('a', array[4]);
+        assertEquals('A', array[5]);
     }
 
     /**
@@ -2344,6 +2667,23 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testReverse_StringArr() {
+        String[] array = new String[] {"array", "assert", "equals", "int", "new", "string"};
+        String[] reversedArray = ArrayOperations.reverse(array);
+        assertEquals(6, reversedArray.length);
+        assertEquals("string", reversedArray[0]);
+        assertEquals("new", reversedArray[1]);
+        assertEquals("int", reversedArray[2]);
+        assertEquals("equals", reversedArray[3]);
+        assertEquals("assert", reversedArray[4]);
+        assertEquals("array", reversedArray[5]);
+        ArrayOperations.reverseInPlace(array);
+        assertEquals(6, array.length);
+        assertEquals("string", array[0]);
+        assertEquals("new", array[1]);
+        assertEquals("int", array[2]);
+        assertEquals("equals", array[3]);
+        assertEquals("assert", array[4]);
+        assertEquals("array", array[5]);
     }
 
     /**
@@ -2351,6 +2691,19 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testReverse_booleanArr() {
+        boolean[] array = new boolean[] {true, false, true, true};
+        boolean[] reversedArray = ArrayOperations.reverse(array);
+        assertEquals(4, reversedArray.length);
+        assertTrue(reversedArray[0]);
+        assertTrue(reversedArray[1]);
+        assertFalse(reversedArray[2]);
+        assertTrue(reversedArray[3]);
+        ArrayOperations.reverseInPlace(array);
+        assertEquals(4, array.length);
+        assertTrue(array[0]);
+        assertTrue(array[1]);
+        assertFalse(array[2]);
+        assertTrue(array[3]);
     }
 
     /**
@@ -2358,6 +2711,26 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testReverse_ObjectArr() {
+        ReplicableObject one = new ReplicableObject(1);
+        ReplicableObject ten = new ReplicableObject(10);
+        ReplicableObject fifteen = new ReplicableObject(15);
+        ReplicableObject fifty = new ReplicableObject(50);
+        ReplicableObject max = new ReplicableObject(Integer.MAX_VALUE);
+        ReplicableObject[] array = new ReplicableObject[] {one, ten, fifteen, fifty, max};
+        Object[] reversedArray = ArrayOperations.reverse(array);
+        assertEquals(5, reversedArray.length);
+        assertEquals(max, reversedArray[0]);
+        assertEquals(fifty, reversedArray[1]);
+        assertEquals(fifteen, reversedArray[2]);
+        assertEquals(ten, reversedArray[3]);
+        assertEquals(one, reversedArray[4]);
+        ArrayOperations.reverseInPlace(array);
+        assertEquals(5, array.length);
+        assertEquals(max, array[0]);
+        assertEquals(fifty, array[1]);
+        assertEquals(fifteen, array[2]);
+        assertEquals(ten, array[3]);
+        assertEquals(one, array[4]);
     }
 
     /**

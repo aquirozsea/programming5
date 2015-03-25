@@ -21,6 +21,7 @@
 
 package programming5.arrays;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import programming5.code.ObjectMatcher;
 import programming5.code.Replicable;
 import programming5.collections.NotFoundException;
@@ -49,6 +50,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new copy of the input array
      */
+    @Immutable
     public static byte[] replicate(byte[] array) {
         if (array == null) {return null;}
         byte[] ret = new byte[array.length];
@@ -59,6 +61,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new copy of the input array
      */
+    @Immutable
     public static int[] replicate(int[] array) {
         if (array == null) {return null;}
         int[] ret = new int[array.length];
@@ -69,6 +72,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new copy of the input array
      */
+    @Immutable
     public static float[] replicate(float[] array) {
         if (array == null) {return null;}
         float[] ret = new float[array.length];
@@ -79,6 +83,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new copy of the input array
      */
+    @Immutable
     public static double[] replicate(double[] array) {
         if (array == null) {return null;}
         double[] ret = new double[array.length];
@@ -89,6 +94,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new copy of the input array
      */
+    @Immutable
     public static char[] replicate(char[] array) {
         if (array == null) {return null;}
         char[] ret = new char[array.length];
@@ -99,6 +105,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new copy of the input array
      */
+    @Immutable
     public static String[] replicate(String[] array) {
         if (array == null) {return null;}
         String[] ret = new String[array.length];
@@ -106,6 +113,10 @@ public abstract class ArrayOperations {
         return ret;
     }
 
+    /**
+     *@return a new copy of the input array
+     */
+    @Immutable
     public static long[] replicate(long[] array) {
         if (array == null) {return null;}
         long[] ret = new long[array.length];
@@ -132,6 +143,7 @@ public abstract class ArrayOperations {
      *@param destination the pre-allocated destination array, of equal size as the source array, which will be filled with values from the source
      *@throws java.lang.IllegalArgumentException if the arrays are of different sizes
      */
+    @Immutable
     public static <T extends Replicable> void replicate(T[] source, T[] destination) {
         if (source.length == destination.length) {
             for (int i = 0; i < source.length; i++) {
@@ -146,6 +158,7 @@ public abstract class ArrayOperations {
     /**
      *@return the sum of the elements of the input array
      */
+    @Immutable
     public static int sum(int... array) {
         int sum = 0;
         for (int elem : array) {
@@ -157,6 +170,7 @@ public abstract class ArrayOperations {
     /**
      *@return the sum of the elements of the input array
      */
+    @Immutable
     public static float sum(float... array) {
         float sum = 0;
         for (float elem : array) {
@@ -168,6 +182,7 @@ public abstract class ArrayOperations {
     /**
      *@return the sum of the elements of the input array
      */
+    @Immutable
     public static double sum(double... array) {
         double sum = 0;
         for (double elem : array) {
@@ -179,6 +194,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (beware of overflow)
      */
+    @Immutable
     public static long product(int... array) {
         if (array.length == 0) {return 0;}
         long product = 1;
@@ -191,6 +207,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (using a BigInteger in case of overflow)
      */
+    @Immutable
     public static BigInteger bigProduct(int... array) {
         if (array.length == 0) {return BigInteger.ZERO;}
         BigInteger product = BigInteger.ONE;
@@ -203,6 +220,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (using a BigInteger in case of overflow)
      */
+    @Immutable
     public static BigInteger bigProduct(long... array) {
         if (array.length == 0) {return BigInteger.ZERO;}
         BigInteger product = BigInteger.ONE;
@@ -215,6 +233,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (beware of overflow)
      */
+    @Immutable
     public static double product(float... array) {
         if (array.length == 0) {return 0;}
         double product = 1;
@@ -227,6 +246,7 @@ public abstract class ArrayOperations {
     /**
      * @return the product of the elements of the given array (beware of overflow)
      */
+    @Immutable
     public static double product(double... array) {
         if (array.length == 0) {return 0;}
         double product = 1;
@@ -239,6 +259,7 @@ public abstract class ArrayOperations {
     /**
      *@return the average of the elements of the input array
      */
+    @Immutable
     public static double avg(int... array) {
         if (array.length == 0) {return 0;}
         return (double)sum(array)/(double)array.length;
@@ -247,6 +268,7 @@ public abstract class ArrayOperations {
     /**
      *@return the average of the elements of the input array
      */
+    @Immutable
     public static double avg(float... array) {
         if (array.length == 0) {return 0;}
         return (double)sum(array)/(double)array.length;
@@ -255,6 +277,7 @@ public abstract class ArrayOperations {
     /**
      *@return the average of the elements of the input array
      */
+    @Immutable
     public static double avg(double... array) {
         if (array.length == 0) {return 0;}
         return sum(array)/(double)array.length;
@@ -263,6 +286,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array
      */
+    @Immutable
     public static int max(int... array) {
         int ret = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -276,6 +300,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array
      */
+    @Immutable
     public static float max(float... array) {
         float ret = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -289,6 +314,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array
      */
+    @Immutable
     public static double max(double... array) {
         double ret = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -302,6 +328,7 @@ public abstract class ArrayOperations {
     /**
      *@return the maximum element value of the elements of the input array, with respect to the given comparator
      */
+    @Immutable
     public static <T, S extends T> Object max(S[] array, Comparator<T> comp) {
         S ret = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -315,6 +342,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of maximum value in the input array
      */
+    @Immutable
     public static int maxIndex(int[] array) {
         int ret = 0;
         int maxval = array[0];
@@ -330,6 +358,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of maximum value in the input array
      */
+    @Immutable
     public static int maxIndex(long[] array) {
         int ret = 0;
         long maxval = array[0];
@@ -345,6 +374,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of maximum value in the input array
      */
+    @Immutable
     public static int maxIndex(float[] array) {
         int ret = 0;
         float maxval = array[0];
@@ -360,6 +390,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of maximum value in the input array
      */
+    @Immutable
     public static int maxIndex(double[] array) {
         int ret = 0;
         double maxval = array[0];
@@ -375,6 +406,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of maximum value in the input array, with respect to the given comparator
      */
+    @Immutable
     public static <T, S extends T> int maxIndex(S[] array, Comparator<T> comp) {
         int ret = 0;
         S maxval = array[0];
@@ -390,6 +422,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array
      */
+    @Immutable
     public static int min(int... array) {
         int ret = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -402,6 +435,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array
      */
+    @Immutable
     public static float min(float... array) {
         float ret = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -414,6 +448,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array
      */
+    @Immutable
     public static double min(double... array) {
         double ret = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -426,6 +461,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of minimum value of the elements in the array, with respect to the given comparator
      */
+    @Immutable
     public static <T, S extends T> Object min(S[] array, Comparator<T> comp) {
         S ret = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -439,6 +475,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of minimum value of the elements in the input array
      */
+    @Immutable
     public static int minIndex(int[] array) {
         int ret = 0;
         int minval = array[0];
@@ -454,6 +491,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of minimum value of the elements in the input array
      */
+    @Immutable
     public static int minIndex(float[] array) {
         int ret = 0;
         float minval = array[0];
@@ -469,6 +507,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of minimum value of the elements in the input array
      */
+    @Immutable
     public static int minIndex(double[] array) {
         int ret = 0;
         double minval = array[0];
@@ -484,6 +523,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of minimum value of the elements in the input array, with respect to the given comparator
      */
+    @Immutable
     public static <T, S extends T> int minIndex(S[] array, Comparator<T> comp) {
         int ret = 0;
         S maxval = array[0];
@@ -499,6 +539,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
+    @Immutable
     public static byte[] prefix(byte[] array, int until) throws ArrayIndexOutOfBoundsException {
         byte[] ret = new byte[until];
         System.arraycopy(array, 0, ret, 0, until);
@@ -508,6 +549,7 @@ public abstract class ArrayOperations {
     /**
      *@return  a new subarray of elements of array from 0 to that indexed by until-1
      */
+    @Immutable
     public static int[] prefix(int[] array, int until) throws ArrayIndexOutOfBoundsException {
         int[] ret = new int[until];
         System.arraycopy(array, 0, ret, 0, until);
@@ -517,6 +559,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
+    @Immutable
     public static float[] prefix(float[] array, int until) throws ArrayIndexOutOfBoundsException {
         float[] ret = new float[until];
         System.arraycopy(array, 0, ret, 0, until);
@@ -526,6 +569,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
+    @Immutable
     public static double[] prefix(double[] array, int until) throws ArrayIndexOutOfBoundsException {
         double[] ret = new double[until];
         System.arraycopy(array, 0, ret, 0, until);
@@ -535,6 +579,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
+    @Immutable
     public static char[] prefix(char[] array, int until) throws ArrayIndexOutOfBoundsException {
         char[] ret = new char[until];
         System.arraycopy(array, 0, ret, 0, until);
@@ -544,6 +589,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
+    @Immutable
     public static String[] prefix(String[] array, int until) throws ArrayIndexOutOfBoundsException {
         String[] ret = new String[until];
         System.arraycopy(array, 0, ret, 0, until);
@@ -553,6 +599,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1. Caution: Does not replicate objects
      */
+    @Immutable
     public static Object[] prefix(Object[] array, int until) throws ArrayIndexOutOfBoundsException {
         Object[] ret = new Object[until];
         System.arraycopy(array, 0, ret, 0, until);
@@ -562,6 +609,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from 0 to that indexed by until-1
      */
+    @Immutable
     public static byte[] suffix(byte[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         byte[] ret = new byte[array.length-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -571,6 +619,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
+    @Immutable
     public static int[] suffix(int[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         int[] ret = new int[array.length-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -580,6 +629,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
+    @Immutable
     public static float[] suffix(float[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         float[] ret = new float[array.length-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -589,6 +639,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
+    @Immutable
     public static double[] suffix(double[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         double[] ret = new double[array.length-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -598,6 +649,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
+    @Immutable
     public static char[] suffix(char[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         char[] ret = new char[array.length-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -607,6 +659,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element
      */
+    @Immutable
     public static String[] suffix(String[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         String[] ret = new String[array.length-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -616,6 +669,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to the last element. Caution: Does not replicate objects!
      */
+    @Immutable
     public static Object[] suffix(Object[] array, int from) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         Object[] ret = new Object[array.length-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -625,6 +679,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
+    @Immutable
     public static byte[] subArray(byte[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         byte[] ret = new byte[until-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -634,6 +689,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
+    @Immutable
     public static int[] subArray(int[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         int[] ret = new int[until-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -643,6 +699,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
+    @Immutable
     public static float[] subArray(float[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         float[] ret = new float[until-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -652,6 +709,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
+    @Immutable
     public static double[] subArray(double[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         double[] ret = new double[until-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -661,6 +719,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
+    @Immutable
     public static char[] subArray(char[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         char[] ret = new char[until-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -670,6 +729,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1
      */
+    @Immutable
     public static String[] subArray(String[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         String[] ret = new String[until-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -679,6 +739,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new subarray of elements of array from that indexed by from to that indexed by until-1. Caution: Does not replicate objects!
      */
+    @Immutable
     public static Object[] subArray(Object[] array, int from, int until) throws ArrayIndexOutOfBoundsException, NegativeArraySizeException {
         Object[] ret = new Object[until-from];
         System.arraycopy(array, from, ret, 0, ret.length);
@@ -688,6 +749,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
+    @Immutable
     public static byte[] join(byte[]... arrays) {
         int totalLength = 0;
         for (byte[] array : arrays) {
@@ -705,6 +767,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
+    @Immutable
     public static int[] join(int[]... arrays) {
         int totalLength = 0;
         for (int[] array : arrays) {
@@ -722,6 +785,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
+    @Immutable
     public static float[] join(float[]... arrays) {
         int totalLength = 0;
         for (float[] array : arrays) {
@@ -739,6 +803,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
+    @Immutable
     public static double[] join(double[]... arrays) {
         int totalLength = 0;
         for (double[] array : arrays) {
@@ -756,6 +821,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
+    @Immutable
     public static char[] join(char[]... arrays) {
         int totalLength = 0;
         for (char[] array : arrays) {
@@ -773,6 +839,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
+    @Immutable
     public static boolean[] join(boolean[]... arrays) {
         int totalLength = 0;
         for (boolean[] array : arrays) {
@@ -790,6 +857,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array containing the elements of all arrays in sequential order
      */
+    @Immutable
     public static String[] join(String[]... arrays) {
         int totalLength = 0;
         for (String[] array : arrays) {
@@ -808,6 +876,7 @@ public abstract class ArrayOperations {
      *@return a new array containing the elements of all arrays in sequential order.
      *Caution: Does not replicate objects!
      */
+    @Immutable
     public static Object[] join(Object[]... arrays) {
         int totalLength = 0;
         for (Object[] array : arrays) {
@@ -825,6 +894,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
+    @Immutable
     public static byte[] delete(byte[] array, int item) {
         if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
         byte[] ret = new byte[array.length-1];
@@ -838,6 +908,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
+    @Immutable
     public static int[] delete(int[] array, int item) {
         if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
         int[] ret = new int[array.length-1];
@@ -851,6 +922,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
+    @Immutable
     public static float[] delete(float[] array, int item) {
         if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
         float[] ret = new float[array.length-1];
@@ -864,6 +936,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
+    @Immutable
     public static double[] delete(double[] array, int item) {
         if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
         double[] ret = new double[array.length-1];
@@ -877,6 +950,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
+    @Immutable
     public static char[] delete(char[] array, int item) {
         if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
         char[] ret = new char[array.length-1];
@@ -890,6 +964,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified)
      */
+    @Immutable
     public static String[] delete(String[] array, int item) {
         if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
         String[] ret = new String[array.length-1];
@@ -903,6 +978,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array of size array.length-1 in which the element in the position given by item in the input array has been deleted (the input array is not modified). Caution: Does not replicate objects!
      */
+    @Immutable
     public static Object[] delete(Object[] array, int item) {
         if (item < 0 || item >= array.length) {throw new ArrayIndexOutOfBoundsException("ArrayOperations: Cannot delete item: Index " + item + " out of bounds on array of length " + array.length);}
         Object[] ret = new Object[array.length-1];
@@ -916,6 +992,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
+    @Immutable
     public static void print(byte[] array) {
         for (byte elem : array)
             OUT.println(elem);
@@ -924,6 +1001,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
+    @Immutable
     public static void print(int... array) {
         for (int elem : array)
             OUT.println(elem);
@@ -932,6 +1010,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
+    @Immutable
     public static void print(float... array) {
         for (float elem : array)
             OUT.println(elem);
@@ -940,6 +1019,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
+    @Immutable
     public static void print(double... array) {
         for (double elem : array)
             OUT.println(elem);
@@ -948,6 +1028,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
+    @Immutable
     public static void print(char... array) {
         for (char elem : array)
             OUT.println(elem);
@@ -956,6 +1037,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line
      */
+    @Immutable
     public static void print(String... array) {
         for (String elem : array)
             OUT.println(elem);
@@ -964,6 +1046,7 @@ public abstract class ArrayOperations {
     /**
      *Prints the elements of the array to System.out, or the current OUT stream, one per line, using objects' toString method
      */
+    @Immutable
     public static void print(Object... array) {
         for (Object elem : array) {
             OUT.println(elem.toString());
@@ -973,6 +1056,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
+    @Immutable
     public static void printHorizontal(byte[] array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
@@ -984,6 +1068,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
+    @Immutable
     public static void printHorizontal(int... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
@@ -995,6 +1080,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
+    @Immutable
     public static void printHorizontal(float... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
@@ -1006,6 +1092,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
+    @Immutable
     public static void printHorizontal(double... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
@@ -1017,6 +1104,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
+    @Immutable
     public static void printHorizontal(char... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
@@ -1028,6 +1116,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
+    @Immutable
     public static void printHorizontal(String... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
@@ -1039,6 +1128,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream, using objects' toString method
      */
+    @Immutable
     public static void printHorizontal(Object... array) {
         OUT.print(array[0].toString());
         for (int i = 1; i < array.length; i++) {
@@ -1050,6 +1140,7 @@ public abstract class ArrayOperations {
     /**
      *Prints a comma separated list of the elements of the input array to System.out, or the current OUT stream
      */
+    @Immutable
     public static void printHorizontal(boolean... array) {
         OUT.print(array[0]);
         for (int i = 1; i < array.length; i++) {
@@ -1061,6 +1152,7 @@ public abstract class ArrayOperations {
     /**
      *@return true if all of the elements of the input array are true
      */
+    @Immutable
     public static boolean tautology(boolean... array) {
         boolean ret = (array.length > 0);
         for (boolean ind : array) {
@@ -1075,6 +1167,7 @@ public abstract class ArrayOperations {
     /**
      *@return true if all the elements of the input array are false, or if the array is empty
      */
+    @Immutable
     public static boolean contradiction(boolean... array) {
         boolean ret = true;
         for (boolean ind : array) {
@@ -1106,6 +1199,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array
      * @throws NotFoundException if b is not found in the array
      */
+    @Immutable
     public static int findInSequence(byte b, byte[] array) throws NotFoundException {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1135,6 +1229,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array
      * @throws NotFoundException if b is not found in the array
      */
+    @Immutable
     public static int findInSequence(int b, int[] array) throws NotFoundException {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1164,6 +1259,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array
      * @throws NotFoundException if b is not found in the array
      */
+    @Immutable
     public static int findInSequence(float b, float[] array) throws NotFoundException {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1193,6 +1289,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array
      * @throws NotFoundException if b is not found in the array
      */
+    @Immutable
     public static int findInSequence(double b, double[] array) throws NotFoundException {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1222,6 +1319,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array
      * @throws NotFoundException if b is not found in the array
      */
+    @Immutable
     public static int findInSequence(char b, char[] array) throws NotFoundException {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1251,6 +1349,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array
      * @throws NotFoundException if b is not found in the array
      */
+    @Immutable
     public static int findInSequence(Object b, Object[] array) throws NotFoundException {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == b) {
@@ -1280,6 +1379,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array using the given matcher
      * @throws NotFoundException if b is not found in the array
      */
+    @Immutable
     public static <T> int findInSequence(T b, T[] array, ObjectMatcher<T> matcher) throws NotFoundException {
         for (int i = 0; i < array.length; i++) {
             if (matcher.matches(array[i], b)) {
@@ -1309,6 +1409,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array after and including the given starting index
      * @throws NotFoundException if b is not found from the starting position
      */
+    @Immutable
     public static int findInSequence(byte b, byte[] array, int from) throws NotFoundException {
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1338,6 +1439,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array after and including the given starting index
      * @throws NotFoundException if b is not found from the starting position
      */
+    @Immutable
     public static int findInSequence(int b, int[] array, int from) throws NotFoundException {
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1367,6 +1469,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array after and including the given starting index
      * @throws NotFoundException if b is not found from the starting position
      */
+    @Immutable
     public static int findInSequence(float b, float[] array, int from) throws NotFoundException {
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1396,6 +1499,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array after and including the given starting index
      * @throws NotFoundException if b is not found from the starting position
      */
+    @Immutable
     public static int findInSequence(double b, double[] array, int from) throws NotFoundException {
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1425,6 +1529,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array after and including the given starting index
      * @throws NotFoundException if b is not found from the starting position
      */
+    @Immutable
     public static int findInSequence(char b, char[] array, int from) throws NotFoundException {
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1454,6 +1559,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array after and including the given starting index
      * @throws NotFoundException if b is not found from the starting position
      */
+    @Immutable
     public static int findInSequence(Object b, Object[] array, int from) throws NotFoundException {
         for (int i = from; i < array.length; i++) {
             if (array[i] == b) {
@@ -1483,6 +1589,7 @@ public abstract class ArrayOperations {
      * @return the index of the first b in the array after and including the given starting index
      * @throws NotFoundException if b is not found from the starting position
      */
+    @Immutable
     public static <T> int findInSequence(T b, T[] array, int from, ObjectMatcher<T> matcher) throws NotFoundException {
         for (int i = from; i < array.length; i++) {
             if (matcher.matches(array[i], b)) {
@@ -1495,6 +1602,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of array that is closest to the given value (the first one encountered if multiple elements are equally close)
      */
+    @Immutable
     public static int findClosest(int[] array, int value) {
         int ret = array[0];
         long minDiff = Math.abs((long) value - array[0]);
@@ -1511,6 +1619,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of array that is closest to value (the first one encountered if multiple elements are equally close)
      */
+    @Immutable
     public static int findClosestIndex(int[] array, int value) {
         int ret = 0;
         long minDiff = Math.abs((long) value - array[0]);
@@ -1534,6 +1643,7 @@ public abstract class ArrayOperations {
      * @return the element of array that is closest to the given value (the first one encountered if multiple elements are equally close, within double floating
      * point precision)
      */
+    @Immutable
     public static double findClosest(double[] array, double value) {
         int retIndex = 0;
         BigDecimal auxValue = new BigDecimal(value);
@@ -1580,6 +1690,7 @@ public abstract class ArrayOperations {
      * Works with current tests, but be wary of precision issues (good precision to about eight significant digits). Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
      * @return the element of array that is closest to value
      */
+    @Immutable
     public static float findClosest(float[] array, float value) {
         float ret = array[0];
         double minDiff = Math.abs((double) value - array[0]);
@@ -1606,6 +1717,7 @@ public abstract class ArrayOperations {
      * Works with current tests, but be wary of precision issues (good precision to about eight significant digits). Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
      * @return the index of the element of array that is closest to value
      */
+    @Immutable
     public static int findClosestIndex(float[] array, float value) {
         int ret = 0;
         double minDiff = Math.abs((double) value - array[0]);
@@ -1631,6 +1743,7 @@ public abstract class ArrayOperations {
     /**
      * @return the element of array that is closest to value, using a lexicographic distance function that counts the number of characters that are different between the two strings (with left alignment)
      */
+    @Immutable
     public static String findClosest(String[] array, String value) {
         return findClosest(array, value, DEFAULT_STRING_DISTFUNC);
     }
@@ -1639,6 +1752,7 @@ public abstract class ArrayOperations {
      * This method takes a custom distance function for a parameterized object class. There are a number of distance functions provided for strings in the programming5.strings package
      * @return the element of the array that is closest to the given object, using the given distance function
      */
+    @Immutable
     public static <T> T findClosest(T[] array, T value, DistanceFunction<T> df) {
         T ret = array[0];
         double minDiff = df.distance(value, array[0]);
@@ -1655,6 +1769,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of array that is closest to value, using a lexicographic distance function that counts the number of characters that are different between the two strings (with left alignment)
      */
+    @Immutable
     public static int findClosestIndex(String[] array, String value) {
         return findClosestIndex(array, value, DEFAULT_STRING_DISTFUNC);
     }
@@ -1663,6 +1778,7 @@ public abstract class ArrayOperations {
      * This method takes a custom distance function for a parameterized object class. There are a number of distance functions provided for strings in the programming5.strings package
      * @return the index of the element of array that is closest to the given object, using the given distance function
      */
+    @Immutable
     public static <T> int findClosestIndex(T[] array, T value, DistanceFunction<T> df) {
         int ret = 0;
         double minDiff = df.distance(value, array[0]);
@@ -1679,6 +1795,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of array that is closest to value, using lexicographic distance (difference in the char code values)
      */
+    @Immutable
     public static char findClosest(char[] array, char value) {
         char ret = array[0];
         int minDiff = Math.abs(value - array[0]);
@@ -1695,6 +1812,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of array that is closest to value
      */
+    @Immutable
     public static int findClosestIndex(char[] array, char value) {
         int ret = 0;
         int minDiff = Math.abs(value - array[0]);
@@ -1716,6 +1834,7 @@ public abstract class ArrayOperations {
      * the value is greater than the last element).
      * @return the element of a sorted array that is closest to the given value
      */
+    @Immutable
     public static int findClosestInOrder(int[] array, int value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -1748,6 +1867,7 @@ public abstract class ArrayOperations {
      * the value is greater than the last element).
      * @return the index of the element of a sorted array that is closest to the given value
      */
+    @Immutable
     public static int findClosestIndexInOrder(int[] array, int value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -1775,6 +1895,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of a sorted array that is closest to value
      */
+    @Immutable
     public static double findClosestInOrder(double[] array, double value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -1802,6 +1923,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
+    @Immutable
     public static int findClosestIndexInOrder(double[] array, double value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -1829,6 +1951,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of a sorted array that is closest to value
      */
+    @Immutable
     public static float findClosestInOrder(float[] array, float value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -1856,6 +1979,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
+    @Immutable
     public static int findClosestIndexInOrder(float[] array, float value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -1883,6 +2007,7 @@ public abstract class ArrayOperations {
     /**
      *@return the element of a sorted array that is closest to value
      */
+    @Immutable
     public static char findClosestInOrder(char[] array, char value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -1910,6 +2035,7 @@ public abstract class ArrayOperations {
     /**
      *@return the index of the element of a sorted array that is closest to value
      */
+    @Immutable
     public static int findClosestIndexInOrder(char[] array, char value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -1941,6 +2067,7 @@ public abstract class ArrayOperations {
      * @param comparator the comparator that defines the order for the given type
      * @return the element in the given sorted array (order determined by given comparator) that is closest (distance determined by given distance function) to the given value
      */
+    @Immutable
     public static <T> T findClosestInOrder(T[] array, T value, DistanceFunction<T> distanceFunction, Comparator<T> comparator) {
         int ret = Arrays.binarySearch(array, value, comparator);
         if (ret < 0) {
@@ -1970,6 +2097,7 @@ public abstract class ArrayOperations {
      * @return the element of a sorted array that is closest to value, according to lexicographic distance with different character counting
      * @see programming5.strings.LexicographicDistanceFunction
      */
+    @Immutable
     public static String findClosestInOrder(String[] array, String value) {
         return findClosestInOrder(array, value, DEFAULT_STRING_DISTFUNC, DEFAULT_STRING_COMPARATOR);
     }
@@ -1981,6 +2109,7 @@ public abstract class ArrayOperations {
      * @param comparator the comparator that defines the order for the given type
      * @return the index of the element in the given sorted array (order determined by given comparator) that is closest (distance determined by given distance function) to the given value
      */
+    @Immutable
     public static <T> int findClosestIndexInOrder(T[] array, T value, DistanceFunction<T> distanceFunction, Comparator<T> comparator) {
         int ret = Arrays.binarySearch(array, value, comparator);
         if (ret < 0) {
@@ -2009,6 +2138,7 @@ public abstract class ArrayOperations {
      * @return the index of the element of a sorted array that is closest to value, according to lexicographic distance with different character counting
      * @see programming5.strings.LexicographicDistanceFunction
      */
+    @Immutable
     public static int findClosestIndexInOrder(String[] array, String value) {
         return findClosestIndexInOrder(array, value, DEFAULT_STRING_DISTFUNC, DEFAULT_STRING_COMPARATOR);
     }
@@ -2018,6 +2148,7 @@ public abstract class ArrayOperations {
      *(null if the value is larger than all values in the array)
      *@see java.lang.Comparable
      */
+    @Immutable
     public static <T extends Comparable, S extends T> T findNextInOrder(T[] array, S value) {
         T ret;
         if (value.compareTo(array[0]) <= 0) {
@@ -2050,6 +2181,7 @@ public abstract class ArrayOperations {
      *array if the value is greater than all values in the array.
      *@see java.lang.Comparable
      */
+    @Immutable
     public static <T extends Comparable, S extends T> int findPositionInOrder(T[] array, S value) {
         int ret;
         if (value.compareTo(array[0]) <= 0) {
@@ -2081,6 +2213,7 @@ public abstract class ArrayOperations {
      *value in order, which is the position where the value should be inserted in the array. The position is the length of the
      *array if the value is greater than all values in the array.
      */
+    @Immutable
     public static int findPositionInOrder(int[] array, int value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -2094,6 +2227,7 @@ public abstract class ArrayOperations {
      *value in order, which is the position where the value should be inserted in the array. The position is the length of the
      *array if the value is greater than all values in the array.
      */
+    @Immutable
     public static int findPositionInOrder(float[] array, float value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -2107,6 +2241,7 @@ public abstract class ArrayOperations {
      *value in order, which is the position where the value should be inserted in the array. The position is the length of the
      *array if the value is greater than all values in the array.
      */
+    @Immutable
     public static int findPositionInOrder(double[] array, double value) {
         int ret = Arrays.binarySearch(array, value);
         if (ret < 0) {
@@ -2119,6 +2254,7 @@ public abstract class ArrayOperations {
      *@return the element of a sorted array that follows (or is equal to) the given value in order
      *(null if the value is larger than all values in the array), using the given comparator
      */
+    @Immutable
     public static <T, S extends T, U extends T> S findNextInOrder(S[] array, U value, Comparator<T> comp) {
         int pos = findPositionInOrder(array, value, comp);
         if (pos < array.length) {
@@ -2134,6 +2270,7 @@ public abstract class ArrayOperations {
      *value in order, using the given comparator, which is the position where the value should be inserted in the array.
      *The position is the length of the array if the value is greater than all values in the array.
      */
+    @Immutable
     public static <T, S extends T, U extends T> int findPositionInOrder(S[] array, U value, Comparator<T> comp) {
         int ret = Arrays.binarySearch(array, value, comp);
         if (ret < 0) {
@@ -2141,11 +2278,20 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
-    
+
+    /**
+     * @return lambda function that divides the values given to it by the given norm
+     */
+    public static IntToDoubleFunction normalizer(double norm) {
+        return (value) -> {return (double) value / norm;};
+    }
+
     /**
      *@return new array with normalized values of array with respect to the max value of array
      */
+    @Immutable
     public static double[] normalizeMax(int[] array) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         double maxval = (double)(max(array));
         for (int i = 0; i < array.length; i++) {
@@ -2154,14 +2300,12 @@ public abstract class ArrayOperations {
         return ret;
     }
 
-    public static IntToDoubleFunction normalizer(double norm) {
-        return (value) -> {return (double) value / norm;};
-    }
-    
     /**
      *@return new array with normalized values of array with respect to the sum of the values of array
      */
+    @Immutable
     public static double[] normalizeSum(int[] array) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         double arraysum = (double)(sum(array));
         for (int i = 0; i < array.length; i++) {
@@ -2173,7 +2317,9 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the value given
      */
+    @Immutable
     public static double[] normalizeVal(int[] array, double maxval) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = (double)array[i]/maxval;
@@ -2184,7 +2330,9 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the max value of array
      */
+    @Immutable
     public static double[] normalizeMax(float[] array) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         double maxval = (double)(max(array));
         for (int i = 0; i < array.length; i++) {
@@ -2196,7 +2344,9 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the sum of the values of array
      */
+    @Immutable
     public static double[] normalizeSum(float[] array) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         double arraysum = (double)(sum(array));
         for (int i = 0; i < array.length; i++) {
@@ -2208,7 +2358,9 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the value given
      */
+    @Immutable
     public static double[] normalizeVal(float[] array, double maxval) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = (double)array[i]/maxval;
@@ -2219,7 +2371,9 @@ public abstract class ArrayOperations {
     /**
      *@return new array with normalized values of array with respect to the max value of array
      */
+    @Immutable
     public static double[] normalizeMax(double[] array) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         double maxval = max(array);
         for (int i = 0; i < array.length; i++) {
@@ -2227,11 +2381,25 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
-    
+
+    /**
+     *Normalizes values of array with respect to the max value of the array
+     */
+    public static void normalizeMaxInPlace(double[] array) {
+        if (array != null) {
+            double maxval = max(array);
+            for (int i = 0; i < array.length; i++) {
+                array[i] /= maxval;
+            }
+        }
+    }
+
     /**
      *@return new array with normalized values of array with respect to the sum of the values of array
      */
+    @Immutable
     public static double[] normalizeSum(double[] array) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         double arraysum = sum(array);
         for (int i = 0; i < array.length; i++) {
@@ -2239,93 +2407,222 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
-    
+
+    /**
+     *Normalizes values of array with respect to the sum of the values of the array
+     */
+    public static void normalizeSumInPlace(double[] array) {
+        if (array != null) {
+            double sum = sum(array);
+            for (int i = 0; i < array.length; i++) {
+                array[i] /= sum;
+            }
+        }
+    }
+
     /**
      *@return new array with normalized values of array with respect to the value given
      */
+    @Immutable
     public static double[] normalizeVal(double[] array, double maxval) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i]/maxval;
         }
         return ret;
     }
-    
+
+    /**
+     *Normalizes values of array with respect to the given value
+     */
+    public static void normalizeValInPlace(double[] array, double value) {
+        if (array != null) {
+            for (int i = 0; i < array.length; i++) {
+                array[i] /= value;
+            }
+        }
+    }
+
     /**
      *@return a new array in which the elements of the input array are in reverse order (does not modify the original array)
      */
-    public static final int[] reverse(int[] array) {
+    @Immutable
+    public static int[] reverse(int[] array) {
+        if (array == null) return null;
         int[] ret = new int[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[ret.length-i-1] = array[i];
         }
         return ret;
     }
+
+    /**
+     * Reverses the elements of the given array
+     */
+    public static void reverseInPlace(int[] array) {
+        if (array != null) {
+            int i = 0;
+            int j = array.length - 1;
+            while (i < j) {
+                swap(array, i++, j--);
+            }
+        }
+    }
     
     /**
      *@return a new array in which the elements of the input array are in reverse order (does not modify the original array)
      */
-    public static final float[] reverse(float[] array) {
+    @Immutable
+    public static float[] reverse(float[] array) {
+        if (array == null) return null;
         float[] ret = new float[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[ret.length-i-1] = array[i];
         }
         return ret;
     }
+
+    /**
+     * Reverses the elements of the given array
+     */
+    public static void reverseInPlace(float[] array) {
+        if (array != null) {
+            int i = 0;
+            int j = array.length - 1;
+            while (i < j) {
+                swap(array, i++, j--);
+            }
+        }
+    }
     
     /**
      *@return a new array in which the elements of the input array are in reverse order (does not modify the original array)
      */
-    public static final double[] reverse(double[] array) {
+    @Immutable
+    public static double[] reverse(double[] array) {
+        if (array == null) return null;
         double[] ret = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[ret.length-i-1] = array[i];
         }
         return ret;
     }
+
+    /**
+     * Reverses the elements of the given array
+     */
+    public static void reverseInPlace(double[] array) {
+        if (array != null) {
+            int i = 0;
+            int j = array.length - 1;
+            while (i < j) {
+                swap(array, i++, j--);
+            }
+        }
+    }
     
     /**
      *@return a new array in which the elements of the input array are in reverse order (does not modify the original array)
      */
-    public static final char[] reverse(char[] array) {
+    @Immutable
+    public static char[] reverse(char[] array) {
+        if (array == null) return null;
         char[] ret = new char[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[ret.length-i-1] = array[i];
         }
         return ret;
     }
+
+    /**
+     * Reverses the elements of the given array
+     */
+    public static void reverseInPlace(char[] array) {
+        if (array != null) {
+            int i = 0;
+            int j = array.length - 1;
+            while (i < j) {
+                swap(array, i++, j--);
+            }
+        }
+    }
     
     /**
      *@return a new array in which the elements of the input array are in reverse order (does not modify the original array)
      */
-    public static final String[] reverse(String[] array) {
+    @Immutable
+    public static String[] reverse(String[] array) {
+        if (array == null) return null;
         String[] ret = new String[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[ret.length-i-1] = array[i];
         }
         return ret;
     }
+
+    /**
+     * Reverses the elements of the given array
+     */
+    public static void reverseInPlace(String[] array) {
+        if (array != null) {
+            int i = 0;
+            int j = array.length - 1;
+            while (i < j) {
+                swap(array, i++, j--);
+            }
+        }
+    }
     
     /**
      *@return a new array in which the elements of the input array are in reverse order (does not modify the original array)
      */
-    public static final boolean[] reverse(boolean[] array) {
+    @Immutable
+    public static boolean[] reverse(boolean[] array) {
+        if (array == null) return null;
         boolean[] ret = new boolean[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[ret.length-i-1] = array[i];
         }
         return ret;
     }
+
+    /**
+     * Reverses the elements of the given array
+     */
+    public static void reverseInPlace(boolean[] array) {
+        if (array != null) {
+            int i = 0;
+            int j = array.length - 1;
+            while (i < j) {
+                swap(array, i++, j--);
+            }
+        }
+    }
     
     /**
      *@return a new array in which the elements of the input array are in reverse order (does not modify the original array)
      */
-    public static final Object[] reverse(Object[] array) {
+    @Immutable
+    public static Object[] reverse(Object[] array) {
         Object[] ret = new Object[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[ret.length-i-1] = array[i];
         }
         return ret;
+    }
+
+    /**
+     * Reverses the elements of the given array
+     */
+    public static void reverseInPlace(Object[] array) {
+        if (array != null) {
+            int i = 0;
+            int j = array.length - 1;
+            while (i < j) {
+                swap(array, i++, j--);
+            }
+        }
     }
     
     /**
@@ -3664,6 +3961,60 @@ public abstract class ArrayOperations {
             ret[i] = padding;
         }
         return ret;
+    }
+
+    public static void swap(int[] array, int i, int j) {
+        int aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
+    }
+
+    public static void swap(long[] array, int i, int j) {
+        long aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
+    }
+
+    public static void swap(float[] array, int i, int j) {
+        float aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
+    }
+
+    public static void swap(double[] array, int i, int j) {
+        double aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
+    }
+
+    public static void swap(String[] array, int i, int j) {
+        String aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
+    }
+
+    public static void swap(Object[] array, int i, int j) {
+        Object aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
+    }
+
+    public static void swap(byte[] array, int i, int j) {
+        byte aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
+    }
+
+    public static void swap(char[] array, int i, int j) {
+        char aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
+    }
+
+    public static void swap(boolean[] array, int i, int j) {
+        boolean aux = array[i];
+        array[i] = array[j];
+        array[j] = aux;
     }
 
 }
