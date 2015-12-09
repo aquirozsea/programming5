@@ -114,7 +114,7 @@ public class DynamicPriorityQueue<K, V> extends PairedPriorityQueue<K, V> {
      */
     public void purge() {
         resetIterator();
-        PriorityQueue<EntryObject<K, V>> auxQueue = new PriorityQueue<>();
+        PriorityQueue<EntryObject<K, V>> auxQueue = new PriorityQueue<>(queue.comparator());
         for (Map.Entry<V, K> entry : objectLookup.entrySet()) {
             auxQueue.add(new EntryObject<K, V>(entry.getValue(), entry.getKey()));
         }
