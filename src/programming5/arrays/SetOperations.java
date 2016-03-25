@@ -939,34 +939,34 @@ public abstract class SetOperations {
 	 *@return true if set1 is a subset of set2
 	 */
 	public static final boolean isSubset(int[] set1, int[] set2) {
-		return (difference(set1, set2) == null);
+		return (difference(set1, set2).length == 0);
 	}
 	
 	/**
 	 *@return true if set1 is a subset of set2
 	 */
 	public static final boolean isSubset(float[] set1, float[] set2) {
-		return (difference(set1, set2) == null);
+		return (difference(set1, set2).length == 0);
 	}
 	
 	/**
 	 *@return true if set1 is a subset of set2
 	 */
 	public static final boolean isSubset(double[] set1, double[] set2) {
-		return (difference(set1, set2) == null);
+		return (difference(set1, set2).length == 0);
 	}
 	
 	/**
 	 *@return true if set1 is a subset of set2
 	 */
 	public static final boolean isSubset(char[] set1, char[] set2) {
-		return (difference(set1, set2) == null);
+		return (difference(set1, set2).length == 0);
 	}
 	
 	/**
 	 *@return true if set1 is a subset of set2
 	 */
 	public static final boolean isSubset(Object[] set1, Object[] set2) {
-		return (difference(set1, set2) == null);
+		return (difference(set1, set2).length == 0);
 	}
 }
