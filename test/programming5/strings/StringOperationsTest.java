@@ -5,14 +5,12 @@
 
 package programming5.strings;
 
-import java.util.List;
+import org.junit.*;
 import programming5.io.Debug;
+
+import java.util.List;
 import java.util.Map;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -276,6 +274,67 @@ public class StringOperationsTest {
      */
     @Test
     public void testIsNumeric() {
+    }
+
+    @Test
+    public void testIsSubsequenceOf() {
+        assertTrue(StringOperations.isSubsequenceOf("inc", "incorporated"));
+        assertTrue(StringOperations.isSubsequenceOf("ltd", "limited"));
+        assertTrue(StringOperations.isSubsequenceOf("prtns", "partners"));
+        assertTrue(StringOperations.isSubsequenceOf("full", "full"));
+        assertTrue(StringOperations.isSubsequenceOf("e", "east"));
+        assertTrue(StringOperations.isSubsequenceOf("ab", "bbbbbaaaabb"));
+        assertTrue(StringOperations.isSubsequenceOf("ncooe", "incorporated"));
+
+        assertFalse(StringOperations.isSubsequenceOf("incorporated", "inc"));
+        assertFalse(StringOperations.isSubsequenceOf("tub", "but"));
+        assertFalse(StringOperations.isSubsequenceOf("prtnss", "partners"));
+        assertFalse(StringOperations.isSubsequenceOf("bab", "bbbbbbaaaaaa"));
+        assertFalse(StringOperations.isSubsequenceOf("", "anything"));
+
+    }
+
+    @Test
+    public void testAreSubsequenceMatches() {
+        assertTrue(StringOperations.areSubsequenceMatches("inc", "incorporated"));
+        assertTrue(StringOperations.areSubsequenceMatches("ltd", "limited"));
+        assertTrue(StringOperations.areSubsequenceMatches("prtns", "partners"));
+        assertTrue(StringOperations.areSubsequenceMatches("full", "full"));
+        assertTrue(StringOperations.areSubsequenceMatches("e", "east"));
+        assertTrue(StringOperations.areSubsequenceMatches("ab", "bbbbbaaaabb"));
+        assertTrue(StringOperations.areSubsequenceMatches("ncooe", "incorporated"));
+        assertTrue(StringOperations.areSubsequenceMatches("incorporated", "inc"));
+        assertTrue(StringOperations.areSubsequenceMatches("limited", "ltd"));
+        assertTrue(StringOperations.areSubsequenceMatches("partners", "prtns"));
+        assertTrue(StringOperations.areSubsequenceMatches("east", "e"));
+        assertTrue(StringOperations.areSubsequenceMatches("bbbbbaaaabb", "bab"));
+        assertTrue(StringOperations.areSubsequenceMatches("incorporated", "ncooe"));
+
+        assertFalse(StringOperations.areSubsequenceMatches("tub", "but"));
+        assertFalse(StringOperations.areSubsequenceMatches("", "anything"));
+        assertFalse(StringOperations.areSubsequenceMatches("anything", ""));
+    }
+
+    @Test
+    public void testAreAnchoredSubsequenceMatches() {
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("inc", "incorporated"));
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("ltd", "limited"));
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("prtns", "partners"));
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("full", "full"));
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("e", "east"));
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("incorporated", "inc"));
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("limited", "ltd"));
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("partners", "prtns"));
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("east", "e"));
+        assertTrue(StringOperations.areAnchoredSubsequenceMatches("bbbbbaaaabb", "bab"));
+
+        assertFalse(StringOperations.areAnchoredSubsequenceMatches("ab", "bbbbbaaaabb"));
+        assertFalse(StringOperations.areAnchoredSubsequenceMatches("ncooe", "incorporated"));
+        assertFalse(StringOperations.areAnchoredSubsequenceMatches("incorporated", "ncooe"));
+        assertFalse(StringOperations.areAnchoredSubsequenceMatches("tub", "but"));
+        assertFalse(StringOperations.areAnchoredSubsequenceMatches("", "anything"));
+        assertFalse(StringOperations.areAnchoredSubsequenceMatches("anything", ""));
+
     }
 
 }

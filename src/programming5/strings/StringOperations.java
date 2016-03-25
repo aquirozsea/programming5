@@ -21,23 +21,18 @@
 
 package programming5.strings;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import programming5.arrays.ArrayOperations;
 import programming5.collections.CollectionUtils;
 import programming5.collections.EntryObject;
 import programming5.io.Debug;
 import programming5.io.LogUtil;
 import programming5.math.NumberRange;
+
+import java.math.BigInteger;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Abstract class that provides utility methods for string manipulation that are not provided directly
@@ -781,6 +776,43 @@ public abstract class StringOperations {
 
     public static String[] charSplit(String string) {
         return ArrayOperations.suffix(string.split(""), 1);
+    }
+
+    public static boolean areAnchoredSubsequenceMatches(String string1, String string2) {
+        if (string1.length() == 0 || string2.length() == 0) return false;
+        if (string1.charAt(0) == string2.charAt(0)) {
+            String shorter = string1.length() < string2.length() ? string1 : string2;
+            String longer = string1.length() < string2.length() ? string2 : string1;
+            if (shorter.length() > 1) {
+                return isSubsequenceOf(shorter.substring(1), longer.substring(1));
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    public static boolean areSubsequenceMatches(String string1, String string2) {
+        String shorter = string1.length() < string2.length() ? string1 : string2;
+        String longer = string1.length() < string2.length() ? string2 : string1;
+        return isSubsequenceOf(shorter, longer);
+    }
+
+    public static boolean isSubsequenceOf(String shorter, String longer) {
+        if (shorter.length() == 0) return false;
+        int limit = longer.length() - shorter.length();
+        int i = 0;
+        for (int j = 0; j <= limit; j++) {
+            if (shorter.charAt(i) == longer.charAt(j)) {
+                i++;
+                limit++;
+                if (i == shorter.length()) return true;
+            }
+        }
+        return false;
     }
 
 }
