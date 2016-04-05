@@ -815,4 +815,27 @@ public abstract class StringOperations {
         return false;
     }
 
+    public static String[] csvSplit(String line) {
+        String[] row = line.split(",", -1);
+        for (int i = 0; i < row.length - 1; i++) {
+            if (row[i].startsWith("\"")) {
+                if (!row[i].endsWith("\"")) {
+                    for (int j = i + 1; j < row.length; j++) {
+                        row[i] += "," + row[j];
+                        if (row[j].endsWith("\"")) {
+                            row = ArrayOperations.join(ArrayOperations.prefix(row, i + 1), ArrayOperations.suffix(row, j + 1));
+                            row[i] = row[i].substring(1, row[i].length() - 1);  // Remove quotes
+                            i = j + 1;
+                            break;
+                        }
+                    }
+                }
+                else {
+                    row[i] = row[i].substring(1, row[i].length() - 1);
+                }
+            }
+        }
+        return row;
+    }
+
 }
