@@ -57,7 +57,7 @@ public abstract class CollectionMap<K, V> {
     /**
      * Adds a new element to the Collection for the given key. If the Collection does not exist (first element added for that key), it will
      * be created to hold the element
-     * @param CollectionKey the key for the Collection
+     * @param collectionKey the key for the Collection
      * @param element the element to add
      */
     public void addToCollection(K collectionKey, V element) {
@@ -79,7 +79,7 @@ public abstract class CollectionMap<K, V> {
     }
 
     /**
-     * @param CollectionKey the key associated with the Collection to search
+     * @param collectionKey the key associated with the Collection to search
      * @param pattern the pattern object to compare elements in the Collection against
      * @param comp implementation of Comparator interface
      * @return the "first" element in the Collection with the given key matching the given pattern, as determined by the given comparator
@@ -104,7 +104,7 @@ public abstract class CollectionMap<K, V> {
     }
 
     /**
-     * @param CollectionKey the key associated with the Collection to search
+     * @param collectionKey the key associated with the Collection to search
      * @param pattern the pattern object to compare elements in the Collection against
      * @param comp implementation of Comparator interface
      * @return all of the elements in the Collection with the given key matching the given pattern, as determined by the given comparator
