@@ -21,18 +21,10 @@
 
 package programming5.collections;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
 import programming5.arrays.ArrayOperations;
 import programming5.math.MathOperations;
+
+import java.util.*;
 
 /**
  *Provides utility methods to use with/for collections classes
@@ -905,6 +897,21 @@ public abstract class CollectionUtils {
             }
         }
         return retMap;
+    }
+
+    public static <T> String toPrintableList(Collection<T> collection, String separator) {
+        StringBuilder builder = new StringBuilder();
+        for (T item : collection) {
+            builder.append(item.toString());
+            builder.append(separator);
+        }
+        String retString = builder.toString();
+        int limit = retString.length() - separator.length();
+        return builder.toString().substring(0, limit);
+    }
+
+    public static <T> String toPrintableList(Collection<T> collection) {
+        return toPrintableList(collection, ", ");
     }
 
 }
