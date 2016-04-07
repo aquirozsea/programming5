@@ -825,7 +825,6 @@ public abstract class StringOperations {
                         if (row[j].endsWith("\"")) {
                             row = ArrayOperations.join(ArrayOperations.prefix(row, i + 1), ArrayOperations.suffix(row, j + 1));
                             row[i] = row[i].substring(1, row[i].length() - 1);  // Remove quotes
-                            i = j + 1;
                             break;
                         }
                     }
