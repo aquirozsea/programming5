@@ -337,4 +337,14 @@ public class StringOperationsTest {
 
     }
 
+    @Test
+    public void testCsvSplit() {
+        String line = "one,\"two, three\",\"four, five, six\",seven,eight";
+        String[] split = StringOperations.csvSplit(line);
+        assertEquals(5, split.length);
+        assertEquals("two, three", split[1]);
+        assertEquals("four, five, six", split[2]);
+        assertEquals("eight", split[4]);
+    }
+
 }
