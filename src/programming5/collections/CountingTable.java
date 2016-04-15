@@ -201,6 +201,10 @@ public class CountingTable<E> {
         return CollectionUtils.max(baseTable.values());
     }
 
+    public int getCountTotal() {
+        return (int) CollectionUtils.sum(baseTable.values());
+    }
+
     public int getCount(E key) {
         return baseTable.safeGet(key, 0);
     }
