@@ -914,4 +914,17 @@ public abstract class CollectionUtils {
         return toPrintableList(collection, ", ");
     }
 
+    public static List<List> synchronize(List... lists) {
+        List<List> syncList = new ArrayList<>();
+        List<List> allLists = Arrays.asList(lists);
+        int minSize = allLists.stream().map(list -> list.size()).reduce(Math::min).get();
+        for (int i = 0; i < minSize; i++) {
+            List tuple = new ArrayList<>();
+            final int index = i;
+            allLists.stream().forEach(list -> tuple.add(list.get(index)));
+            syncList.add(tuple);
+        }
+        return syncList;
+    }
+
 }
