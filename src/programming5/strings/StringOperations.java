@@ -819,7 +819,7 @@ public abstract class StringOperations {
         String[] row = line.split(",", -1);
         for (int i = 0; i < row.length - 1; i++) {
             if (row[i].startsWith("\"")) {
-                if (!row[i].endsWith("\"")) {
+                if (!row[i].endsWith("\"") || row[i].length() == 1) {
                     for (int j = i + 1; j < row.length; j++) {
                         row[i] += "," + row[j];
                         if (row[j].endsWith("\"")) {
@@ -834,10 +834,14 @@ public abstract class StringOperations {
                 }
             }
         }
+        if (row[row.length - 1].startsWith("\"") && row[row.length - 1].endsWith("\"")) {
+            row[row.length - 1] = row[row.length - 1].substring(1, row[row.length - 1].length() - 1);
+        }
         return row;
     }
 
     public static String capitalize(String s) {
+        if (s != null && s.length() <= 1) return s.toUpperCase();
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 

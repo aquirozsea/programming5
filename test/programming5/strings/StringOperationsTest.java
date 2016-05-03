@@ -345,6 +345,18 @@ public class StringOperationsTest {
         assertEquals("two, three", split[1]);
         assertEquals("four, five, six", split[2]);
         assertEquals("eight", split[4]);
+        line = "\"one\",\"two\",\"three\"";
+        split = StringOperations.csvSplit(line);
+        assertEquals(3, split.length);
+        assertEquals("three", split[2]);
+        line = "\"one\",\"two\",\"\"";
+        split = StringOperations.csvSplit(line);
+        assertEquals(3, split.length);
+        assertEquals("", split[2]);
+        line = "one,\", and a two\"";
+        split = StringOperations.csvSplit(line);
+        assertEquals(2, split.length);
+        assertEquals(", and a two", split[1]);
     }
 
 }
