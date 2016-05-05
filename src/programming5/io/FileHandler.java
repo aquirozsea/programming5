@@ -21,12 +21,13 @@
 
 package programming5.io;
 
+import programming5.arrays.ArrayOperations;
+
 import java.io.*;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
-import programming5.arrays.ArrayOperations;
 
 /**
  *This class provides a number of customizable functions for handling files of different content types. 
@@ -1336,4 +1337,35 @@ public class FileHandler {
         public static void fileTreeTraversal(String rootPath, FileProcessor processor) {
             fileTreeTraversal(new File(rootPath), processor);
         }
+
+    /**
+     * @param fileName the file name, which is expected to have an extension after the last dot (.)
+     * @return the file name without the extension; for example, file.txt -> file and file.tar.gz -> file.tar
+     */
+	public static String stripExtensionFrom(String fileName) {
+		return fileName.substring(0, fileName.lastIndexOf("."));
+	}
+
+    /**
+     * @param fileName the file name, which is expected to have the given extension
+     * @param extension the extension to remove, without the leading dot (.)
+     * @return the file name without the extension; for example, file.txt, txt -> file and file.tar.gz, tar.gz -> file
+     */
+    public static String stripExtensionFrom(String fileName, String extension) {
+		return fileName.substring(0, fileName.lastIndexOf("." + extension));
+	}
+
+    /**
+     * @param fileName the file name to get the extension from, which is expected to be the part of the name after the
+     *                 last dot (.)
+     * @return the extension of the file; for example, file.txt -> txt and file.tar.gz -> gz
+     */
+    public static String extensionOf(String fileName) {
+		if (fileName.contains(".")) {
+			return fileName.substring(1 + fileName.lastIndexOf("."));
+		}
+		else {
+			return "";
+		}
+	}
 }
