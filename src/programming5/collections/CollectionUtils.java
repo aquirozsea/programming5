@@ -120,13 +120,28 @@ public abstract class CollectionUtils {
     }
 
     /**
-     * To create a list initialized to contain the given element of a subclass of the list type.
+     * To create a list initialized to contain the given element of a subclass of the list type. Note that this method is
+     * different from {@link Arrays#asList(Object[])} in that the list returned is typed as a superclass of the given
+     * object and in that it can be modified (the Arrays asList method returns an unmodifiable list instance).
      * @param element the input element, which will be put into the list by reference
      * @param type the list type, which is a superclass of the element type.
-     * @return the typed list containing the given element
+     * @return the typed and modifiable list containing the given element
      */
     public static final <T, U extends T> List<T> listFromElement(U element, Class<T> type) {
         List<T> ret = new ArrayList<T>();
+        ret.add(element);
+        return ret;
+    }
+
+    /**
+     * To create a typed list initialized to contain the given element. Note that this method is
+     * different from {@link Arrays#asList(Object[])} in that the returned list it can be modified (the Arrays asList
+     * method returns an unmodifiable list instance).
+     * @param element the input element, which will be put into the list by reference
+     * @return the typed and modifiable list containing the given element
+     */
+    public static final <T> List<T> listFromElement(T element) {
+        List<T> ret = new ArrayList<>();
         ret.add(element);
         return ret;
     }
@@ -881,7 +896,7 @@ public abstract class CollectionUtils {
     }
     
     /**
-     * @param mapString ex. {key1:value1,key2:value2,...}
+     * @param mapString ex. "key1:value1;key2:value2,..."
      * @return 
      */
     public static Map<String, String> mapFromString(String mapString) {
@@ -894,6 +909,24 @@ public abstract class CollectionUtils {
             }
             else {
                 throw new IllegalArgumentException("CollectionUtils: Could not construct map from string: Bad entry (" + entry + ")");
+            }
+        }
+        return retMap;
+    }
+
+    /**
+     * @param pairs Zero or more strings of the form "key:value"
+     * @return a hash map with the corresponding key/value entries
+     */
+    public static Map<String, String> mapFromPairs(String... pairs) {
+        Map<String, String> retMap = new HashMap<>();
+        for (String pair : pairs) {
+            String[] entry = pair.split("\\s*:\\s*");
+            try {
+                retMap.put(entry[0], entry[1]);
+            }
+            catch (Exception e) {
+                throw new IllegalArgumentException("CollectionUtils: Could not constrauct map from pair strings: Bad pair (" + pair + ")");
             }
         }
         return retMap;
@@ -926,5 +959,7 @@ public abstract class CollectionUtils {
         }
         return syncList;
     }
+
+
 
 }
