@@ -39,7 +39,6 @@ public abstract class AbstractFactory {
                     )
                     .map(key -> propertyPrefix.isEmpty() ? key : key.substring(1 + key.lastIndexOf(".")))
                     .forEach(key -> {
-                        System.out.println("Getting " + key);
                         String value = classProperties.getProperty(propertyPrefix + key);
                         if (!value.contains(";")) { // TODO: Define escape mechanism for semicolon
                             try {
