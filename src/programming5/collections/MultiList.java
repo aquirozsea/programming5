@@ -21,18 +21,11 @@
 
 package programming5.collections;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import programming5.arrays.ArrayOperations;
 import programming5.strings.StringOperations;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  *Wrapper class that links the elements of two lists, so that the elements of one can be indexed with the elements 
@@ -172,8 +165,8 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     }
 
     /**
-     *Implementation of the Map method, equivalent to containsFirst.
-     *@see #containsFirst
+     *Implementation of the Map method, equivalent to containsInFirst.
+     *@see #containsInFirst(Object)
      */
     @Override
     public boolean containsKey(Object key) {
@@ -181,8 +174,8 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     }
 
     /**
-     *Implementation of the Map method, equivalent to containsSecond.
-     *@see #containsSecond
+     *Implementation of the Map method, equivalent to containsInSecond.
+     *@see #containsInSecond(Object)
      */
     @Override
     public boolean containsValue(Object value) {
