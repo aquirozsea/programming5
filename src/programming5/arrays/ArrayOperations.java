@@ -2628,7 +2628,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array in the position given
      */
-    public static final int[] insert(int value, int[] array, int pos) throws ArrayIndexOutOfBoundsException {
+    @Immutable
+    public static int[] insert(int value, int[] array, int pos) throws ArrayIndexOutOfBoundsException {
         int[] ret = new int[array.length+1];
         for (int i = 0; i < pos; i++) {
             ret[i] = array[i];
@@ -2643,7 +2644,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array at the end
      */
-    public static final int[] addElement(int elem, int[] array) {
+    @Immutable
+    public static int[] addElement(int elem, int[] array) {
         int[] ret = null;
         if (array == null) {
             array = new int[1];
@@ -2659,7 +2661,8 @@ public abstract class ArrayOperations {
     /**
      *@return new sorted array where value is inserted into an initially sorted array.
      */
-    public static final int[] insertSorted(int value, int[] array) {
+    @Immutable
+    public static int[] insertSorted(int value, int[] array) {
         int pos = findClosestIndexInOrder(array, value);
         int[] ret = null;
         if (array[pos] >= value) {
@@ -2674,7 +2677,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array in the position given
      */
-    public static final byte[] insert(byte value, byte[] array, int pos) throws ArrayIndexOutOfBoundsException {
+    @Immutable
+    public static byte[] insert(byte value, byte[] array, int pos) throws ArrayIndexOutOfBoundsException {
         byte[] ret = new byte[array.length+1];
         for (int i = 0; i < pos; i++) {
             ret[i] = array[i];
@@ -2689,7 +2693,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array at the end
      */
-    public static final byte[] addElement(byte elem, byte[] array) {
+    @Immutable
+    public static byte[] addElement(byte elem, byte[] array) {
         byte[] ret = null;
         if (array == null) {
             array = new byte[1];
@@ -2705,7 +2710,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array in the position given
      */
-    public static final float[] insert(float value, float[] array, int pos) throws ArrayIndexOutOfBoundsException {
+    @Immutable
+    public static float[] insert(float value, float[] array, int pos) throws ArrayIndexOutOfBoundsException {
         float[] ret = new float[array.length+1];
         for (int i = 0; i < pos; i++) {
             ret[i] = array[i];
@@ -2720,7 +2726,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array at the end
      */
-    public static final float[] addElement(float elem, float[] array) {
+    @Immutable
+    public static float[] addElement(float elem, float[] array) {
         float[] ret = null;
         if (array == null) {
             array = new float[1];
@@ -2736,7 +2743,8 @@ public abstract class ArrayOperations {
     /**
      *@return new sorted array where value is inserted into an initially sorted array.
      */
-    public static final float[] insertSorted(float value, float[] array) {
+    @Immutable
+    public static float[] insertSorted(float value, float[] array) {
         int pos = findClosestIndexInOrder(array, value);
         float[] ret = null;
         if (array[pos] >= value) {
@@ -2751,7 +2759,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array in the position given
      */
-    public static final double[] insert(double value, double[] array, int pos) throws ArrayIndexOutOfBoundsException {
+    @Immutable
+    public static double[] insert(double value, double[] array, int pos) throws ArrayIndexOutOfBoundsException {
         double[] ret = new double[array.length+1];
         for (int i = 0; i < pos; i++) {
             ret[i] = array[i];
@@ -2766,7 +2775,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array at the end
      */
-    public static final double[] addElement(double elem, double[] array) {
+    @Immutable
+    public static double[] addElement(double elem, double[] array) {
         double[] ret = null;
         if (array == null) {
             array = new double[1];
@@ -2782,7 +2792,8 @@ public abstract class ArrayOperations {
     /**
      *@return new sorted array where value is inserted into an initially sorted array.
      */
-    public static final double[] insertSorted(double value, double[] array) {
+    @Immutable
+    public static double[] insertSorted(double value, double[] array) {
         int pos = findClosestIndexInOrder(array, value);
         double[] ret = null;
         if (array[pos] >= value) {
@@ -2797,7 +2808,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array in the position given
      */
-    public static final char[] insert(char value, char[] array, int pos) throws ArrayIndexOutOfBoundsException {
+    @Immutable
+    public static char[] insert(char value, char[] array, int pos) throws ArrayIndexOutOfBoundsException {
         char[] ret = new char[array.length+1];
         for (int i = 0; i < pos; i++) {
             ret[i] = array[i];
@@ -2812,7 +2824,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array at the end
      */
-    public static final char[] addElement(char elem, char[] array) {
+    @Immutable
+    public static char[] addElement(char elem, char[] array) {
         char[] ret = null;
         if (array == null) {
             array = new char[1];
@@ -2828,7 +2841,8 @@ public abstract class ArrayOperations {
     /**
      *@return new sorted array where value is inserted into an initially sorted array.
      */
-    public static final char[] insertSorted(char value, char[] array) {
+    @Immutable
+    public static char[] insertSorted(char value, char[] array) {
         int pos = findClosestIndexInOrder(array, value);
         char[] ret = null;
         if (array[pos] >= value) {
@@ -2843,7 +2857,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array in the position given
      */
-    public static final String[] insert(String value, String[] array, int pos) throws ArrayIndexOutOfBoundsException {
+    @Immutable
+    public static String[] insert(String value, String[] array, int pos) throws ArrayIndexOutOfBoundsException {
         String[] ret = new String[array.length+1];
         for (int i = 0; i < pos; i++) {
             ret[i] = new String(array[i]);
@@ -2858,7 +2873,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array at the end
      */
-    public static final String[] addElement(String elem, String[] array) {
+    @Immutable
+    public static String[] addElement(String elem, String[] array) {
         String[] ret = null;
         if (array == null) {
             array = new String[1];
@@ -2874,7 +2890,8 @@ public abstract class ArrayOperations {
     /**
      *@return new sorted array where value is inserted into an initially sorted array.
      */
-    public static final String[] insertSorted(String value, String[] array) {
+    @Immutable
+    public static String[] insertSorted(String value, String[] array) {
         int pos = findClosestIndexInOrder(array, value);
         String[] ret = null;
         if (array[pos].compareTo(value) >= 0) {
@@ -2889,7 +2906,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array in the position given
      */
-    public static final Object[] insert(Object value, Object[] array, int pos) throws ArrayIndexOutOfBoundsException {
+    @Immutable
+    public static Object[] insert(Object value, Object[] array, int pos) throws ArrayIndexOutOfBoundsException {
         Object[] ret = new Object[array.length+1];
         for (int i = 0; i < pos; i++) {
             ret[i] = array[i];
@@ -2904,7 +2922,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array at the end
      */
-    public static final Object[] addElement(Object elem, Object[] array) {
+    @Immutable
+    public static Object[] addElement(Object elem, Object[] array) {
         Object[] ret = null;
         if (array == null) {
             array = new Object[1];
@@ -2920,7 +2939,8 @@ public abstract class ArrayOperations {
     /**
      *@return new sorted array where value is inserted into an initially sorted array.
      */
-    public static final <T extends Comparable, S extends T> T[] insertSorted(S value, T[] array) {
+    @Immutable
+    public static <T extends Comparable, S extends T> T[] insertSorted(S value, T[] array) {
         int pos = findPositionInOrder(array, value);
         T[] ret = null;
         ret = (T[])insert(value, array, pos);
@@ -2930,7 +2950,8 @@ public abstract class ArrayOperations {
     /**
      *@return new sorted array where value is inserted into an initially sorted array.
      */
-    public static final <T, S extends T> T[] insertSorted(S value, T[] array, Comparator<T> comp) {
+    @Immutable
+    public static <T, S extends T> T[] insertSorted(S value, T[] array, Comparator<T> comp) {
         int pos = findPositionInOrder(array, value, comp);
         T[] ret = null;
         ret = (T[])insert(value, array, pos);
@@ -2940,7 +2961,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array in the position given
      */
-    public static final boolean[] insert(boolean value, boolean[] array, int pos) throws ArrayIndexOutOfBoundsException {
+    @Immutable
+    public static boolean[] insert(boolean value, boolean[] array, int pos) throws ArrayIndexOutOfBoundsException {
         boolean[] ret = new boolean[array.length+1];
         for (int i = 0; i < pos; i++) {
             ret[i] = array[i];
@@ -2955,7 +2977,8 @@ public abstract class ArrayOperations {
     /**
      *@return new array where value is inserted into array at the end
      */
-    public static final boolean[] addElement(boolean elem, boolean[] array) {
+    @Immutable
+    public static boolean[] addElement(boolean elem, boolean[] array) {
         boolean[] ret = null;
         if (array == null) {
             array = new boolean[1];
@@ -2971,7 +2994,7 @@ public abstract class ArrayOperations {
     /**
      *@return a new array that has elements that go from 0 to numElements-1
      */
-    public static final int[] generateEnumeration(int numElements) {
+    public static int[] generateEnumeration(int numElements) {
         int[] ret = new int[numElements];
         for (int i = 0; i < numElements; i++) {
             ret[i] = i;
@@ -2980,9 +3003,20 @@ public abstract class ArrayOperations {
     }
 
     /**
+     * @param start first element in the resulting enumeration
+     * @param end last element in the resulting enumeration
+     * @return a new array of numElements, from start to end inclusive
+     */
+    public static int[] generateEnumeration(int start, int end) {
+        int numElements = Math.abs(end - start) + 1;
+        int step = (end - start) / Math.abs(end - start);
+        return generateEnumeration(start, numElements, step);
+    }
+
+    /**
      *@return a new array of numElements, from start and increasing by step
      */
-    public static final int[] generateEnumeration(int start, int numElements, int step) {
+    public static int[] generateEnumeration(int start, int numElements, int step) {
         int[] ret = new int[numElements];
         ret[0] = start;
         for (int i = 1; i < numElements; i++) {
@@ -2996,73 +3030,124 @@ public abstract class ArrayOperations {
      *@deprecated same functionality as fill method in java.util.Arrays class
      */
     @Deprecated
-    public static final int[] initialize(int[] array, int initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static final float[] initialize(float[] array, float initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static final double[] initialize(double[] array, double initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static final char[] initialize(char[] array, char initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static final boolean[] initialize(boolean[] array, boolean initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static final String[] initialize(String[] array, String initValue) {
+    public static int[] initialize(int[] array, int initValue) {
         for (int i = 0; i < array.length; i++) {
             array[i] = initValue;
         }
         return array;
     }
 
+    /**
+     * Creates a new array initialized with the given value
+     * @param size the size of the array
+     * @param initValue the value to fill the array with
+     * @return a new array of the given size with every position filled by the given value
+     */
+    public static int[] newIntArray(int size, int initValue) {
+        int[] ret = new int[size];
+        Arrays.fill(ret, initValue);
+        return ret;
+    }
+    
+    /**
+     *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
+     */
+    @Deprecated
+    public static float[] initialize(float[] array, float initValue) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = initValue;
+        }
+        return array;
+    }
+
+    /**
+     * Creates a new array initialized with the given value
+     * @param size the size of the array
+     * @param initValue the value to fill the array with
+     * @return a new array of the given size with every position filled by the given value
+     */
+    public static float[] newFloatArray(int size, float initValue) {
+        float[] ret = new float[size];
+        Arrays.fill(ret, initValue);
+        return ret;
+    }
+
+    /**
+     *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
+     */
+    @Deprecated
+    public static double[] initialize(double[] array, double initValue) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = initValue;
+        }
+        return array;
+    }
+
+    /**
+     * Creates a new array initialized with the given value
+     * @param size the size of the array
+     * @param initValue the value to fill the array with
+     * @return a new array of the given size with every position filled by the given value
+     */
+    public static double[] newDoubleArray(int size, double initValue) {
+        double[] ret = new double[size];
+        Arrays.fill(ret, initValue);
+        return ret;
+    }
+
+    /**
+     *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
+     */
+    @Deprecated
+    public static char[] initialize(char[] array, char initValue) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = initValue;
+        }
+        return array;
+    }
+    
+    /**
+     *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
+     */
+    @Deprecated
+    public static boolean[] initialize(boolean[] array, boolean initValue) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = initValue;
+        }
+        return array;
+    }
+
+    /**
+     * Creates a new array initialized with the given value
+     * @param size the size of the array
+     * @param initValue the value to fill the array with
+     * @return a new array of the given size with every position filled by the given value
+     */
+    public static boolean[] newBooleanArray(int size, boolean initValue) {
+        boolean[] ret = new boolean[size];
+        Arrays.fill(ret, initValue);
+        return ret;
+    }
+
+    /**
+     *@return the given array with all values set to the given initValue
+     *@deprecated same functionality as fill method in java.util.Arrays class
+     */
+    @Deprecated
+    public static String[] initialize(String[] array, String initValue) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = initValue;
+        }
+        return array;
+    }
+
+    /**
+     * @return the given matrix with the values set to the given initValue
+     */
     public static int[][] initialize(int[][] matrix, int initValue) {
         for (int i = 0; i < matrix.length; i++) {
             Arrays.fill(matrix[i], initValue);
@@ -3071,11 +3156,13 @@ public abstract class ArrayOperations {
     }
     
     /**
-     *Casts the elements of the origin array to the type of the destination array and copies each of these elements to the new array, which must be pre-allocated with the correct size.
+     *Casts the elements of the origin array to the type of the destination array and copies each of these elements to
+     *the new array, which must be pre-allocated with the correct size.
      *@throws java.lang.IllegalArgumentException if the arrays are of different sizes
      *@throws java.lang.ClassCastException if the elements of the origin array cannot be cast to the destination type
      */
-    public static final <T> void arrayCast(T[] destination, Object[] origin) {
+    @Immutable
+    public static <T> void arrayCast(T[] destination, Object[] origin) {
         if (destination.length == origin.length) {
             for (int i = 0; i < destination.length; i++) {
                 destination[i] = (T) origin[i];
@@ -3091,7 +3178,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of String representing each of the elements of the given array
      */
-    public static final String[] toString(int[] array) {
+    @Immutable
+    public static String[] toString(int[] array) {
         String[] ret = new String[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Integer.toString(array[i]);
@@ -3104,7 +3192,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of String representing each of the elements of the given array
      */
-    public static final String[] toString(double[] array) {
+    @Immutable
+    public static String[] toString(double[] array) {
         String[] ret = new String[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Double.toString(array[i]);
@@ -3117,7 +3206,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of String representing each of the elements of the given array
      */
-    public static final String[] toString(long[] array) {
+    @Immutable
+    public static String[] toString(long[] array) {
         String[] ret = new String[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Long.toString(array[i]);
@@ -3130,7 +3220,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of String representing each of the elements of the given array
      */
-    public static final String[] toString(float[] array) {
+    @Immutable
+    public static String[] toString(float[] array) {
         String[] ret = new String[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Float.toString(array[i]);
@@ -3143,7 +3234,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of String representing each of the elements of the given array
      */
-    public static final String[] toString(boolean[] array) {
+    @Immutable
+    public static String[] toString(boolean[] array) {
         String[] ret = new String[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Boolean.toString(array[i]);
@@ -3157,7 +3249,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of int with the value that each of the elements of the given array represents
      */
-    public static final int[] toIntArray(String[] array) {
+    @Immutable
+    public static int[] toIntArray(String[] array) {
         int[] ret = new int[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Integer.parseInt(array[i]);
@@ -3171,7 +3264,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of double with the value that each of the elements of the given array represents
      */
-    public static final double[] toDoubleArray(String[] array) {
+    @Immutable
+    public static double[] toDoubleArray(String[] array) {
         double[] ret = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Double.parseDouble(array[i]);
@@ -3185,7 +3279,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of long with the value that each of the elements of the given array represents
      */
-    public static final long[] toLongArray(String[] array) {
+    @Immutable
+    public static long[] toLongArray(String[] array) {
         long[] ret = new long[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Long.parseLong(array[i]);
@@ -3199,7 +3294,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of float with the value that each of the elements of the given array represents
      */
-    public static final float[] toFloatArray(String[] array) {
+    @Immutable
+    public static float[] toFloatArray(String[] array) {
         float[] ret = new float[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Float.parseFloat(array[i]);
@@ -3213,7 +3309,8 @@ public abstract class ArrayOperations {
      * @param array the array to transform
      * @return an array of boolean with the value that each of the elements of the given array represents
      */
-    public static final boolean[] toBooleanArray(String[] array) {
+    @Immutable
+    public static boolean[] toBooleanArray(String[] array) {
         boolean[] ret = new boolean[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = Boolean.parseBoolean(array[i]);

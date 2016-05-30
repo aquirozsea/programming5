@@ -3328,4 +3328,13 @@ public class ArrayOperationsTest {
     public void testCastArray() {
     }
 
+    @Test
+    public void testGenerateEnumeration() {
+        int[] reverseEnum = ArrayOperations.generateEnumeration(10, 5);
+        assertEquals(6, reverseEnum.length);
+        for (int i = 0; i < reverseEnum.length; i++) {
+            assertEquals(10 - i, reverseEnum[i]);
+        }
+    }
+
 }
