@@ -21,9 +21,10 @@
 
 package programming5.net;
 
+import programming5.arrays.ArrayOperations;
+
 import java.util.ArrayList;
 import java.util.List;
-import programming5.arrays.ArrayOperations;
 
 /**
  *This class is used to store and manipulate an organized array of items in a message
@@ -182,7 +183,6 @@ public class Message {
      *Creates a headerless message from specific objects.
      *WARNING: This method uses the objects' toString method to obtain the item it will keep, with the
      *exception of byte array objects, which will be encoded without change.
-     *@param header the header string (must not contain the reserved character ':')
      *@param items a list of items to be encoded in the message object
      *@return the filled message object
      */
