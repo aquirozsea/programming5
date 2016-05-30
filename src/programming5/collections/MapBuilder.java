@@ -31,6 +31,17 @@ public class MapBuilder<K, V> {
     }
 
     /**
+     * Puts contents of the given map into the map being built, overwriting any keys already present in the map (as in
+     * the regular {@link Map#putAll(Map)}).
+     * @param other another map containing the key/value pairs to put into the map being built
+     * @return this map builder
+     */
+    public MapBuilder<K, V> putAll(Map<? extends K, ? extends V> other) {
+        map.putAll(other);
+        return this;
+    }
+
+    /**
      * @return the reference to the constructed map with any entries from calls to put
      */
     public Map<K, V> get() {
@@ -45,6 +56,17 @@ public class MapBuilder<K, V> {
      * @return a MapBuilder reference, which can be further operated upon
      */
     public static <K, V> MapBuilder<K, V> from(K firstKey, V firstValue) {
+        return new MapBuilder<K, V>().put(firstKey, firstValue);
+    }
+
+    /**
+     * Can be used to create a map from a reference key and value. Equivalent to {@link #from(Object, Object)}, but added
+     * because of clearer semantics.
+     * @param firstKey the key object
+     * @param firstValue the value object
+     * @return a MapBuilder reference, which can be further operated upon
+     */
+    public static <K, V> MapBuilder<K, V> start(K firstKey, V firstValue) {
         return new MapBuilder<K, V>().put(firstKey, firstValue);
     }
 
