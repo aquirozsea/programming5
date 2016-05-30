@@ -221,8 +221,26 @@ public class CountingTable<E> {
         return baseTable.size();
     }
 
+    /**
+     * Adds all values in the given counting table to this table, so that the resulting count for two entries with the
+     * same key is the sum of the values
+     * @param other the counting table to merge into this table
+     */
+    public void mergeWith(CountingTable<E> other) {
+        for (E key : other.keySet()) {
+            this.increaseCount(key, other.getCount(key));
+        }
+    }
+
+    /**
+     * Convenience method to add multiple counting tables together into a new result table (the contents of the input
+     * tables will not be modified). The resulting count for multiple entries with the same key is the sum of the values
+     * in each table.
+     * @param tables the tables to add into the result table
+     * @return a new table containing all of the keys of the input tables and corresponding sums of counts
+     */
     public static <T> CountingTable<T> add(CountingTable<T>... tables) {
-        CountingTable<T> ret = new CountingTable<T>();
+        CountingTable<T> ret = new CountingTable<>();
         for (CountingTable<T> table : tables) {
             for (T key : table.keySet()) {
                 ret.increaseCount(key, table.getCount(key));
