@@ -1,5 +1,5 @@
 /*
- * MultiList.java
+ * MapBuilder.java
  *
  * Copyright 2016 Andres Quiroz Hernandez
  *
