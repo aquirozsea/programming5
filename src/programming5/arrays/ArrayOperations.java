@@ -3322,7 +3322,8 @@ public abstract class ArrayOperations {
      * Element by element comparison of two arrays
      * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
      */
-    public static final boolean areEqual(int[] array1, int[] array2) {
+    @Immutable
+    public static boolean areEqual(int[] array1, int[] array2) {
         boolean ret = (array1.length == array2.length);
         if (ret) {
             for (int i = 0; i < array1.length; i++) {
@@ -3339,7 +3340,8 @@ public abstract class ArrayOperations {
      * Element by element comparison of two arrays
      * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
      */
-    public static final boolean areEqual(long[] array1, long[] array2) {
+    @Immutable
+    public static boolean areEqual(long[] array1, long[] array2) {
         boolean ret = (array1.length == array2.length);
         if (ret) {
             for (int i = 0; i < array1.length; i++) {
@@ -3356,7 +3358,8 @@ public abstract class ArrayOperations {
      * Element by element comparison of two arrays
      * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
      */
-    public static final boolean areEqual(float[] array1, float[] array2) {
+    @Immutable
+    public static boolean areEqual(float[] array1, float[] array2) {
         boolean ret = (array1.length == array2.length);
         if (ret) {
             for (int i = 0; i < array1.length; i++) {
@@ -3373,7 +3376,8 @@ public abstract class ArrayOperations {
      * Element by element comparison of two arrays
      * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
      */
-    public static final boolean areEqual(double[] array1, double[] array2) {
+    @Immutable
+    public static boolean areEqual(double[] array1, double[] array2) {
         boolean ret = (array1.length == array2.length);
         if (ret) {
             for (int i = 0; i < array1.length; i++) {
@@ -3390,7 +3394,8 @@ public abstract class ArrayOperations {
      * Element by element comparison of two arrays
      * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
      */
-    public static final boolean areEqual(byte[] array1, byte[] array2) {
+    @Immutable
+    public static boolean areEqual(byte[] array1, byte[] array2) {
         boolean ret = (array1.length == array2.length);
         if (ret) {
             for (int i = 0; i < array1.length; i++) {
@@ -3407,7 +3412,8 @@ public abstract class ArrayOperations {
      * Element by element comparison of two arrays
      * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
      */
-    public static final boolean areEqual(char[] array1, char[] array2) {
+    @Immutable
+    public static boolean areEqual(char[] array1, char[] array2) {
         boolean ret = (array1.length == array2.length);
         if (ret) {
             for (int i = 0; i < array1.length; i++) {
@@ -3424,7 +3430,8 @@ public abstract class ArrayOperations {
      * Element by element comparison of two arrays
      * @return true if the input arrays are of equal length and all elements in corresponding positions are equal; false otherwise
      */
-    public static final boolean areEqual(Object[] array1, Object[] array2) {
+    @Immutable
+    public static boolean areEqual(Object[] array1, Object[] array2) {
         boolean ret = (array1.length == array2.length);
         if (ret) {
             for (int i = 0; i < array1.length; i++) {
@@ -3441,7 +3448,8 @@ public abstract class ArrayOperations {
      * @param array an array reference
      * @return true if the given reference is null or an array of length zero; false otherwise
      */
-    public static final <T> boolean isEmpty(T[] array) {
+    @Immutable
+    public static <T> boolean isEmpty(T[] array) {
         int length = (array == null) ? 0 : array.length;
         return (length == 0);
     }
@@ -3451,7 +3459,8 @@ public abstract class ArrayOperations {
      * @param array the primitive array
      * @return the object type array
      */
-    public static final Integer[] box(int[] array) {
+    @Immutable
+    public static Integer[] box(int[] array) {
         Integer[] ret = new Integer[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3464,7 +3473,8 @@ public abstract class ArrayOperations {
      * @param array the primitive array
      * @return the object type array
      */
-    public static final Long[] box(long[] array) {
+    @Immutable
+    public static Long[] box(long[] array) {
         Long[] ret = new Long[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3477,7 +3487,8 @@ public abstract class ArrayOperations {
      * @param array the primitive array
      * @return the object type array
      */
-    public static final Float[] box(float[] array) {
+    @Immutable
+    public static Float[] box(float[] array) {
         Float[] ret = new Float[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3490,7 +3501,8 @@ public abstract class ArrayOperations {
      * @param array the primitive array
      * @return the object type array
      */
-    public static final Double[] box(double[] array) {
+    @Immutable
+    public static Double[] box(double[] array) {
         Double[] ret = new Double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3503,7 +3515,8 @@ public abstract class ArrayOperations {
      * @param array the primitive array
      * @return the object type array
      */
-    public static final Boolean[] box(boolean[] array) {
+    @Immutable
+    public static Boolean[] box(boolean[] array) {
         Boolean[] ret = new Boolean[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3516,7 +3529,8 @@ public abstract class ArrayOperations {
      * @param array the object type array
      * @return the primitive array
      */
-    public static final int[] unbox(Integer[] array) {
+    @Immutable
+    public static int[] unbox(Integer[] array) {
         int[] ret = new int[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3529,7 +3543,8 @@ public abstract class ArrayOperations {
      * @param array the object type array
      * @return the primitive array
      */
-    public static final long[] unbox(Long[] array) {
+    @Immutable
+    public static long[] unbox(Long[] array) {
         long[] ret = new long[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3542,7 +3557,8 @@ public abstract class ArrayOperations {
      * @param array the object type array
      * @return the primitive array
      */
-    public static final float[] unbox(Float[] array) {
+    @Immutable
+    public static float[] unbox(Float[] array) {
         float[] ret = new float[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3555,7 +3571,8 @@ public abstract class ArrayOperations {
      * @param array the object type array
      * @return the primitive array
      */
-    public static final double[] unbox(Double[] array) {
+    @Immutable
+    public static double[] unbox(Double[] array) {
         double[] ret = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3568,7 +3585,8 @@ public abstract class ArrayOperations {
      * @param array the object type array
      * @return the primitive array
      */
-    public static final boolean[] unbox(Boolean[] array) {
+    @Immutable
+    public static boolean[] unbox(Boolean[] array) {
         boolean[] ret = new boolean[array.length];
         for (int i = 0; i < array.length; i++) {
             ret[i] = array[i];
@@ -3579,7 +3597,8 @@ public abstract class ArrayOperations {
     /**
      * @return the number of true elements in the given array
      */
-    public static final int countTrue(boolean[] array) {
+    @Immutable
+    public static int countTrue(boolean[] array) {
         int ret = 0;
         for (int i = 0; i < array.length; i++) {
             if (array[i]) {
@@ -3588,7 +3607,10 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
-    
+
+    /**
+     * Equivalent to {@link #generateEnumeration(int, int, int)}, invoked with generateEnumeration(start, size, step)
+     */
     public static int[] createArithSeries(int start, int step, int size) {
         int[] ret = new int[size];
         int value = start;
@@ -3598,11 +3620,21 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
-    
+
+    /**
+     * Equivalent to {@link #generateEnumeration(int)}
+     */
     public static int[] createEnumeration(int size) {
         return createArithSeries(0, 1, size);
     }
 
+    /**
+     * Finds the first index (i.e. index of the start of a sequence of the given element) of the given element in the
+     * given array, which is expected to be sorted
+     * @param array a sorted array
+     * @param element the element to search for in the array
+     * @return the index of the first occurrence of the element in the array, or -1 if not found
+     */
     public static int findFirstIndexInOrder(int[] array, int element) {
         int pos = Arrays.binarySearch(array, element);
         if (pos > 0 && array[0] < element) {
@@ -3627,6 +3659,13 @@ public abstract class ArrayOperations {
         return pos;
     }
 
+    /**
+     * Finds the first index (i.e. index of the start of a sequence of the given element) of the given element in the
+     * given array, which is expected to be sorted
+     * @param array a sorted array
+     * @param element the element to search for in the array
+     * @return the index of the first occurrence of the element in the array, or -1 if not found
+     */
     public static int findFirstIndexInOrder(float[] array, float element) {
         int pos = Arrays.binarySearch(array, element);
         if (pos > 0 && array[0] < element) {
@@ -3651,6 +3690,13 @@ public abstract class ArrayOperations {
         return pos;
     }
 
+    /**
+     * Finds the first index (i.e. index of the start of a sequence of the given element) of the given element in the
+     * given array, which is expected to be sorted
+     * @param array a sorted array
+     * @param element the element to search for in the array
+     * @return the index of the first occurrence of the element in the array, or -1 if not found
+     */
     public static int findFirstIndexInOrder(long[] array, long element) {
         int pos = Arrays.binarySearch(array, element);
         if (pos > 0 && array[0] < element) {
@@ -3675,6 +3721,13 @@ public abstract class ArrayOperations {
         return pos;
     }
 
+    /**
+     * Finds the first index (i.e. index of the start of a sequence of the given element) of the given element in the
+     * given array, which is expected to be sorted
+     * @param array a sorted array
+     * @param element the element to search for in the array
+     * @return the index of the first occurrence of the element in the array, or -1 if not found
+     */
     public static int findFirstIndexInOrder(double[] array, double element) {
         int pos = Arrays.binarySearch(array, element);
         if (pos > 0 && array[0] < element) {
@@ -3699,6 +3752,13 @@ public abstract class ArrayOperations {
         return pos;
     }
 
+    /**
+     * Finds the first index (i.e. index of the start of a sequence of the given element) of the given element in the
+     * given array, which is expected to be sorted according to the Comparable interface
+     * @param array a sorted array
+     * @param element the element to search for in the array
+     * @return the index of the first occurrence of the element in the array, or -1 if not found
+     */
     public static int findFirstIndexInOrder(Comparable[] array, Comparable element) {
         int pos = Arrays.binarySearch(array, element);
         if (pos > 0 && (array[0].compareTo(element) < 0)) {
@@ -3723,6 +3783,14 @@ public abstract class ArrayOperations {
         return pos;
     }
 
+    /**
+     * Finds the first index (i.e. index of the start of a sequence of the given element) of the given element in the
+     * given array, which is expected to be sorted in an order given by the comparator
+     * @param array a sorted array
+     * @param element the element to search for in the array
+     * @param comp the comparator that determines the order of elements in the array
+     * @return the index of the first occurrence of the element in the array, or -1 if not found
+     */
     public static <T, U extends T> int findFirstIndexInOrder(T[] array, U element, Comparator<T> comp) {
         int pos = Arrays.binarySearch(array, element);
         if (pos > 0 && (comp.compare(array[0], element) < 0)) {
@@ -3747,82 +3815,144 @@ public abstract class ArrayOperations {
         return pos;
     }
 
+    /**
+     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
+     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
+     * array to find the unsorted order.
+     * @param array the array to be sorted
+     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
+     * returns the original element in position i of the array before sorting; for example, the unsorted order of
+     * [3, 1, 2] is [2, 0, 1].
+     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
+     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
+     * given by {@link #sortedOrder(int[])})
+     */
     public static int[] sort(int[] array) {
-        int[] sortedOrder = new int[array.length];
+        int[] unsortedOrder = new int[array.length];
         int[] original = ArrayOperations.replicate(array);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(array);
         for (int i = 0; i < original.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
             repetitions[firstIndex]++;
         }
-        return sortedOrder;
+        return unsortedOrder;
     }
 
+    /**
+     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
+     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
+     * array to find the unsorted order.
+     * @param array the array to be sorted
+     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
+     * returns the original element in position i of the array before sorting; for example, the unsorted order of
+     * [3, 1, 2] is [2, 0, 1].
+     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
+     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
+     * given by {@link #sortedOrder(int[])})
+     */
     public static int[] sort(float[] array) {
-        int[] sortedOrder = new int[array.length];
+        int[] unsortedOrder = new int[array.length];
         float[] original = ArrayOperations.replicate(array);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(array);
         for (int i = 0; i < original.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
             repetitions[firstIndex]++;
         }
-        return sortedOrder;
+        return unsortedOrder;
     }
 
+    /**
+     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
+     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
+     * array to find the unsorted order.
+     * @param array the array to be sorted
+     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
+     * returns the original element in position i of the array before sorting; for example, the unsorted order of
+     * [3, 1, 2] is [2, 0, 1].
+     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
+     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
+     * given by {@link #sortedOrder(int[])})
+     */
     public static int[] sort(long[] array) {
-        int[] sortedOrder = new int[array.length];
+        int[] unsortedOrder = new int[array.length];
         long[] original = ArrayOperations.replicate(array);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(array);
         for (int i = 0; i < original.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
             repetitions[firstIndex]++;
         }
-        return sortedOrder;
+        return unsortedOrder;
     }
 
+    /**
+     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
+     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
+     * array to find the unsorted order.
+     * @param array the array to be sorted
+     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
+     * returns the original element in position i of the array before sorting; for example, the unsorted order of
+     * [3, 1, 2] is [2, 0, 1].
+     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
+     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
+     * given by {@link #sortedOrder(int[])})
+     */
     public static int[] sort(double[] array) {
-        int[] sortedOrder = new int[array.length];
+        int[] unsortedOrder = new int[array.length];
         double[] original = ArrayOperations.replicate(array);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(array);
         for (int i = 0; i < original.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
             repetitions[firstIndex]++;
         }
-        return sortedOrder;
+        return unsortedOrder;
     }
 
+    /**
+     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
+     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
+     * array to find the unsorted order.
+     * @param array the array to be sorted
+     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
+     * returns the original element in position i of the array before sorting; for example, the unsorted order of
+     * [3, 1, 2] is [2, 0, 1].
+     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
+     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
+     * given by {@link #sortedOrder(int[])})
+     */
     public static int[] sort(Comparable[] array) {
-        int[] sortedOrder = new int[array.length];
+        int[] unsortedOrder = new int[array.length];
         Comparable[] original = new Comparable[array.length];
         ArrayOperations.replicate(array, original);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(array);
         for (int i = 0; i < original.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
+            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
             repetitions[firstIndex]++;
         }
-        return sortedOrder;
+        return unsortedOrder;
     }
 
+    /**
+     * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
+     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(int[])}.
+     * @param array the array to sort
+     * @return the sorted order of the array elements
+     */
+    @Immutable
     public static int[] sortedOrder(int[] array) {
         int[] sortedOrder = new int[array.length];
         int[] sorted = ArrayOperations.replicate(array);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(sorted);
         for (int i = 0; i < array.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
@@ -3832,11 +3962,18 @@ public abstract class ArrayOperations {
         return sortedOrder;
     }
 
+    /**
+     * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
+     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(float[])}.
+     * @param array the array to sort
+     * @return the sorted order of the array elements
+     */
+    @Immutable
     public static int[] sortedOrder(float[] array) {
         int[] sortedOrder = new int[array.length];
         float[] sorted = ArrayOperations.replicate(array);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(sorted);
         for (int i = 0; i < array.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
@@ -3846,11 +3983,18 @@ public abstract class ArrayOperations {
         return sortedOrder;
     }
 
+    /**
+     * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
+     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(long[])}.
+     * @param array the array to sort
+     * @return the sorted order of the array elements
+     */
+    @Immutable
     public static int[] sortedOrder(long[] array) {
         int[] sortedOrder = new int[array.length];
         long[] sorted = ArrayOperations.replicate(array);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(sorted);
         for (int i = 0; i < array.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
@@ -3860,11 +4004,18 @@ public abstract class ArrayOperations {
         return sortedOrder;
     }
 
+    /**
+     * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
+     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(double[])}.
+     * @param array the array to sort
+     * @return the sorted order of the array elements
+     */
+    @Immutable
     public static int[] sortedOrder(double[] array) {
         int[] sortedOrder = new int[array.length];
         double[] sorted = ArrayOperations.replicate(array);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(sorted);
         for (int i = 0; i < array.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
@@ -3874,12 +4025,19 @@ public abstract class ArrayOperations {
         return sortedOrder;
     }
 
+    /**
+     * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
+     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(Object[])}.
+     * @param array the array to sort
+     * @return the sorted order of the array elements
+     */
+    @Immutable
     public static int[] sortedOrder(Comparable[] array) {
         int[] sortedOrder = new int[array.length];
         Comparable[] sorted = new Comparable[array.length];
         ArrayOperations.replicate(array, sorted);
-        int[] repetitions = new int[array.length];
-        Arrays.fill(repetitions, 0);
+        int[] repetitions = newIntArray(array.length, 0);
         Arrays.sort(sorted);
         for (int i = 0; i < array.length; i++) {
             int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
@@ -3888,6 +4046,8 @@ public abstract class ArrayOperations {
         }
         return sortedOrder;
     }
+
+    // Continue here
 
     public static int binarySearch(int[] array, int value, int[] order) {
         int ret;

@@ -3221,6 +3221,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSort_intArr() {
+        int[] array = new int[] {3, 1, 2};
+        int[] replica = new int[] {3, 1, 2};
+        int[] uo = ArrayOperations.sort(array);
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(replica[i], array[uo[i]]);
+        }
+        array = new int[] {3, 2, 0, 2, 1, 3};
+        replica = new int[] {3, 2, 0, 2, 1, 3};
+        uo = ArrayOperations.sort(array);
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(replica[i], array[uo[i]]);
+        }
     }
 
     /**
@@ -3256,6 +3268,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSortedOrder_intArr() {
+        int[] array = new int[] {3, 1, 2};
+        int[] sorted = new int[] {1, 2, 3};
+        int[] so = ArrayOperations.sortedOrder(array);
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(sorted[i], array[so[i]]);
+        }
+        array = new int[] {3, 2, 0, 2, 1, 3};
+        sorted = new int[] {0, 1, 2, 2, 3, 3};
+        so = ArrayOperations.sortedOrder(array);
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(sorted[i], array[so[i]]);
+        }
     }
 
     /**
