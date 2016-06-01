@@ -932,6 +932,13 @@ public abstract class CollectionUtils {
         return retMap;
     }
 
+    /**
+     * Creates a single string from the elements of the collection with the given separator string between them (objects
+     * are printed using their toString method)
+     * @param collection the collection to print
+     * @param separator the separator string to use between elements
+     * @return the printable list
+     */
     public static <T> String toPrintableList(Collection<T> collection, String separator) {
         StringBuilder builder = new StringBuilder();
         for (T item : collection) {
@@ -943,10 +950,22 @@ public abstract class CollectionUtils {
         return builder.toString().substring(0, limit);
     }
 
+    /**
+     * @return a comma-separated list of the elements in the collection (objects in the collection are printed using
+     * their toString method)
+     */
     public static <T> String toPrintableList(Collection<T> collection) {
         return toPrintableList(collection, ", ");
     }
 
+    /**
+     * Provides a way to simultaneously access corresponding elements of multiple lists without the need for an index-
+     * based loop (for example, in order to use a streaming construct).
+     * @param lists the lists to synchronize, which should be of equal size; otherwise, only the elements up to the size
+     *              of the shortest list will be synchronized
+     * @return a list of tuples (also encoded as lists), where each tuple contains the ith elements of each of the
+     * input lists
+     */
     public static List<List> synchronize(List... lists) {
         List<List> syncList = new ArrayList<>();
         List<List> allLists = Arrays.asList(lists);
@@ -959,7 +978,5 @@ public abstract class CollectionUtils {
         }
         return syncList;
     }
-
-
 
 }
