@@ -36,7 +36,7 @@ import java.util.Stack;
  *on the file type and data type, so the user must take care to use the proper methods according to the data to 
  *write or read. It is recommended to write and read the file specifying the same type and using converse method 
  *pairs.
- *There are also static methods for basic file functions, mainly copying files.
+ *There are also static methods for basic file functions, mainly copying files and file tree traversal.
  *@author Andres Quiroz Hernandez
  *@version 6.0
  */
