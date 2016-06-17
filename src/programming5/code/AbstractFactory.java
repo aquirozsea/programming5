@@ -26,6 +26,7 @@ import programming5.strings.StringOperations;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -169,15 +170,15 @@ public abstract class AbstractFactory {
 
     /**
      * Creates a class instance of the given type with the properties declared in the given properties file
-     * @param propertiesFile path to the properties file, which contain at least a "class" property, and, if multiple
-     *                       classes are declared, a "default_type" property (see key naming conventions in the general
-     *                       class documentation)
+     * @param propertiesFile path to the properties file, which may omit the "class" property, as long as multiple
+     *                       classes are not declared, in which case a "default_type" property and a prefixed "class"
+     *                       property must be included (see key naming conventions in the general class documentation)
      * @param typeClass the expected class of the instance to be returned
      * @return the configured and initialized class instance
      * @throws RuntimeException wrapping any exceptions thrown during instantiation, configuration, or initialization
      */
     public static <T> T createFromPropertiesWithClass(String propertiesFile, Class<T> typeClass) {
-        return (T) createFromProperties(propertiesFile);
+        return (T) createFromPropertiesWithDefaults(propertiesFile, Collections.singletonMap("class", typeClass.getName()));
     }
 
     /**
