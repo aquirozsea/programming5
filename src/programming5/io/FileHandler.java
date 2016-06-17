@@ -40,7 +40,7 @@ import java.util.Stack;
  *@author Andres Quiroz Hernandez
  *@version 6.0
  */
-public class FileHandler {
+public class FileHandler implements AutoCloseable {
 	
 	/**
 	 *Specifies the modes in which a file can be opened
