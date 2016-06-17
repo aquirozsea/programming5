@@ -449,6 +449,23 @@ public abstract class StringOperations {
     }
 
     /**
+     * Varargs alternative to {@link #toList(Object[])}
+     * @return a comma separated list of the objects' string representations
+     */
+    public static String stringList(Object... items) {
+        return toList(items);
+    }
+
+    /**
+     * Varargs alternative to {@link #toList(Object[], String)}
+     * @param separator the separator to use between objects
+     * @return a list of the objects' string representations, separated with the given separator
+     */
+    public static String customStringList(String separator, Object... items) {
+        return toList(items, separator);
+    }
+
+    /**
      * @param value a string representation of an integer
      * @return equivalent to Integer.toString(Integer.parseInt(value) + 1);
      */
