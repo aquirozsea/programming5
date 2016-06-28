@@ -21,11 +21,12 @@
 
 package programming5.collections;
 
+import programming5.code.ObjectMatcher;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import programming5.code.ObjectMatcher;
 
 /**
  * This extension of a java Hashtable implements the programming5 PMap interface.
@@ -67,6 +68,26 @@ public class HashTable<E, D> extends HashMap<E, D> implements PMap<E, D> {
             ret = defaultValue;
         }
         return ret;
+    }
+
+    /**
+     * Implements the {@link Map#getOrDefault(Object, Object)} method as a {@link #safeGet(Object, Object)} (i.e. the
+     * default value is automatically inserted into the table under the given key if the key does not exist in the table
+     * and if the key is of an acceptable type; if the key type is not acceptable, the default value is returned without
+     * being inserted).
+     * @param key the search key
+     * @param defaultValue an initializer or default value to be associated with the key in case no value is
+     * associated with the key in the map already
+     * @return this.safeGet(key, defaultValue)
+     */
+    @Override
+    public D getOrDefault(Object key, D defaultValue) {
+        try {
+            return safeGet((E) key, defaultValue);
+        }
+        catch (ClassCastException cce) {
+            return defaultValue;
+        }
     }
 
     /**
