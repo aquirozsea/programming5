@@ -99,4 +99,15 @@ public class MapBuilder<K, V> {
     public static <K, V> MapBuilder<K, V> in(Map<K, V> seedMap) {
         return new MapBuilder<>(seedMap);
     }
+
+    /**
+     * Convenience method to create a hash map with a single key/value pair. This method is different from {@link Collections#singletonMap(Object, Object)}
+     * in that the constructed map is a hash map that may be modified.
+     * @param key key to populate the map
+     * @param value value to populate the map
+     * @return the new map object populated with the key/value pair
+     */
+    public static <K, V> Map<K, V> singletonMap(K key, V value) {
+        return start(key, value).get();
+    }
 }
