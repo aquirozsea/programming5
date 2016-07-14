@@ -140,12 +140,16 @@ public abstract class AbstractFactory {
 
     /**
      * Creates a class instance of the given type with the given properties map
-     * @param classProperties the properties of the class, which must contain at least a "class" property
+     * @param classProperties the properties of the class, which may omit the "class" property unless it is a superclass
+     *                        of the typeClass parameter
      * @param typeClass the expected class of the instance to be returned
      * @return the configured and initialized class instance
      * @throws RuntimeException wrapping any exceptions thrown during instantiation, configuration, or initialization
      */
     public static <T> T createFromPropertiesWithClass(Properties classProperties, Class<T> typeClass) {
+        if (!classProperties.containsKey("class")) {
+            classProperties.put("class", typeClass.getName());
+        }
         return (T) createFromProperties(classProperties);
     }
 
