@@ -29,10 +29,18 @@ import programming5.io.LogUtil;
 import programming5.math.NumberRange;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Abstract class that provides utility methods for string manipulation that are not provided directly
@@ -859,7 +867,16 @@ public abstract class StringOperations {
 
     public static String capitalize(String s) {
         if (s != null && s.length() <= 1) return s.toUpperCase();
-        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
+    }
+
+    public static String titleCase(String s) {
+        return Stream.of(s.split("\\s+"))
+                .map(p -> {
+                    if (p != null && p.length() <= 1) return p.toUpperCase();
+                    return p.substring(0, 1).toUpperCase() + p.substring(1).toLowerCase();
+                })
+                .collect(Collectors.joining(" "));
     }
 
 }

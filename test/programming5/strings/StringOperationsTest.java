@@ -5,13 +5,19 @@
 
 package programming5.strings;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import programming5.io.Debug;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -357,6 +363,20 @@ public class StringOperationsTest {
         split = StringOperations.csvSplit(line);
         assertEquals(2, split.length);
         assertEquals(", and a two", split[1]);
+    }
+
+    public void testCapitalize() {
+        assertEquals("Tommy", StringOperations.capitalize("tommy"));
+        assertEquals("File_name", StringOperations.capitalize("file_name"));
+        assertEquals("FileName", StringOperations.capitalize("fileName"));
+        assertEquals("A", StringOperations.capitalize("a"));
+        assertEquals("", StringOperations.capitalize(""));
+    }
+
+    public void testTitleCase() {
+        assertEquals("Tommy", StringOperations.titleCase("tommy"));
+        assertEquals("A Wonderful Story", StringOperations.titleCase("a wonderful story"));
+        assertEquals("A Wonderful Story", StringOperations.titleCase("A WONDERFUL STORY"));
     }
 
 }
