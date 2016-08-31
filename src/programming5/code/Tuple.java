@@ -120,6 +120,13 @@ public class Tuple {
         return (T) tuple[index];
     }
 
+    /**
+     * @return the item contained at the given index, cast into the receiving class
+     */
+    public <T> T getAs(int index) {
+        return (T) tuple[index];
+    }
+
     @Override
     public String toString() {
         return "[" + StringOperations.toList(tuple) + "]";
