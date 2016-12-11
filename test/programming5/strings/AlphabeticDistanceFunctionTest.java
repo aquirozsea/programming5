@@ -10,7 +10,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -106,7 +108,7 @@ public class AlphabeticDistanceFunctionTest {
     public void testTriangle() {
         assertTrue("Distance must obey the triangle inequality", adf.distance("sa", "sb") + adf.distance("sb", "sc") >= adf.distance("sa", "sc"));
         assertTrue("Distance must obey the triangle inequality", adf.distance("sa", "") + adf.distance("", "sc") >= adf.distance("sa", "sc"));
-        assertTrue("Distance must obey the triangle inequality (Failed with " + arbitrary1 + ", " + arbitrary2 + ", " + arbitrary3 + ")", adf.distance(arbitrary1, arbitrary2) + adf.distance(arbitrary2, arbitrary3) >= adf.distance(arbitrary1, arbitrary3));
+        assertTrue("Distance must obey the triangle inequality (Failed with " + arbitrary1 + ", " + arbitrary2 + ", " + arbitrary3 + ")", adf.distance(arbitrary1, arbitrary2) + adf.distance(arbitrary2, arbitrary3) + 0.00001 >= adf.distance(arbitrary1, arbitrary3));
     }
 
 }
