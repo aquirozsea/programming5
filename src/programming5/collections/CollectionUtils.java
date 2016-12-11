@@ -24,7 +24,17 @@ package programming5.collections;
 import programming5.arrays.ArrayOperations;
 import programming5.math.MathOperations;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 /**
  *Provides utility methods to use with/for collections classes
@@ -977,6 +987,18 @@ public abstract class CollectionUtils {
             syncList.add(tuple);
         }
         return syncList;
+    }
+
+    /**
+     * Creates an array list containing the given elements
+     * @return the new array list object that contains the elements
+     */
+    public static <T> ArrayList<T> arrayList(T... elements) {
+        ArrayList<T> list = new ArrayList<>();
+        for (T element : elements) {
+            list.add(element);
+        }
+        return list;
     }
 
 }

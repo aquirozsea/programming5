@@ -7,7 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CollectionUtilsTest {
 
@@ -60,6 +62,14 @@ public class CollectionUtilsTest {
         List<String> list = CollectionUtils.listFromElement("first");
         assertEquals(1, list.size());
         assertTrue(list.contains("first"));
+    }
+
+    @Test
+    public void createArrayListTest() {
+        List<String> list = CollectionUtils.arrayList("one", "two", "three");
+        assertEquals(3, list.size());
+        List<Integer> other = CollectionUtils.arrayList(1, 2, 3, 5, 6);
+        assertEquals(5, other.size());
     }
 
 }
