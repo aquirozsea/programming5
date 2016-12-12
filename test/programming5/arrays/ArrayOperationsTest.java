@@ -5,17 +5,37 @@
 
 package programming5.arrays;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import programming5.code.ReplicableObject;
 import programming5.collections.NotFoundException;
 import programming5.math.DistanceFunction;
-import programming5.strings.*;
+import programming5.strings.AlphabeticDistanceFunction;
+import programming5.strings.AlphabeticStringComparator;
+import programming5.strings.KeyValuePairMatcher;
+import programming5.strings.LexicographicDistanceFunction;
 import programming5.strings.LexicographicDistanceFunction.Mode;
+import programming5.strings.NumericStringComparator;
+import programming5.strings.StringEditDistanceFunction;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  *
@@ -3308,6 +3328,18 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSortedOrder_ComparableArr() {
+        String[] array = {"c", "a", "b"};
+        String[] sorted = new String[] {"a", "b", "c"};
+        int[] so = ArrayOperations.sortedOrder(array);
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(sorted[i], array[so[i]]);
+        }
+        array = new String[] {"c", "b", "a", "b", "aa", "c"};
+        sorted = new String[] {"a", "aa", "b", "b", "c", "c"};
+        so = ArrayOperations.sortedOrder(array);
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(sorted[i], array[so[i]]);
+        }
     }
 
     /**

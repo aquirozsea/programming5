@@ -3817,116 +3817,118 @@ public abstract class ArrayOperations {
 
     /**
      * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
-     * array to find the unsorted order.
+     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
+     * more efficiently using the order array obtained from {@link #sortedOrder()} and referencing the original array.
      * @param array the array to be sorted
      * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
      * returns the original element in position i of the array before sorting; for example, the unsorted order of
      * [3, 1, 2] is [2, 0, 1].
      * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
      * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])})
+     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
+     * it requires making a replica of the original array.
      */
+    @Deprecated
     public static int[] sort(int[] array) {
-        int[] unsortedOrder = new int[array.length];
-        int[] original = ArrayOperations.replicate(array);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(array);
-        for (int i = 0; i < original.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
-            repetitions[firstIndex]++;
+        int[] so = sortedOrder(array);
+        Integer[] uo = box(createEnumeration(array.length));
+        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
+        int[] arrayCopy = replicate(array);
+        for (int i = 0; i < array.length; i++) {
+            array[i] = arrayCopy[so[i]];
         }
-        return unsortedOrder;
+        return unbox(uo);
     }
 
     /**
      * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
-     * array to find the unsorted order.
+     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
+     * more efficiently using the order array obtained from {@link #sortedOrder()} and referencing the original array.
      * @param array the array to be sorted
      * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
      * returns the original element in position i of the array before sorting; for example, the unsorted order of
      * [3, 1, 2] is [2, 0, 1].
      * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
      * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])})
+     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
+     * it requires making a replica of the original array.
      */
+    @Deprecated
     public static int[] sort(float[] array) {
-        int[] unsortedOrder = new int[array.length];
-        float[] original = ArrayOperations.replicate(array);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(array);
-        for (int i = 0; i < original.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
-            repetitions[firstIndex]++;
+        int[] so = sortedOrder(array);
+        Integer[] uo = box(createEnumeration(array.length));
+        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
+        float[] arrayCopy = replicate(array);
+        for (int i = 0; i < array.length; i++) {
+            array[i] = arrayCopy[so[i]];
         }
-        return unsortedOrder;
+        return unbox(uo);
     }
 
     /**
      * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
-     * array to find the unsorted order.
+     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
+     * more efficiently using the order array obtained from {@link #sortedOrder()} and referencing the original array.
      * @param array the array to be sorted
      * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
      * returns the original element in position i of the array before sorting; for example, the unsorted order of
      * [3, 1, 2] is [2, 0, 1].
      * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
      * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])})
+     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
+     * it requires making a replica of the original array.
      */
+    @Deprecated
     public static int[] sort(long[] array) {
-        int[] unsortedOrder = new int[array.length];
-        long[] original = ArrayOperations.replicate(array);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(array);
-        for (int i = 0; i < original.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
-            repetitions[firstIndex]++;
+        int[] so = sortedOrder(array);
+        Integer[] uo = box(createEnumeration(array.length));
+        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
+        long[] arrayCopy = replicate(array);
+        for (int i = 0; i < array.length; i++) {
+            array[i] = arrayCopy[so[i]];
         }
-        return unsortedOrder;
+        return unbox(uo);
     }
 
     /**
      * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
-     * array to find the unsorted order.
+     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
+     * more efficiently using the order array obtained from {@link #sortedOrder()} and referencing the original array.
      * @param array the array to be sorted
      * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
      * returns the original element in position i of the array before sorting; for example, the unsorted order of
      * [3, 1, 2] is [2, 0, 1].
      * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
      * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])})
+     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
+     * it requires making a replica of the original array.
      */
+    @Deprecated
     public static int[] sort(double[] array) {
-        int[] unsortedOrder = new int[array.length];
-        double[] original = ArrayOperations.replicate(array);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(array);
-        for (int i = 0; i < original.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
-            repetitions[firstIndex]++;
+        int[] so = sortedOrder(array);
+        Integer[] uo = box(createEnumeration(array.length));
+        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
+        double[] arrayCopy = replicate(array);
+        for (int i = 0; i < array.length; i++) {
+            array[i] = arrayCopy[so[i]];
         }
-        return unsortedOrder;
+        return unbox(uo);
     }
 
     /**
      * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method allocates an extra array of the same size of the original
-     * array to find the unsorted order.
+     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
+     * more efficiently using the order array obtained from {@link #sortedOrder()} and referencing the original array.
      * @param array the array to be sorted
      * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
      * returns the original element in position i of the array before sorting; for example, the unsorted order of
      * [3, 1, 2] is [2, 0, 1].
      * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
      * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])})
+     * given by {@link #sortedOrder(int[])}). This is also a less efficient O(N^2) method of obtaining the unsorted order
+     * that also requires making a replica of the original array.
      */
+    @Deprecated
     public static int[] sort(Comparable[] array) {
         int[] unsortedOrder = new int[array.length];
         Comparable[] original = new Comparable[array.length];
@@ -3943,108 +3945,77 @@ public abstract class ArrayOperations {
 
     /**
      * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
-     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
-     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(int[])}.
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. This method
+     * uses {@link Arrays#sort} under the hood and retains O(NlogN) complexity, but can be useful if retaining the
+     * original array or original sorted order are needed and replicating the array is expensive.
      * @param array the array to sort
      * @return the sorted order of the array elements
      */
     @Immutable
     public static int[] sortedOrder(int[] array) {
-        int[] sortedOrder = new int[array.length];
-        int[] sorted = ArrayOperations.replicate(array);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(sorted);
-        for (int i = 0; i < array.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
-            repetitions[firstIndex]++;
-        }
-        return sortedOrder;
+        Integer[] order = ArrayOperations.box(ArrayOperations.generateEnumeration(array.length));
+        Arrays.sort(order, Comparator.comparing(a -> array[a]));
+        return ArrayOperations.unbox(order);
     }
 
     /**
      * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
-     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
-     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(float[])}.
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. This method
+     * uses {@link Arrays#sort} under the hood and retains O(NlogN) complexity, but can be useful if retaining the
+     * original array or original sorted order are needed and replicating the array is expensive.
      * @param array the array to sort
      * @return the sorted order of the array elements
      */
     @Immutable
     public static int[] sortedOrder(float[] array) {
-        int[] sortedOrder = new int[array.length];
-        float[] sorted = ArrayOperations.replicate(array);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(sorted);
-        for (int i = 0; i < array.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
-            repetitions[firstIndex]++;
-        }
-        return sortedOrder;
+        Integer[] order = ArrayOperations.box(ArrayOperations.generateEnumeration(array.length));
+        Arrays.sort(order, Comparator.comparing(a -> array[a]));
+        return ArrayOperations.unbox(order);
     }
 
     /**
      * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
-     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
-     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(long[])}.
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. This method
+     * uses {@link Arrays#sort} under the hood and retains O(NlogN) complexity, but can be useful if retaining the
+     * original array or original sorted order are needed and replicating the array is expensive.
      * @param array the array to sort
      * @return the sorted order of the array elements
      */
     @Immutable
     public static int[] sortedOrder(long[] array) {
-        int[] sortedOrder = new int[array.length];
-        long[] sorted = ArrayOperations.replicate(array);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(sorted);
-        for (int i = 0; i < array.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
-            repetitions[firstIndex]++;
-        }
-        return sortedOrder;
+        Integer[] order = ArrayOperations.box(ArrayOperations.generateEnumeration(array.length));
+        Arrays.sort(order, Comparator.comparing(a -> array[a]));
+        return ArrayOperations.unbox(order);
     }
 
     /**
      * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
-     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
-     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(double[])}.
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. This method
+     * uses {@link Arrays#sort} under the hood and retains O(NlogN) complexity, but can be useful if retaining the
+     * original array or original sorted order are needed and replicating the array is expensive.
      * @param array the array to sort
      * @return the sorted order of the array elements
      */
     @Immutable
     public static int[] sortedOrder(double[] array) {
-        int[] sortedOrder = new int[array.length];
-        double[] sorted = ArrayOperations.replicate(array);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(sorted);
-        for (int i = 0; i < array.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
-            repetitions[firstIndex]++;
-        }
-        return sortedOrder;
+        Integer[] order = ArrayOperations.box(ArrayOperations.generateEnumeration(array.length));
+        Arrays.sort(order, Comparator.comparing(a -> array[a]));
+        return ArrayOperations.unbox(order);
     }
 
     /**
      * Returns the sorted order of the elements in the given array, so that array[so[i]] >= array[so[i+1]] for 0 <= i < array.length,
-     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. Note that
-     * this method creates a copy of the original array and sorts it with {@link Arrays#sort(Object[])}.
+     * while the original array remains unmodified. For example, the sorted order of [3, 1, 2] is [1, 2, 0]. This method
+     * uses {@link Arrays#sort} under the hood and retains O(NlogN) complexity, but can be useful if retaining the
+     * original array or original sorted order are needed and replicating the array is expensive.
      * @param array the array to sort
      * @return the sorted order of the array elements
      */
     @Immutable
     public static int[] sortedOrder(Comparable[] array) {
-        int[] sortedOrder = new int[array.length];
-        Comparable[] sorted = new Comparable[array.length];
-        ArrayOperations.replicate(array, sorted);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(sorted);
-        for (int i = 0; i < array.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(sorted, array[i]);
-            sortedOrder[repetitions[firstIndex] + firstIndex] = i;
-            repetitions[firstIndex]++;
-        }
-        return sortedOrder;
+        Integer[] order = ArrayOperations.box(ArrayOperations.generateEnumeration(array.length));
+        Arrays.sort(order, Comparator.comparing(a -> array[a]));
+        return ArrayOperations.unbox(order);
     }
 
     // Continue here
