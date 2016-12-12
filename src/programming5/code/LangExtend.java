@@ -21,6 +21,7 @@
 
 package programming5.code;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -60,6 +61,32 @@ public abstract class LangExtend {
         }
         catch (NullPointerException npe) {
             return defResult;
+        }
+    }
+
+    /**
+     * Allows performing an operation (function) on an object reference that may be null (or whose operation may throw a
+     * NullPointerException), given a default operation result that will be returned in the null case or if the given
+     * condition is not met.
+     * @param obj the object on which to perform the operation
+     * @param defResult the default result to return in the case of a NullPointerException
+     * @param operation the operation function or lambda
+     * @return the result of the operation, or the default result given if a NullPointerException is thrown when
+     * performing the operation
+     */
+    public static <T, R> R safeOp(T obj, R defResult, Predicate<T> condition, Function<T, R> operation) {
+        if (safeTest(obj, condition)) {
+            return safeOp(obj, defResult, operation);
+        }
+        return defResult;
+    }
+
+    /**
+     * Performs a {@link #safeTest(Object, Predicate)} on the given object and consumes the object if the test passes
+     */
+    public static <T> void safeDoIf(T obj, Predicate<T> test, Consumer<T> operation) {
+        if (safeTest(obj, test)) {
+            operation.accept(obj);
         }
     }
 
