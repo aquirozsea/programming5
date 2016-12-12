@@ -22,6 +22,7 @@
 package programming5.code;
 
 import programming5.collections.MapBuilder;
+import programming5.io.Debug;
 import programming5.strings.StringOperations;
 
 import java.io.FileInputStream;
@@ -90,32 +91,35 @@ public abstract class AbstractFactory {
                     classProperties.getProperty(DEFAULT_TYPE_KEY) + "."
                     : "";
             final Class typeClass = Class.forName(classProperties.getProperty(propertyPrefix + CLASS_KEY));
+            Debug.println("Class to instantiate: " + typeClass.getName());
             final Object instance = typeClass.newInstance();
             classProperties.stringPropertyNames().stream()
                     .filter(key -> key.startsWith(propertyPrefix) && !key.equals(propertyPrefix + CLASS_KEY))
-                    .map(key -> propertyPrefix.isEmpty() ? key : key.substring(1 + key.lastIndexOf(".")))
+                    .map(key -> propertyPrefix.isEmpty() ? key : key.substring(propertyPrefix.length()))
                     .forEach(key -> {
+                        Debug.println("Getting property " + propertyPrefix + key);
                         String value = classProperties.getProperty(propertyPrefix + key);
                         if (!value.contains(";")) { // TODO: Define escape mechanism for semicolon
-                            try {
-                                String setterName = "set" + StringOperations.capitalize(key);
-                                Method setter = setterTypeAdapters.keySet().stream()
-                                        .map(parameterType -> {
-                                            try {
-                                                return typeClass.getMethod(setterName, parameterType);
-                                            }
-                                            catch (NoSuchMethodException e) {
-                                                return null;
-                                            }
-                                        })
-                                        .filter(method -> method != null)
-                                        .findFirst().get();
-                                setter.invoke(instance, adaptType(value, setter));
-                            }
-                            catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-
+                            String setterName = "set" + StringOperations.capitalize(key);
+                            Debug.println("Finding setter: " + setterName);
+                            setterTypeAdapters.keySet().stream()
+                                    .map(parameterType -> {
+                                        try {
+                                            return typeClass.getMethod(setterName, parameterType);
+                                        }
+                                        catch (NoSuchMethodException e) {
+                                            return null;
+                                        }
+                                    })
+                                    .filter(method -> method != null)
+                                    .findFirst()
+                                    .ifPresent(setter -> {
+                                        try {
+                                            setter.invoke(instance, adaptType(value, setter));
+                                        } catch (Exception e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    });
                         }
                         else {
                             // TODO: Invoke adders
