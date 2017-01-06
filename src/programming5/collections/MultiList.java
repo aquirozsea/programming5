@@ -21,11 +21,20 @@
 
 package programming5.collections;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import programming5.arrays.ArrayOperations;
 import programming5.strings.StringOperations;
-
-import java.io.Serializable;
-import java.util.*;
 
 /**
  *Wrapper class that links the elements of two lists, so that the elements of one can be indexed with the elements 
@@ -189,6 +198,34 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
     @Override
     public D get(Object key) {
         return getInSecond((E) key);
+    }
+
+    /**
+     * @param predicateOnKeys a function implementing a condition for keys to be evaluated against
+     * @return all of the values for which the corresponding keys match the given predicate, or an empty list if none
+     * match
+     */
+    public List<D> get(Predicate<E> predicateOnKeys) {
+        return first().stream()
+                .filter(predicateOnKeys)
+                .map(this::get)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * @param predicateOnKeys a function implementing a condition for keys to be evaluated against
+     * @return the first value for which the corresponding key matches the given predicate, if any are present
+     */
+    public Optional<D> getFirstSatifying(Predicate<E> predicateOnKeys) {
+        return get(predicateOnKeys).stream().findFirst();
+    }
+
+    /**
+     * @param predicateOnKeys a function implementing a condition for keys to be evaluated against
+     * @return a value for which the corresponding key matches the given predicate, if any are present
+     */
+    public Optional<D> getAnySatifying(Predicate<E> predicateOnKeys) {
+        return get(predicateOnKeys).stream().findAny();
     }
 
     /**
