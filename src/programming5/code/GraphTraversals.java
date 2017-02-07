@@ -173,12 +173,10 @@ public abstract class GraphTraversals {
     }
 
     /**
-     * Returns a list containing the nodes of the connected graph rooted at the given start node in pre-order (in the
+     * @param start the node at which the walk will be started
+     * @param childWalker a function that provides a child iterator for a given node
+     * @return a list containing the nodes of the connected graph rooted at the given start node in pre-order (in the
      * order that they are first visited in a depth first graph traversal)
-     * @param start
-     * @param childWalker
-     * @param <V>
-     * @return
      */
     public static <V> List<V> graphPreOrder(V start, Function<V, NodeAdjacencyIterator<V>> childWalker) {
         final List<V> preorder = new ArrayList<>();
@@ -186,11 +184,28 @@ public abstract class GraphTraversals {
         return preorder;
     }
 
+    /**
+     * @param start the node at which the walk will be started
+     * @param childWalker a function that provides a child iterator for a given node
+     * @return a list containing the nodes of the connected graph rooted at the given start node in post-order (in the
+     * order in which they are finished in a depth first graph traversal)
+     */
     public static <V> List<V> graphPostOrder(V start, Function<V, NodeAdjacencyIterator<V>> childWalker) {
         final List<V> postorder = new ArrayList<>();
         depthFirstNodeWalk(start, childWalker, node -> {}, postorder::add);
         return postorder;
     }
+
+//    public static <V> void breadthFirstWalk(V start, Function<V, NodeAdjacencyIterator<V>> childWalker, Consumer<V> nodePreprocessor, Consumer<Edge<V>> edgePreprocessor, Consumer<Edge<V>> edgePostprocessor, Consumer<V> nodePostprocessor) {
+//        if (start == null) return;
+//        // Create optionals in case of null inputs
+//        Optional<Consumer<V>> nodePreprocessorOpt = Optional.ofNullable(nodePreprocessor);
+//        Optional<Consumer<V>> nodePostprocessorOpt = Optional.ofNullable(nodePostprocessor);
+//        Optional<Consumer<Edge<V>>> edgePreprocessorOpt = Optional.ofNullable(edgePreprocessor);
+//        Optional<Consumer<Edge<V>>> edgePostprocessorOpt = Optional.ofNullable(edgePostprocessor);
+//        // BFS
+//
+//    }
 
     public static class Edge<V> {
 
