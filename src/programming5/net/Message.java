@@ -22,7 +22,9 @@
 package programming5.net;
 
 import programming5.arrays.ArrayOperations;
+import programming5.collections.NotFoundException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,9 +69,7 @@ public class Message {
      *unknown size. The message must follow the correct syntax or an exception is
      *thrown.
      *@param message the encoded message in String format
-     *@deprecated the preferred way to encode messages is as byte arrays
      */
-    @Deprecated
     public Message(String message) throws MalformedMessageException {
         if (message != null) {
             String[] parts = message.split(sepString, 2);
@@ -96,9 +96,7 @@ public class Message {
      *with the size, or an exception is thrown.
      *@param message the encoded message in String format
      *@param size the expected message size
-     *@deprecated the preferred way to encode messages is as byte arrays
      */
-    @Deprecated
     public Message(String message, int size) throws MalformedMessageException {
         if (message != null) {
             String[] parts = message.split(sepString, 2);
@@ -130,20 +128,20 @@ public class Message {
      * @throws programming5.net.MalformedMessageException
      */
     public Message(byte[] messageBytes) throws MalformedMessageException {
-        int headerIndex = ArrayOperations.seqFind(sepByte, messageBytes);
-        if (headerIndex >= 0) {
+        try {
+            int headerIndex = ArrayOperations.findInSequence(sepByte, messageBytes);
             if (headerIndex > 0) {
                 header = new String(ArrayOperations.prefix(messageBytes, headerIndex));
             }
             List<Integer> separators = new ArrayList<Integer>();
             int start = headerIndex + 1;
-            int separatorIndex = ArrayOperations.seqFind(sepByte, messageBytes, start);
+            int separatorIndex = ArrayOperations.findInSequence(sepByte, messageBytes, start);
             while (separatorIndex > 0 && separatorIndex < (messageBytes.length-1)) {
                 if (messageBytes[separatorIndex+1] == sepByte) {
                     separators.add(separatorIndex);
                 }
                 start = separatorIndex + 2;
-                separatorIndex = ArrayOperations.seqFind(sepByte, messageBytes, start);
+                separatorIndex = ArrayOperations.findInSequence(sepByte, messageBytes, start);
             }
             body = new byte[separators.size()+1][];
             start = headerIndex + 1;
@@ -153,8 +151,9 @@ public class Message {
                 start = separator + 2;
             }
             body[separators.size()] = ArrayOperations.subArray(messageBytes, start, messageBytes.length);
+        } catch (NotFoundException e) {
+            throw new MalformedMessageException("Message: Could not construct message: Expected " + sepString);
         }
-        else throw new MalformedMessageException("Message: Could not construct message: Illegal start");
     }
     
     /**
@@ -201,10 +200,7 @@ public class Message {
     
     /**
      *Gets the encoded string of a message object.
-     *@deprecated the string representation might not be reconstructed correctly as a new Message object
-     * because of byte array to String conversion
      */
-    @Deprecated
     public String getMessage() throws MalformedMessageException {
         String message;
         if (header != null) {
@@ -215,7 +211,7 @@ public class Message {
         }
         int bodyLength = (body == null) ? 0 : body.length;
         if (bodyLength > 0) {
-            message = message.concat(new String(body[0]));
+            message = message.concat(new String(body[0], StandardCharsets.UTF_8));
             for (int i = 1; i < bodyLength; i++) {
                 message = message.concat(sep2String);
                 message = message.concat(new String(body[i]));
@@ -620,31 +616,36 @@ public class Message {
 
     private byte[] inflate(byte[] byteItem) {
         byte[] ret = byteItem.clone();
-        int separatorIndex = ArrayOperations.seqFind(sepByte, ret);
-        while (separatorIndex >= 0) { //  && separatorIndex < (ret.length-1)
-            if (separatorIndex < (ret.length-1)) {
-                if (ret[separatorIndex+1] == sepByte || ret[separatorIndex+1] == escByte) {
-                    ret = ArrayOperations.insert(escByte, ret, ++separatorIndex);
+        try {
+            int separatorIndex = ArrayOperations.findInSequence(sepByte, ret);
+            while (separatorIndex >= 0) { //  && separatorIndex < (ret.length-1)
+                if (separatorIndex < (ret.length - 1)) {
+                    if (ret[separatorIndex + 1] == sepByte || ret[separatorIndex + 1] == escByte) {
+                        ret = ArrayOperations.insert(escByte, ret, ++separatorIndex);
+                    }
+                    separatorIndex = ArrayOperations.findInSequence(sepByte, ret, separatorIndex + 1);
+                } else {
+                    ret = ArrayOperations.addElement(escByte, ret);
+                    separatorIndex = -1;
                 }
-                separatorIndex = ArrayOperations.seqFind(sepByte, ret, separatorIndex+1);
-            }
-            else {
-                ret = ArrayOperations.addElement(escByte, ret);
-                separatorIndex = -1;
             }
         }
+        catch (NotFoundException ignored) {}
         return ret;
     }
 
     private byte[] deflate(byte[] byteItem) {
         byte[] ret = byteItem.clone();
-        int separatorIndex = ArrayOperations.seqFind(sepByte, ret);
-        while (separatorIndex >= 0 && separatorIndex < (ret.length-1)) {
-            if (ret[separatorIndex+1] == escByte) {
-                ret = ArrayOperations.delete(ret, separatorIndex+1);
+        try {
+            int separatorIndex = ArrayOperations.findInSequence(sepByte, ret);
+            while (separatorIndex >= 0 && separatorIndex < (ret.length - 1)) {
+                if (ret[separatorIndex + 1] == escByte) {
+                    ret = ArrayOperations.delete(ret, separatorIndex + 1);
+                }
+                separatorIndex = ArrayOperations.findInSequence(sepByte, ret, separatorIndex + 1);
             }
-            separatorIndex = ArrayOperations.seqFind(sepByte, ret, separatorIndex+1);
         }
+        catch (NotFoundException ignored) {}
         return ret;
     }
 

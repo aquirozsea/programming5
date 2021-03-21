@@ -21,10 +21,11 @@
 
 package programming5.net;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
 import programming5.io.Debug;
 import programming5.io.Serializer;
+
+import java.io.IOException;
+import java.io.NotSerializableException;
 
 /**
  *Event that holds the result of an asynchronous operation. As of version 6.1, objects encapsulated into a
@@ -61,15 +62,6 @@ public class CallbackEvent extends programming5.net.Event {
                 throw new RuntimeException("CallbackEvent: Could not serialize object: " + ioe.getMessage());
             }
         }
-    }
-    
-    /**
-     *@deprecated this constructor is no longer supported
-     *@throws UnsupportedOperationException
-     */
-    @Deprecated
-    public CallbackEvent(Message evtMsg) {
-        super(evtMsg);
     }
 
     /**

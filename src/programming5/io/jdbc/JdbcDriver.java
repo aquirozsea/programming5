@@ -21,20 +21,16 @@
 
 package programming5.io.jdbc;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Savepoint;
-import java.sql.Statement;
+import programming5.arrays.ArrayOperations;
+import programming5.collections.HashTable;
+import programming5.collections.NotFoundException;
+import programming5.io.Debug;
+import programming5.strings.KeyValuePairMatcher;
+
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import programming5.arrays.ArrayOperations;
-import programming5.collections.HashTable;
-import programming5.io.Debug;
-import programming5.strings.KeyValuePairMatcher;
 
 /**
  * This class is a utility wrapper for a JDBC database connection, providing basic CRUD methods
@@ -389,11 +385,11 @@ public class JdbcDriver {
 
     private String fillParameter(DBPropertyKey key, String[] properties, String defaultValue) {
         String ret;
-        int pos = ArrayOperations.seqFind(key.toString(), properties, new KeyValuePairMatcher());
-        if (pos >= 0) {
+        try {
+            int pos = ArrayOperations.findInSequence(key.toString(), properties, new KeyValuePairMatcher());
             ret = properties[pos].split(":")[1].trim();
         }
-        else {
+        catch (NotFoundException nfe) {
             ret = defaultValue;
         }
         return ret;

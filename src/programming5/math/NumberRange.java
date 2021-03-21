@@ -21,8 +21,9 @@
 
 package programming5.math;
 
-import java.util.Map;
 import programming5.strings.StringOperations;
+
+import java.util.Map;
 
 /**
  *This class provides a convenient way of defining and enforcing a range for a numeric value.
@@ -34,57 +35,6 @@ public class NumberRange {
     protected double lower, upper;
     protected boolean includeLower = true;
     protected boolean includeUpper = true;
-    
-    public static final boolean INCLUSIVE = true;
-    public static final boolean EXCLUSIVE = false;
-    
-    /**
-     *@param lowerLimit the lower limit, which is included in the range by default
-     *@param upperLimit the upper limit, which is included in the range by default
-     *@deprecated use of static create method is preferred, since it is more explicit
-     */
-    @Deprecated
-    public NumberRange(int lowerLimit, int upperLimit) {
-        if (lowerLimit <= upperLimit) {
-            lower = lowerLimit;
-            upper = upperLimit;
-        }
-        else {
-            throw new IllegalArgumentException("NumberRange: Lower limit must be less than upper limit");
-        }
-    }
-    
-    /**
-     *@param lowerLimit the lower limit, which is included in the range by default
-     *@param upperLimit the upper limit, which is included in the range by default
-     *@deprecated use of static create method is preferred, since it is more explicit
-     */
-    @Deprecated
-    public NumberRange(float lowerLimit, float upperLimit) {
-        if (lowerLimit <= upperLimit) {
-            lower = lowerLimit;
-            upper = upperLimit;
-        }
-        else {
-            throw new IllegalArgumentException("NumberRange: Lower limit must be less than upper limit");
-        }
-    }
-    
-    /**
-     *@param lowerLimit the lower limit, which is included in the range by default
-     *@param upperLimit the upper limit, which is included in the range by default
-     *@deprecated use of static create method is preferred, since it is more explicit
-     */
-    @Deprecated
-    public NumberRange(double lowerLimit, double upperLimit) {
-        if (lowerLimit <= upperLimit) {
-            lower = lowerLimit;
-            upper = upperLimit;
-        }
-        else {
-            throw new IllegalArgumentException("NumberRange: Lower limit must be less than upper limit");
-        }
-    }
     
     /**
      *@param lowerLimit the lower limit

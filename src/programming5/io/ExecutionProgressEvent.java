@@ -22,7 +22,6 @@
 package programming5.io;
 
 import programming5.net.MalformedMessageException;
-import programming5.net.Message;
 
 /**
  * Event that represents the progress percentage of a given operation. This class is not "castable" from other
@@ -56,15 +55,6 @@ public class ExecutionProgressEvent extends programming5.net.Event {
         super(TYPE);
         this.addMessageItem(operation);
         this.addMessageItem(action.toString());
-    }
-    
-    /**
-     *@deprecated this constructor is no longer supported
-     *@throws UnsupportedOperationException
-     */
-    @Deprecated
-    public ExecutionProgressEvent(Message evtMsg) {
-        super(evtMsg);
     }
 
     /**

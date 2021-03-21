@@ -21,12 +21,12 @@
 
 package programming5.io.keyboard;
 
-import java.util.HashSet;
-import java.util.Set;
 import programming5.io.Debug;
 import programming5.net.Event;
 import programming5.net.MalformedMessageException;
-import programming5.net.Message;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *This event is meant to encapsulate a set of key codes that represent the currently pressed keys of a keyboard. It uses
@@ -53,14 +53,6 @@ public class KeyboardEvent extends Event {
         for (Integer code : keyCodes) {
             this.addMessageItem(code);
         }
-    }
-    
-    /**
-     *Creates a keyboard event for the given event message, encoding the set of keys.
-     */
-    @Deprecated
-    public KeyboardEvent(Message evtMsg) {
-        super(evtMsg);
     }
 
     @Override

@@ -24,17 +24,7 @@ package programming5.collections;
 import programming5.arrays.ArrayOperations;
 import programming5.math.MathOperations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 /**
  *Provides utility methods to use with/for collections classes
@@ -44,31 +34,13 @@ import java.util.Vector;
 public abstract class CollectionUtils {
 
     /**
-     * To create a vector with the elements of a given array, for which there is surprisingly no constructor
-     * in the Vector class.
-     * @param array the input array; the elements of the array will be put into the vector by reference
-     * @return the filled vector of the type of the input array elements
-     * @deprecated use of Vector class is obsolete; use listFromArray instead
-     */
-    @Deprecated 
-    public static final <T> Vector<T> vectorFromArray(T[] array) {
-        Vector<T> ret = new Vector<T>();
-        for (T element : array) {
-            ret.add(element);
-        }
-        return ret;
-    }
-    
-    /**
      * To create a list with the elements of a given array
      * @param array the input array; the elements of the array will be put into the list by reference
      * @return the filled list of the type of the input array elements
      */
-    public static final <T> List<T> listFromArray(T[] array) {
+    public static <T> List<T> listFromArray(T[] array) {
         List<T> ret = new ArrayList<T>();
-        for (T element : array) {
-            ret.add(element);
-        }
+        Collections.addAll(ret, array);
         return ret;
     }
 

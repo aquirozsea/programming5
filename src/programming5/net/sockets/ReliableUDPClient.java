@@ -21,28 +21,13 @@
 
 package programming5.net.sockets;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 import programming5.arrays.ArrayOperations;
 import programming5.collections.RotatingList;
 import programming5.io.Debug;
-import programming5.net.AsynchMessageArrivedEvent;
-import programming5.net.MalformedMessageException;
-import programming5.net.MessageArrivedEvent;
-import programming5.net.MessageArrivedListener;
-import programming5.net.MessagingClient;
-import programming5.net.NetworkException;
-import programming5.net.Publisher;
-import programming5.net.ReceiveRequest;
-import programming5.net.ReliableMessageArrivedListener;
-import programming5.net.ReliableProtocolMessage;
-import programming5.net.Subscriber;
+import programming5.net.*;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -246,7 +231,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
     
     /**
      *Implementation of the MessagingClient interface
-     *@param bytesMessage the packet of bytes to send to the host
+     *@param msgBytes the packet of bytes to send to the host
      */
     @Override
     public void send(byte[] msgBytes) throws NetworkException {
@@ -277,7 +262,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
 
     /**
      *Implementation of the MessagingClient interface. Sends the given message to the given uri.
-     *@param message the message to send
+     *@param bytesMessage the message to send
      *@param uri the destination uri, which must be in the format [protocol:]//host:port[/...]
      */
     @Override

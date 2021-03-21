@@ -1238,18 +1238,6 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_byte_byteArr() {
-        byte[] findArray = new byte[] {'a', 'b', 'a', 'c'};
-        assertEquals(0, ArrayOperations.seqFind((byte) 'a', findArray));
-        assertEquals(1, ArrayOperations.seqFind((byte) 'b', findArray));
-        assertEquals(3, ArrayOperations.seqFind((byte) 'c', findArray));
-        assertEquals(-1, ArrayOperations.seqFind((byte) 'd', findArray));
-    }
-
-    /**
      * Test of findInSequence method, of class ArrayOperations.
      */
     @Test
@@ -1269,18 +1257,6 @@ public class ArrayOperationsTest {
         }
         catch (NotFoundException nfe) {
         }
-    }
-
-    /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_int_intArr() {
-        int[] findArray = new int[] {1, 2, 1, 3};
-        assertEquals(0, ArrayOperations.seqFind(1, findArray));
-        assertEquals(1, ArrayOperations.seqFind(2, findArray));
-        assertEquals(3, ArrayOperations.seqFind(3, findArray));
-        assertEquals(-1, ArrayOperations.seqFind(4, findArray));
     }
 
     /**
@@ -1306,18 +1282,6 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_float_floatArr() {
-        float[] findArray = new float[] {1, 2, 1, 3};
-        assertEquals(0, ArrayOperations.seqFind(1, findArray));
-        assertEquals(1, ArrayOperations.seqFind(2, findArray));
-        assertEquals(3, ArrayOperations.seqFind(3, findArray));
-        assertEquals(-1, ArrayOperations.seqFind(4, findArray));
-    }
-
-    /**
      * Test of findInSequence method, of class ArrayOperations.
      */
     @Test
@@ -1337,18 +1301,6 @@ public class ArrayOperationsTest {
         }
         catch (NotFoundException nfe) {
         }
-    }
-
-    /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_double_doubleArr() {
-        double[] findArray = new double[] {1, 2, 1, 3};
-        assertEquals(0, ArrayOperations.seqFind(1, findArray));
-        assertEquals(1, ArrayOperations.seqFind(2, findArray));
-        assertEquals(3, ArrayOperations.seqFind(3, findArray));
-        assertEquals(-1, ArrayOperations.seqFind(4, findArray));
     }
 
     /**
@@ -1374,18 +1326,6 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_char_charArr() {
-        char[] findArray = new char[] {'a', 'b', 'a', 'c'};
-        assertEquals(0, ArrayOperations.seqFind( 'a', findArray));
-        assertEquals(1, ArrayOperations.seqFind('b', findArray));
-        assertEquals(3, ArrayOperations.seqFind('c', findArray));
-        assertEquals(-1, ArrayOperations.seqFind('d', findArray));
-    }
-
-    /**
      * Test of findInSequence method, of class ArrayOperations.
      */
     @Test
@@ -1405,18 +1345,6 @@ public class ArrayOperationsTest {
         }
         catch (NotFoundException nfe) {
         }
-    }
-
-    /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_Object_ObjectArr() {
-        String[] findArray = new String[] {"a", "b", "a", "c"};
-        assertEquals(0, ArrayOperations.seqFind("a", findArray));
-        assertEquals(1, ArrayOperations.seqFind("b", findArray));
-        assertEquals(3, ArrayOperations.seqFind("c", findArray));
-        assertEquals(-1, ArrayOperations.seqFind("d", findArray));
     }
 
     /**
@@ -1442,17 +1370,6 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_3args_1() {
-        String[] findArray = new String[] {"first:a", "b:b", "other:a", "c:c"};
-        KeyValuePairMatcher keyMatcher = new KeyValuePairMatcher();
-        assertEquals(-1, ArrayOperations.seqFind("a", findArray, keyMatcher));
-        assertEquals(2, ArrayOperations.seqFind("other", findArray, keyMatcher));
-    }
-
-    /**
      * Test of findInSequence method, of class ArrayOperations.
      */
     @Test
@@ -1470,18 +1387,6 @@ public class ArrayOperationsTest {
         catch (NotFoundException nfe) {
             fail("findInSequence did not find existing element");
         }
-    }
-
-    /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_3args_2() {
-        byte[] findArray = new byte[] {'a', 'b', 'a', 'c'};
-        assertEquals(0, ArrayOperations.seqFind((byte) 'a', findArray, 0));
-        assertEquals(2, ArrayOperations.seqFind((byte) 'a', findArray, 1));
-        assertEquals(-1, ArrayOperations.seqFind((byte) 'a', findArray, 3));
-        assertEquals(-1, ArrayOperations.seqFind((byte) 'd', findArray, 0));
     }
 
     /**
@@ -1510,18 +1415,6 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_3args_3() {
-        int[] findArray = new int[] {1, 2, 1, 3};
-        assertEquals(0, ArrayOperations.seqFind(1, findArray, 0));
-        assertEquals(2, ArrayOperations.seqFind(1, findArray, 1));
-        assertEquals(-1, ArrayOperations.seqFind(1, findArray, 3));
-        assertEquals(-1, ArrayOperations.seqFind(4, findArray, 0));
-    }
-
-    /**
      * Test of findInSequence method, of class ArrayOperations.
      */
     @Test
@@ -1544,18 +1437,6 @@ public class ArrayOperationsTest {
         catch (NotFoundException nfe) {
             fail("findInSequence did not find existing element");
         }
-    }
-
-    /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_3args_4() {
-        float[] findArray = new float[] {1, 2, 1, 3};
-        assertEquals(0, ArrayOperations.seqFind(1, findArray, 0));
-        assertEquals(2, ArrayOperations.seqFind(1, findArray, 1));
-        assertEquals(-1, ArrayOperations.seqFind(1, findArray, 3));
-        assertEquals(-1, ArrayOperations.seqFind(4, findArray), 0);
     }
 
     /**
@@ -1584,18 +1465,6 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_3args_5() {
-        double[] findArray = new double[] {1, 2, 1, 3};
-        assertEquals(0, ArrayOperations.seqFind(1, findArray, 0));
-        assertEquals(2, ArrayOperations.seqFind(1, findArray, 1));
-        assertEquals(-1, ArrayOperations.seqFind(1, findArray, 3));
-        assertEquals(-1, ArrayOperations.seqFind(4, findArray, 0));
-    }
-
-    /**
      * Test of findInSequence method, of class ArrayOperations.
      */
     @Test
@@ -1618,18 +1487,6 @@ public class ArrayOperationsTest {
         catch (NotFoundException nfe) {
             fail("findInSequence did not find existing element");
         }
-    }
-
-    /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_3args_6() {
-        char[] findArray = new char[] {'a', 'b', 'a', 'c'};
-        assertEquals(0, ArrayOperations.seqFind('a', findArray, 0));
-        assertEquals(2, ArrayOperations.seqFind('a', findArray, 1));
-        assertEquals(-1, ArrayOperations.seqFind('a', findArray, 3));
-        assertEquals(-1, ArrayOperations.seqFind('d', findArray, 0));
     }
 
     /**
@@ -1658,18 +1515,6 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_3args_7() {
-        String[] findArray = new String[] {"a", "b", "a", "c"};
-        assertEquals(0, ArrayOperations.seqFind("a", findArray, 0));
-        assertEquals(2, ArrayOperations.seqFind("a", findArray, 1));
-        assertEquals(-1, ArrayOperations.seqFind("a", findArray, 3));
-        assertEquals(-1, ArrayOperations.seqFind("d", findArray, 0));
-    }
-
-    /**
      * Test of findInSequence method, of class ArrayOperations.
      */
     @Test
@@ -1692,16 +1537,6 @@ public class ArrayOperationsTest {
         catch (NotFoundException nfe) {
             fail("findInSequence did not find existing element");
         }
-    }
-
-    /**
-     * Test of seqFind method, of class ArrayOperations.
-     */
-    @Test
-    public void testSeqFind_4args() {
-        String[] findArray = new String[] {"first:a", "b:b", "other:a", "c:c"};
-        KeyValuePairMatcher keyMatcher = new KeyValuePairMatcher();
-        assertEquals(2, ArrayOperations.seqFind("other", findArray, 1, keyMatcher));
     }
 
     /**

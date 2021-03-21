@@ -21,26 +21,19 @@
 
 package programming5.net.sockets;
 
-import java.net.Socket;
-import java.net.InetAddress;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import programming5.arrays.ArrayOperations;
 import programming5.collections.MultiList;
 import programming5.io.Debug;
-import programming5.net.MessageArrivedEvent;
-import programming5.net.MessagingClient;
-import programming5.net.NetworkException;
-import programming5.net.Publisher;
-import programming5.net.ReceiveRequest;
+import programming5.net.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.URI;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  *This class is the TCP socket implementation of a MessagingClient. Can be used to handle several TCP connections. Messages will be sent 
@@ -425,13 +418,13 @@ public class TCPClient extends Publisher<MessageArrivedEvent> implements Messagi
                     }
                     while (bytesRead > 0) {
                         try {
-                            headerPos = ArrayOperations.seqFind(TCPClient.SEPARATOR[0], bytesMsg, msgStart);
+                            headerPos = ArrayOperations.findInSequence(TCPClient.SEPARATOR[0], bytesMsg, msgStart);
                             while (headerPos <= msgStart) {
                                 bytesRead += in.read(fromServer);
                                 if (bytesRead > 0) {
                                     bytesMsg = ArrayOperations.join(bytesMsg, ArrayOperations.prefix(fromServer, bytesRead));
                                 }
-                                headerPos = ArrayOperations.seqFind(TCPClient.SEPARATOR[0], bytesMsg, msgStart);
+                                headerPos = ArrayOperations.findInSequence(TCPClient.SEPARATOR[0], bytesMsg, msgStart);
                             }
                             bytesRead -= (headerPos - msgStart + 1);
                             msgLength = Integer.parseInt(new String(ArrayOperations.subArray(bytesMsg, msgStart, headerPos)));

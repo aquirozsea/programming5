@@ -50,15 +50,6 @@ public class MessageArrivedEvent extends programming5.net.Event {
     }
 
     /**
-     *@deprecated this constructor is no longer supported
-     *@throws UnsupportedOperationException
-     */
-    @Deprecated
-    public MessageArrivedEvent(Message evtMsg) {
-        super(evtMsg);
-    }
-
-    /**
      *Creates a new message arrived event with the given payload, trasforming the byte array to a String 
      *object.
      *WARNING: This differs from the semantics of the corresponding Event constructor, which takes the byte

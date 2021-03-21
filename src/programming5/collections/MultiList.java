@@ -21,20 +21,13 @@
 
 package programming5.collections;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import programming5.arrays.ArrayOperations;
 import programming5.strings.StringOperations;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  *Wrapper class that links the elements of two lists, so that the elements of one can be indexed with the elements 
@@ -647,8 +640,8 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
             vector2.remove(vector1Pos);
             ArrayOperations.delete(sortedOrder1, index);
             if (isSorted2) {
-                int vector2Pos = ArrayOperations.seqFind(vector1Pos, sortedOrder2);
-                ArrayOperations.delete(sortedOrder2, vector2Pos);
+                ArrayOperations.delete(sortedOrder2,
+                        findAtIndex(vector1Pos, sortedOrder2));
             }
         }
         else {
@@ -669,13 +662,13 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
         if (index >= 0) {
             vector1.remove(index);
             if (isSorted1) {
-                int sortedPos = ArrayOperations.seqFind(index, sortedOrder1);
-                sortedOrder1 = ArrayOperations.delete(sortedOrder1, sortedPos);
+                sortedOrder1 = ArrayOperations.delete(sortedOrder1,
+                        findAtIndex(index, sortedOrder1));
             }
             vector2.remove(index);
             if (isSorted2) {
-                int sortedPos = ArrayOperations.seqFind(index, sortedOrder2);
-                sortedOrder2 = ArrayOperations.delete(sortedOrder2, sortedPos);
+                sortedOrder2 = ArrayOperations.delete(sortedOrder2,
+                        findAtIndex(index, sortedOrder2));
             }
             removed = true;
         }
@@ -693,13 +686,13 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
         if (index >= 0) {
             vector1.remove(index);
             if (isSorted1) {
-                int sortedPos = ArrayOperations.seqFind(index, sortedOrder1);
-                sortedOrder1 = ArrayOperations.delete(sortedOrder1, sortedPos);
+                sortedOrder1 = ArrayOperations.delete(sortedOrder1,
+                        findAtIndex(index, sortedOrder1));
             }
             vector2.remove(index);
             if (isSorted2) {
-                int sortedPos = ArrayOperations.seqFind(index, sortedOrder2);
-                sortedOrder2 = ArrayOperations.delete(sortedOrder2, sortedPos);
+                sortedOrder2 = ArrayOperations.delete(sortedOrder2,
+                        findAtIndex(index, sortedOrder2));
             }
             removed = true;
         }
@@ -1246,6 +1239,15 @@ public class MultiList<E, D> implements PMap<E, D>, Serializable {
             int sortedPos = CollectionUtils.findPositionInOrder(sortedVector, (Comparable) vector2.get(i));
             ArrayOperations.insert(i, sortedOrder2, sortedPos);
             CollectionUtils.insert(sortedVector, (Comparable) vector2.get(i), sortedPos);
+        }
+    }
+
+    private static int findAtIndex(int index, int[] order) {
+        try {
+            return ArrayOperations.findInSequence(index, order);
+        }
+        catch (NotFoundException nfe) {
+            throw new IllegalStateException("Cannot perform operation: List is in a corrupted state");
         }
     }
     

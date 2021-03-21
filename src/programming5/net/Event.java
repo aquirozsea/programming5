@@ -39,15 +39,6 @@ public class Event extends Message {
         super();
         this.setHeader(type);
     }
-    
-    /**
-     *@deprecated this constructor is no longer supported as of version 6.1
-     *@throws UnsupportedOperationException
-     */
-    @Deprecated
-    public Event(Message evtMsg) {
-        throw new UnsupportedOperationException();
-    }
 
     /**
      * Creates an event by decoding the given byte array
@@ -111,22 +102,7 @@ public class Event extends Message {
     public boolean isType(String type) {
         return type.equals(this.getHeader());
     }
-    
-    /**
-     *@return each of the items carried within the event message
-     *@deprecated since events can carry raw byte payloads as of version 6.1, conversion to strings might
-     *corrupt the payload content. The payload can be accessed via the specific accessor methods defined in
-     *the Message class.
-     */
-    @Deprecated
-    public String[] getPayload() {
-        String[] ret = new String[this.getMessageSize()];
-        for (int i = 0; i < this.getMessageSize(); i++) {
-            ret[i] = this.getMessageItem(i);
-        }
-        return ret;
-    }
-    
+
     /**
      *@return the string message that holds event data in the format TYPE:PAYLOAD, for display purposes
      */
