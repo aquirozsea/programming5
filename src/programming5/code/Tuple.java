@@ -1,6 +1,5 @@
 package programming5.code;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import programming5.arrays.ArrayOperations;
 import programming5.strings.StringOperations;
 
@@ -52,7 +51,6 @@ public class Tuple {
      * @param newContents the contents to append to the new tuple
      * @return a new tuple object with a concatenation of this tuple and the new contents
      */
-    @Immutable
     public Tuple newWith(Object... newContents) {
         return new Tuple(this.tuple).thisWith(newContents);
     }
@@ -65,7 +63,6 @@ public class Tuple {
      * @param items the indices of the items to include in the projection
      * @return a new tuple object containing only the projected items
      */
-    @Immutable
     public Tuple project(int... items) {
         Tuple ret = new Tuple(new Object[items.length]);
         for (int i = 0; i < items.length; i++) {
