@@ -22,7 +22,6 @@
 package programming5.arrays;
 
 import programming5.code.ObjectMatcher;
-import programming5.code.Replicable;
 import programming5.collections.NotFoundException;
 import programming5.math.DistanceFunction;
 import programming5.strings.LexicographicDistanceFunction;
@@ -33,6 +32,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.function.Function;
 import java.util.function.IntToDoubleFunction;
 
 /**
@@ -47,103 +47,16 @@ public abstract class ArrayOperations {
     public static Comparator<String> DEFAULT_STRING_COMPARATOR = new LexicographicStringComparator();
     
     /**
-     *@return a new copy of the input array
-     */
-    public static byte[] replicate(byte[] array) {
-        if (array == null) {return null;}
-        byte[] ret = new byte[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static int[] replicate(int[] array) {
-        if (array == null) {return null;}
-        int[] ret = new int[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static float[] replicate(float[] array) {
-        if (array == null) {return null;}
-        float[] ret = new float[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static double[] replicate(double[] array) {
-        if (array == null) {return null;}
-        double[] ret = new double[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static char[] replicate(char[] array) {
-        if (array == null) {return null;}
-        char[] ret = new char[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static String[] replicate(String[] array) {
-        if (array == null) {return null;}
-        String[] ret = new String[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-
-    /**
-     *@return a new copy of the input array
-     */
-    public static long[] replicate(long[] array) {
-        if (array == null) {return null;}
-        long[] ret = new long[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
      *@param source the array to be replicated
-     *@param destination the pre-allocated destination array, of equal size as the source array, which will be filled with values from the source
+     *@param cloneFn The function that clones objects in the array
      *@throws java.lang.IllegalArgumentException if the arrays are of different sizes
      */
-    public static <T> void replicate(T[] source, T[] destination) {
-        if (source.length == destination.length) {
-            System.arraycopy(source, 0, destination, 0, source.length);
-        } 
-        else {
-            throw new IllegalArgumentException("ArrayOperations: Could not replicate source array: Arrays of different dimensions");
+    public static <T> T[] replicate(T[] source, Function<T, T> cloneFn) {
+        T[] destination = source.clone();
+        for (int i = 0; i < source.length; i++) {
+            destination[i] = cloneFn.apply(source[i]);
         }
-    }
-    
-    /**
-     *@param source the array to be replicated
-     *@param destination the pre-allocated destination array, of equal size as the source array, which will be filled with values from the source
-     *@throws java.lang.IllegalArgumentException if the arrays are of different sizes
-     */
-    public static <T extends Replicable> void replicate(T[] source, T[] destination) {
-        if (source.length == destination.length) {
-            for (int i = 0; i < source.length; i++) {
-                destination[i] = (T) source[i].replicate();
-            }
-        }
-        else {
-            throw new IllegalArgumentException("ArrayOperations: Could not replicate source array: Arrays of different dimensions");
-        }
+        return destination;
     }
     
     /**
@@ -3626,36 +3539,11 @@ public abstract class ArrayOperations {
      * it requires making a replica of the original array.
      */
     @Deprecated
-    public static int[] sort(int[] array) {
-        int[] so = sortedOrder(array);
-        Integer[] uo = box(createEnumeration(array.length));
-        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        int[] arrayCopy = replicate(array);
-        for (int i = 0; i < array.length; i++) {
-            array[i] = arrayCopy[so[i]];
-        }
-        return unbox(uo);
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
-     * it requires making a replica of the original array.
-     */
-    @Deprecated
     public static int[] sort(float[] array) {
         int[] so = sortedOrder(array);
         Integer[] uo = box(createEnumeration(array.length));
         Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        float[] arrayCopy = replicate(array);
+        float[] arrayCopy = array.clone();
         for (int i = 0; i < array.length; i++) {
             array[i] = arrayCopy[so[i]];
         }
@@ -3680,7 +3568,7 @@ public abstract class ArrayOperations {
         int[] so = sortedOrder(array);
         Integer[] uo = box(createEnumeration(array.length));
         Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        long[] arrayCopy = replicate(array);
+        long[] arrayCopy = array.clone();
         for (int i = 0; i < array.length; i++) {
             array[i] = arrayCopy[so[i]];
         }
@@ -3705,39 +3593,11 @@ public abstract class ArrayOperations {
         int[] so = sortedOrder(array);
         Integer[] uo = box(createEnumeration(array.length));
         Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        double[] arrayCopy = replicate(array);
+        double[] arrayCopy = array.clone();
         for (int i = 0; i < array.length; i++) {
             array[i] = arrayCopy[so[i]];
         }
         return unbox(uo);
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient O(N^2) method of obtaining the unsorted order
-     * that also requires making a replica of the original array.
-     */
-    @Deprecated
-    public static int[] sort(Comparable[] array) {
-        int[] unsortedOrder = new int[array.length];
-        Comparable[] original = new Comparable[array.length];
-        ArrayOperations.replicate(array, original);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(array);
-        for (int i = 0; i < original.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
-            repetitions[firstIndex]++;
-        }
-        return unsortedOrder;
     }
 
     /**

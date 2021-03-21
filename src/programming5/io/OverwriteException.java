@@ -21,8 +21,9 @@
 
 package programming5.io;
 
-import java.io.IOException;
 import programming5.arrays.ArrayOperations;
+
+import java.io.IOException;
 
 /**
  * Exception that applies to copying directories or files with the FileHandler class.
@@ -41,7 +42,7 @@ public class OverwriteException extends IOException {
 	
 	public OverwriteException(String[] sourcePaths) {
 		super("Files exist at destination");
-		sources = ArrayOperations.replicate(sourcePaths);
+		sources = sourcePaths.clone();
 	}
 	
 	/**

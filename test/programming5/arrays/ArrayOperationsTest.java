@@ -5,37 +5,16 @@
 
 package programming5.arrays;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import programming5.code.ReplicableObject;
+import org.junit.*;
 import programming5.collections.NotFoundException;
 import programming5.math.DistanceFunction;
-import programming5.strings.AlphabeticDistanceFunction;
-import programming5.strings.AlphabeticStringComparator;
-import programming5.strings.KeyValuePairMatcher;
-import programming5.strings.LexicographicDistanceFunction;
+import programming5.strings.*;
 import programming5.strings.LexicographicDistanceFunction.Mode;
-import programming5.strings.NumericStringComparator;
-import programming5.strings.StringEditDistanceFunction;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -69,184 +48,15 @@ public class ArrayOperationsTest {
      * Test of replicate method, of class ArrayOperations.
      */
     @Test
-    public void testReplicate_byteArr() {
-        byte[] toReplicate = null;
-        assertNull(ArrayOperations.replicate(toReplicate));
-        toReplicate = new byte[0];
-        byte[] replica = ArrayOperations.replicate(toReplicate);
-        assertEquals(0, replica.length);
-        toReplicate = new byte[] {'a'};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertNotSame(replica, toReplicate);
-        assertArrayEquals(new byte[] {'a'}, replica);
-        toReplicate = new byte[] {'a', 'b', 'c'};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertArrayEquals(new byte[]{'a', 'b', 'c'}, replica);
-    }
-
-    /**
-     * Test of replicate method, of class ArrayOperations.
-     */
-    @Test
-    public void testReplicate_intArr() {
-        int[] toReplicate = null;
-        assertNull(ArrayOperations.replicate(toReplicate));
-        toReplicate = new int[0];
-        int[] replica = ArrayOperations.replicate(toReplicate);
-        assertEquals(0, replica.length);
-        toReplicate = new int[] {1};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertNotSame(replica, toReplicate);
-        assertArrayEquals(new int[] {1}, replica);
-        toReplicate = new int[] {1, 2, 3};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertArrayEquals(new int[]{1, 2, 3}, replica);
-    }
-
-    /**
-     * Test of replicate method, of class ArrayOperations.
-     */
-    @Test
-    public void testReplicate_floatArr() {
-        float[] toReplicate = null;
-        assertNull(ArrayOperations.replicate(toReplicate));
-        toReplicate = new float[0];
-        float[] replica = ArrayOperations.replicate(toReplicate);
-        assertEquals(0, replica.length);
-        toReplicate = new float[] {1.0f};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertNotSame(replica, toReplicate);
-        assertEquals(1.0f, replica[0], 0);
-        toReplicate = new float[] {1.0f, 1.999f, 3.5f};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertEquals(1.0f, replica[0], 0);
-        assertEquals(1.999f, replica[1], 0);
-        assertEquals(3.5f, replica[2], 0);
-    }
-
-    /**
-     * Test of replicate method, of class ArrayOperations.
-     */
-    @Test
-    public void testReplicate_doubleArr() {
-        double[] toReplicate = null;
-        assertNull(ArrayOperations.replicate(toReplicate));
-        toReplicate = new double[0];
-        double[] replica = ArrayOperations.replicate(toReplicate);
-        assertEquals(0, replica.length);
-        toReplicate = new double[] {1.0d};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertNotSame(replica, toReplicate);
-        assertEquals(1.0d, replica[0], 0);
-        toReplicate = new double[] {1.0d, 1.999d, 3.5d};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertEquals(1.0d, replica[0], 0);
-        assertEquals(1.999d, replica[1], 0);
-        assertEquals(3.5d, replica[2], 0);
-    }
-
-    /**
-     * Test of replicate method, of class ArrayOperations.
-     */
-    @Test
-    public void testReplicate_charArr() {
-        char[] toReplicate = null;
-        assertNull(ArrayOperations.replicate(toReplicate));
-        toReplicate = new char[0];
-        char[] replica = ArrayOperations.replicate(toReplicate);
-        assertEquals(0, replica.length);
-        toReplicate = new char[] {'a'};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertNotSame(replica, toReplicate);
-        assertArrayEquals(new char[] {'a'}, replica);
-        toReplicate = new char[] {'a', 'b', 'c'};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertArrayEquals(new char[]{'a', 'b', 'c'}, replica);
-    }
-
-    /**
-     * Test of replicate method, of class ArrayOperations.
-     */
-    @Test
-    public void testReplicate_StringArr() {
-        String[] toReplicate = null;
-        assertNull(ArrayOperations.replicate(toReplicate));
-        toReplicate = new String[0];
-        String[] replica = ArrayOperations.replicate(toReplicate);
-        assertEquals(0, replica.length);
-        toReplicate = new String[] {"a"};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertNotSame(replica, toReplicate);
-        assertArrayEquals(new String[] {"a"}, replica);
-        toReplicate = new String[] {"a", "b", "c"};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertArrayEquals(new String[]{"a", "b", "c"}, replica);
-    }
-
-    /**
-     * Test of replicate method, of class ArrayOperations.
-     */
-    @Test
-    public void testReplicate_longArr() {
-        long[] toReplicate = null;
-        assertNull(ArrayOperations.replicate(toReplicate));
-        toReplicate = new long[0];
-        long[] replica = ArrayOperations.replicate(toReplicate);
-        assertEquals(0, replica.length);
-        toReplicate = new long[] {1};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertNotSame(replica, toReplicate);
-        assertArrayEquals(new long[] {1}, replica);
-        toReplicate = new long[] {1, 2, 3};
-        replica = ArrayOperations.replicate(toReplicate);
-        assertArrayEquals(new long[]{1, 2, 3}, replica);
-    }
-
-    /**
-     * Test of replicate method, of class ArrayOperations.
-     */
-    @Test
     public void testReplicate_GenericType_GenericType() {
-        Date[] toReplicate = new Date[0];
-        Date[] replica = new Date[0];
-        ArrayOperations.replicate(toReplicate, replica);
-        assertEquals(0, replica.length);
         Date now = Calendar.getInstance().getTime();
-        toReplicate = new Date[] {now};
-        replica = new Date[1];
-        ArrayOperations.replicate(toReplicate, replica);
+        Date[] toReplicate = new Date[] {now};
+        Date[] replica = ArrayOperations.replicate(toReplicate, date -> (Date) date.clone());
         assertNotSame(replica, toReplicate);
         assertArrayEquals(new Date[]{now}, replica);
         toReplicate = new Date[] {now, now, now};
-        replica = new Date[3];
-        ArrayOperations.replicate(toReplicate, replica);
-        assertSame(toReplicate[1], replica[1]);
-    }
-
-    /**
-     * Test of replicate method, of class ArrayOperations.
-     */
-    @Test
-    public void testReplicate_ReplicableType() {
-        ReplicableObject[] toReplicate = new ReplicableObject[0];
-        ReplicableObject[] replica = new ReplicableObject[0];
-        ArrayOperations.replicate(toReplicate, replica);
-        assertEquals(0, replica.length);
-        ReplicableObject one = new ReplicableObject(1);
-        toReplicate = new ReplicableObject[] {one};
-        replica = new ReplicableObject[1];
-        ArrayOperations.replicate(toReplicate, replica);
-        assertNotSame(replica, toReplicate);
-        assertNotSame(replica[0], toReplicate[0]);
-        assertArrayEquals(new ReplicableObject[] {one}, replica);
-        ReplicableObject two = new ReplicableObject(2);
-        ReplicableObject three = new ReplicableObject(3);
-        toReplicate = new ReplicableObject[] {one, two, three};
-        replica = new ReplicableObject[3];
-        ArrayOperations.replicate(toReplicate, replica);
-        two.setField(20);
-        assertEquals(20, toReplicate[1].getField());
-        assertEquals(2, replica[1].getField());
+        replica = ArrayOperations.replicate(toReplicate, date -> (Date) date.clone());
+        assertArrayEquals(new Date[] {now, now, now}, replica);
     }
 
     /**
@@ -677,19 +487,19 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testPrefix_ObjectArr_int() {
-        ReplicableObject one = new ReplicableObject(1);
-        ReplicableObject two = new ReplicableObject(2);
-        ReplicableObject three = new ReplicableObject(3);
-        ReplicableObject[] toPrefix = new ReplicableObject[] {one, two, three};
+        String one = "1";
+        String two = "2";
+        String three = "3";
+        String[] toPrefix = new String[] {one, two, three};
         Object[] prefix = ArrayOperations.prefix(toPrefix, 0);
         assertEquals(0, prefix.length);
         prefix = ArrayOperations.prefix(toPrefix, 2);
         assertEquals(2, prefix.length);
-        assertArrayEquals(new ReplicableObject[]{one, two}, prefix);
+        assertArrayEquals(new String[]{one, two}, prefix);
         prefix = ArrayOperations.prefix(toPrefix, 3);
         assertEquals(3, prefix.length);
-        assertArrayEquals(new ReplicableObject[] {one, two, three}, prefix);
-        assertArrayEquals(new ReplicableObject[] {one, two, three}, toPrefix);
+        assertArrayEquals(new String[] {one, two, three}, prefix);
+        assertArrayEquals(new String[] {one, two, three}, toPrefix);
         try {
             prefix = ArrayOperations.prefix(toPrefix, 4);
             fail("Prefix failed to throw out of bounds exception");
@@ -836,19 +646,19 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSuffix_ObjectArr_int() {
-        ReplicableObject one = new ReplicableObject(1);
-        ReplicableObject two = new ReplicableObject(2);
-        ReplicableObject three = new ReplicableObject(3);
-        ReplicableObject[] toSuffix = new ReplicableObject[] {one, two, three};
+        String one = "1";
+        String two = "2";
+        String three = "3";
+        String[] toSuffix = new String[] {one, two, three};
         Object[] suffix = ArrayOperations.suffix(toSuffix, 0);
         assertEquals(3, suffix.length);
-        assertArrayEquals(new ReplicableObject[] {one, two, three}, suffix);
+        assertArrayEquals(new String[] {one, two, three}, suffix);
         suffix = ArrayOperations.suffix(toSuffix, 2);
         assertEquals(1, suffix.length);
-        assertArrayEquals(new ReplicableObject[] {three}, suffix);
+        assertArrayEquals(new String[] {three}, suffix);
         suffix = ArrayOperations.suffix(toSuffix, 3);
         assertEquals(0, suffix.length);
-        assertArrayEquals(new ReplicableObject[] {one, two, three}, toSuffix);
+        assertArrayEquals(new String[] {one, two, three}, toSuffix);
         try {
             suffix = ArrayOperations.suffix(toSuffix, 4);
             fail("Suffix failed to throw out of bounds exception");
@@ -1020,19 +830,19 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testSubArray_3args_7() {
-        ReplicableObject one = new ReplicableObject(1);
-        ReplicableObject two = new ReplicableObject(2);
-        ReplicableObject three = new ReplicableObject(3);
-        ReplicableObject[] toCut = new ReplicableObject[] {one, two, three};
+        String one = "1";
+        String two = "2";
+        String three = "3";
+        String[] toCut = new String[] {one, two, three};
         Object[] subArray = ArrayOperations.subArray(toCut, 0, 3);
         assertEquals(3, subArray.length);
-        assertArrayEquals(new ReplicableObject[] {one, two, three}, subArray);
+        assertArrayEquals(new String[] {one, two, three}, subArray);
         subArray = ArrayOperations.subArray(toCut, 1, 2);
         assertEquals(1, subArray.length);
-        assertArrayEquals(new ReplicableObject[] {two}, subArray);
+        assertArrayEquals(new String[] {two}, subArray);
         subArray = ArrayOperations.subArray(toCut, 3, 3);
         assertEquals(0, subArray.length);
-        assertArrayEquals(new ReplicableObject[]{one, two, three}, toCut);
+        assertArrayEquals(new String[]{one, two, three}, toCut);
         try {
             subArray = ArrayOperations.subArray(toCut, 0, 4);
             fail("SubArray failed to throw out of bounds exception");
@@ -1177,21 +987,21 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testJoin_ObjectArrArr() {
-        ReplicableObject one = new ReplicableObject(1);
-        ReplicableObject two = new ReplicableObject(2);
-        ReplicableObject three = new ReplicableObject(3);
-        ReplicableObject[] empty = new ReplicableObject[0];
-        ReplicableObject[] single = new ReplicableObject[] {one};
-        ReplicableObject[] multiple = new ReplicableObject[] {one, two, three};
+        String one = "1";;
+        String two = "2";
+        String three = "3";
+        String[] empty = new String[0];
+        String[] single = new String[] {one};
+        String[] multiple = new String[] {one, two, three};
         Object[] joined = ArrayOperations.join(empty);
         assertEquals(0, joined.length);
         assertNotSame(joined, empty);
         joined = ArrayOperations.join(empty, single, multiple, empty);
         assertEquals(4, joined.length);
-        assertArrayEquals(new ReplicableObject[] {one, one, two, three}, joined);
+        assertArrayEquals(new String[] {one, one, two, three}, joined);
         joined = ArrayOperations.join(single, single);
         assertEquals(2, joined.length);
-        assertArrayEquals(new ReplicableObject[]{one, one}, joined);
+        assertArrayEquals(new String[]{one, one}, joined);
     }
 
     /**
@@ -2731,12 +2541,12 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testReverse_ObjectArr() {
-        ReplicableObject one = new ReplicableObject(1);
-        ReplicableObject ten = new ReplicableObject(10);
-        ReplicableObject fifteen = new ReplicableObject(15);
-        ReplicableObject fifty = new ReplicableObject(50);
-        ReplicableObject max = new ReplicableObject(Integer.MAX_VALUE);
-        ReplicableObject[] array = new ReplicableObject[] {one, ten, fifteen, fifty, max};
+        String one = "1";
+        String ten = "10";
+        String fifteen = "15";
+        String fifty = "50";
+        String max = Integer.toString(Integer.MAX_VALUE);
+        String[] array = new String[] {one, ten, fifteen, fifty, max};
         Object[] reversedArray = ArrayOperations.reverse(array);
         assertEquals(5, reversedArray.length);
         assertEquals(max, reversedArray[0]);
@@ -3234,53 +3044,6 @@ public class ArrayOperationsTest {
      */
     @Test
     public void testFindFirstIndexInOrder_3args() {
-    }
-
-    /**
-     * Test of sort method, of class ArrayOperations.
-     */
-    @Test
-    public void testSort_intArr() {
-        int[] array = new int[] {3, 1, 2};
-        int[] replica = new int[] {3, 1, 2};
-        int[] uo = ArrayOperations.sort(array);
-        for (int i = 0; i < array.length; i++) {
-            assertEquals(replica[i], array[uo[i]]);
-        }
-        array = new int[] {3, 2, 0, 2, 1, 3};
-        replica = new int[] {3, 2, 0, 2, 1, 3};
-        uo = ArrayOperations.sort(array);
-        for (int i = 0; i < array.length; i++) {
-            assertEquals(replica[i], array[uo[i]]);
-        }
-    }
-
-    /**
-     * Test of sort method, of class ArrayOperations.
-     */
-    @Test
-    public void testSort_floatArr() {
-    }
-
-    /**
-     * Test of sort method, of class ArrayOperations.
-     */
-    @Test
-    public void testSort_longArr() {
-    }
-
-    /**
-     * Test of sort method, of class ArrayOperations.
-     */
-    @Test
-    public void testSort_doubleArr() {
-    }
-
-    /**
-     * Test of sort method, of class ArrayOperations.
-     */
-    @Test
-    public void testSort_ComparableArr() {
     }
 
     /**

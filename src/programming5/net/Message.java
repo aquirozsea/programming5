@@ -619,7 +619,7 @@ public class Message {
 //    }
 
     private byte[] inflate(byte[] byteItem) {
-        byte[] ret = ArrayOperations.replicate(byteItem);
+        byte[] ret = byteItem.clone();
         int separatorIndex = ArrayOperations.seqFind(sepByte, ret);
         while (separatorIndex >= 0) { //  && separatorIndex < (ret.length-1)
             if (separatorIndex < (ret.length-1)) {
@@ -637,7 +637,7 @@ public class Message {
     }
 
     private byte[] deflate(byte[] byteItem) {
-        byte[] ret = ArrayOperations.replicate(byteItem);
+        byte[] ret = byteItem.clone();
         int separatorIndex = ArrayOperations.seqFind(sepByte, ret);
         while (separatorIndex >= 0 && separatorIndex < (ret.length-1)) {
             if (ret[separatorIndex+1] == escByte) {
