@@ -93,16 +93,6 @@ public class CallbackEvent extends programming5.net.Event {
         }
         return ret;
     }
-    
-    /**
-     *@return the result message associated with the event
-     *@deprecated different functionality from (deprecated) base class method; use getQualifier instead
-     */
-    @Override
-    @Deprecated
-    public String getMessage() {
-        return this.getMessageItem(0);
-    }
 
     /**
      * @return the descriptive message associated with the event

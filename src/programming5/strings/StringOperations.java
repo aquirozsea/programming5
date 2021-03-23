@@ -29,14 +29,8 @@ import programming5.io.LogUtil;
 import programming5.math.NumberRange;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -176,10 +170,7 @@ public abstract class StringOperations {
      * @throws IllegalArgumentException if the string (i.e. the immutable portion outside the tags) does not match the 
      * given pattern (the pattern used for matching the string is equivalent to the pattern given, where the tags have 
      * been replaced by (.*)
-     * @deprecated the use of newDecodePattern is preferred. In a future release, the implementation of newDecodePattern will replace the current 
-     * implementation of decodePattern, and the return signature will change accordingly
      */
-    @Deprecated
     public static Map<String, String> decodePattern(String string, String regexPattern) {
         Map<String, String> decodeElements = new HashMap<String, String>();
         String[] fields = extractAndReplace(regexPattern, "<\\w+>", ".*");

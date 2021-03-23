@@ -284,17 +284,6 @@ public abstract class Debug {
     }
 
     /**
-     * Changes the current behavior of the debug object for the default debug set
-     * @return true if the set is now enabled; false if it was previously enabled
-     * @deprecated changes in semantics do not apply to this method, which uses the previous default set semantics.
-     * Use toggleDefault method instead.
-     */
-    @Deprecated
-    public static boolean toggleActive() {
-        return toggleActive(DEFAULT_SET);
-    }
-
-    /**
      * Enables or disables default printing depending on its current state
      * @return true if the default printing is now enabled; false if it was previously enabled
      */

@@ -516,7 +516,7 @@ public class ReliableUDPClient extends Publisher<MessageArrivedEvent> implements
                 parts = new byte[total][];
                 assembly.put(streamID, parts);
                 boolean[] counter = new boolean[total];
-                ArrayOperations.initialize(counter, false);
+                Arrays.fill(counter, false);
                 assemblyCounter.put(streamID, counter);
             }
             int index = rpm.getIndex();

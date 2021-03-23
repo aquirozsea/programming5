@@ -86,30 +86,10 @@ public class MessageArrivedEvent extends programming5.net.Event {
     }
 
     /**
-     *@return the message associated with this event
-     *@deprecated different functionality from (deprecated) base class method; use getContent instead
-     */
-    @Override
-    @Deprecated
-    public String getMessage() {
-        return this.getMessageItem(0);
-    }
-
-    /**
      * @return the message payload associated with this event
      */
     public String getContent() {
         return this.getMessageItem(0);
-    }
-
-    /**
-     *@return the byte array representation of the message associated with this event
-     *@deprecated different functionality from base class method; use getContentBytes instead
-     */
-    @Override
-    @Deprecated
-    public byte[] getMessageBytes() {
-        return this.getItemAsByteArray(0);
     }
 
     /**

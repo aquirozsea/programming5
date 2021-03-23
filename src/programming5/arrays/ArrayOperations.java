@@ -1239,35 +1239,7 @@ public abstract class ArrayOperations {
         }
         return array[retIndex];
     }
-    
-    /**
-     * Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
-     * @return the index of the element of array that is closest to value
-     * @deprecated Known cases where overflow can cause the wrong result (good precision to about 15 significant digits)
-     */
-    @Deprecated
-    public static int findClosestIndex(double[] array, double value) {
-        int ret = 0;
-        double minDiff = Math.abs(value - array[0]);
-        double diff;
-        for (int i = 1; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) < minDiff) {
-                ret = i;
-                minDiff = diff;
-            }
-            else if (diff == minDiff && array[i] != array[ret]) {  // This is for rare occasions where the differences are so large that the precision isn't enough to differentiate them
-                if (((array[i] > array[ret]) && (array[i] < value && array[ret] < value))
-                 || ((array[i] < array[ret]) && (array[i] > value && array[ret] > value))
-                 || (array[i] < 0 && value < 0 && array[ret] > 0)
-                 || (array[i] > 0 && value > 0 && array[ret] < 0))
-                {
-                    ret = i;
-                }
-            }
-        }
-        return ret;
-    }
-    
+
     /**
      * Works with current tests, but be wary of precision issues (good precision to about eight significant digits). Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
      * @return the element of array that is closest to value
@@ -2540,18 +2512,6 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static int[] initialize(int[] array, int initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
 
     /**
      * Creates a new array initialized with the given value
@@ -2563,18 +2523,6 @@ public abstract class ArrayOperations {
         int[] ret = new int[size];
         Arrays.fill(ret, initValue);
         return ret;
-    }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static float[] initialize(float[] array, float initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
     }
 
     /**
@@ -2590,18 +2538,6 @@ public abstract class ArrayOperations {
     }
 
     /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static double[] initialize(double[] array, double initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-
-    /**
      * Creates a new array initialized with the given value
      * @param size the size of the array
      * @param initValue the value to fill the array with
@@ -2611,30 +2547,6 @@ public abstract class ArrayOperations {
         double[] ret = new double[size];
         Arrays.fill(ret, initValue);
         return ret;
-    }
-
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static char[] initialize(char[] array, char initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static boolean[] initialize(boolean[] array, boolean initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
     }
 
     /**
@@ -2650,23 +2562,11 @@ public abstract class ArrayOperations {
     }
 
     /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static String[] initialize(String[] array, String initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-
-    /**
      * @return the given matrix with the values set to the given initValue
      */
     public static int[][] initialize(int[][] matrix, int initValue) {
-        for (int i = 0; i < matrix.length; i++) {
-            Arrays.fill(matrix[i], initValue);
+        for (int[] ints : matrix) {
+            Arrays.fill(ints, initValue);
         }
         return matrix;
     }
@@ -3299,81 +3199,6 @@ public abstract class ArrayOperations {
             pos = 0;
         }
         return pos;
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
-     * it requires making a replica of the original array.
-     */
-    @Deprecated
-    public static int[] sort(float[] array) {
-        int[] so = sortedOrder(array);
-        Integer[] uo = box(createEnumeration(array.length));
-        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        float[] arrayCopy = array.clone();
-        for (int i = 0; i < array.length; i++) {
-            array[i] = arrayCopy[so[i]];
-        }
-        return unbox(uo);
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
-     * it requires making a replica of the original array.
-     */
-    @Deprecated
-    public static int[] sort(long[] array) {
-        int[] so = sortedOrder(array);
-        Integer[] uo = box(createEnumeration(array.length));
-        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        long[] arrayCopy = array.clone();
-        for (int i = 0; i < array.length; i++) {
-            array[i] = arrayCopy[so[i]];
-        }
-        return unbox(uo);
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
-     * it requires making a replica of the original array.
-     */
-    @Deprecated
-    public static int[] sort(double[] array) {
-        int[] so = sortedOrder(array);
-        Integer[] uo = box(createEnumeration(array.length));
-        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        double[] arrayCopy = array.clone();
-        for (int i = 0; i < array.length; i++) {
-            array[i] = arrayCopy[so[i]];
-        }
-        return unbox(uo);
     }
 
     /**

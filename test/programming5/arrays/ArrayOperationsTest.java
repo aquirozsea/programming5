@@ -1620,25 +1620,6 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Test of findClosestIndex method, of class ArrayOperations.
-     */
-    @Test
-    public void testFindClosestIndex_doubleArr_double() {
-        double[] array = new double[] {1, 50, 10, 15, 9.9, 9.90000000000001};
-        assertEquals(0, ArrayOperations.findClosestIndex(array, Double.MIN_VALUE), 0);
-        assertEquals(0, ArrayOperations.findClosestIndex(array, -51), 0);
-        assertEquals(0, ArrayOperations.findClosestIndex(array, 2), 0);
-        assertEquals(4, ArrayOperations.findClosestIndex(array, 6), 0);
-        assertEquals(4, ArrayOperations.findClosestIndex(array, 9.9), 0);
-        assertEquals(5, ArrayOperations.findClosestIndex(array, 9.91), 0);
-        assertEquals(3, ArrayOperations.findClosestIndex(array, 15), 0);
-        assertEquals(3, ArrayOperations.findClosestIndex(array, 25), 0);
-        assertEquals(1, ArrayOperations.findClosestIndex(array, 40), 0);
-        assertEquals(1, ArrayOperations.findClosestIndex(array, 51), 0);
-        assertEquals(1, ArrayOperations.findClosestIndex(array, Double.MAX_VALUE), 0);
-    }
-
-    /**
      * Test of findClosest method, of class ArrayOperations.
      */
     @Test

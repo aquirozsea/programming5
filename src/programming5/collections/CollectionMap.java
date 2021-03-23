@@ -22,10 +22,11 @@
 package programming5.collections;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Base class for ListMap and SetMap classes, and in general for maintaining multiple collections by a key, with shortcuts for updating
@@ -80,89 +81,63 @@ public abstract class CollectionMap<K, V> {
 
     /**
      * @param collectionKey the key associated with the Collection to search
-     * @param pattern the pattern object to compare elements in the Collection against
-     * @param comp implementation of Comparator interface
+     * @param matcher predicate to compare elements in the Collection against
      * @return the "first" element in the Collection with the given key matching the given pattern, as determined by the given comparator
      * @throws NotFoundException if no such element (or Collection) exists
      */
-    public V matchCollectionElement(K collectionKey, Object pattern, Comparator comp) throws NotFoundException {
-        V ret = null;
+    public V matchCollectionElement(K collectionKey, Predicate<V> matcher) throws NotFoundException {
         Collection<V> collection = baseTable.get(collectionKey);
         if (collection != null) {
-            Set<V> matches = CollectionUtils.findMatches(collection, pattern, comp);
-            if (!matches.isEmpty()) {
-                ret = matches.iterator().next();
-            }
-            else {
-                throw new NotFoundException("CollectionMap: Could not match element from Collection: No element exists in collection " + collectionKey + " for pattern " + pattern);
-            }
+            return collection.stream()
+                    .filter(matcher)
+                    .findFirst()
+                    .orElse(null);
         }
         else {
             throw new NotFoundException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
         }
-        return ret;
     }
 
     /**
      * @param collectionKey the key associated with the Collection to search
-     * @param pattern the pattern object to compare elements in the Collection against
-     * @param comp implementation of Comparator interface
-     * @return all of the elements in the Collection with the given key matching the given pattern, as determined by the given comparator
+     * @return all of the elements in the Collection with the given key matching the given predicate
      * (may return an empty collection if no elements match)
      * @throws NotFoundException if no collection with the given key exists
      */
-    public Collection<V> matchesCollectionElement(K collectionKey, Object pattern, Comparator comp) throws NotFoundException {
-        Collection<V> ret = null;
+    public Set<V> matchesCollectionElement(K collectionKey, Predicate<V> matcher) throws NotFoundException {
         Collection<V> collection = baseTable.get(collectionKey);
         if (collection != null) {
-            ret = CollectionUtils.findMatches(collection, pattern, comp);
+            return collection.stream()
+                    .filter(matcher)
+                    .collect(Collectors.toSet());
         }
         else {
             throw new NotFoundException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
         }
-        return ret;
     }
 
     /**
-     * @param pattern the pattern object to compare elements against
-     * @param comp implementation of Comparator interface
+     * @param matcher the predicate to compare elements against
      * @return any element matching the given pattern, as determined by the given comparator, among all of the Collections
      * @throws NotFoundException if no such elements exist
      */
-    public V matchAllCollectionElement(Object pattern, Comparator comp) throws NotFoundException {
-        V ret = null;
-        Collection<V> collection = this.getAll();
-        if (collection != null) {
-            Collection<V> matches = CollectionUtils.findMatches(collection, pattern, comp);
-            if (!matches.isEmpty()) {
-                ret = matches.iterator().next();
-            }
-            else {
-                throw new NotFoundException("CollectionMap: Could not match element from all collections: No such element exists that matches pattern " + pattern);
-            }
-        }
-        else {
-            throw new NotFoundException("CollectionMap: Could not match element from Collection: CollectionMap is empty");
-        }
-        return ret;
+    public V matchAllCollectionElement(Predicate<V> matcher) throws NotFoundException {
+        return this.getAll().stream()
+                .filter(matcher)
+                .findAny()
+                .orElseThrow(() -> new NotFoundException(
+                        "CollectionMap: Could not match element from all collections: No such element exists that matches the given matcher"));
     }
 
     /**
-     * @param pattern the pattern object to compare elements against
-     * @param comp implementation of Comparator interface
-     * @return all elements matching the given pattern, as determined by the given comparator, among all of the Collections
+     * @param matcher the predicate to compare elements against
+     * @return set of all elements matching the given pattern, as determined by the given comparator, among all of the Collections
      * @throws NotFoundException if no such elements exist
      */
-    public Collection<V> matchesAllCollectionElement(Object pattern, Comparator comp) throws NotFoundException {
-        Collection<V> ret = null;
-        Collection<V> collection = this.getAll();
-        if (collection != null) {
-            ret = CollectionUtils.findMatches(collection, pattern, comp);
-        }
-        else {
-            throw new NotFoundException("CollectionMap: Could not match element from Collection: Collection does not exist for given key");
-        }
-        return ret;
+    public Set<V> matchesAllCollectionElement(Predicate<V> matcher) throws NotFoundException {
+        return this.getAll().stream()
+                .filter(matcher)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -188,16 +163,10 @@ public abstract class CollectionMap<K, V> {
      */
     public boolean containsValue(V value) {
         try {
-            this.matchAllCollectionElement(value, new Comparator() {
-
-                public int compare(Object o1, Object o2) {
-                    return ((o1.equals(o2)) ? 0 : -1);
-                }
-
-            });
+            this.matchAllCollectionElement(value::equals);
             return true;
         }
-        catch (NotFoundException iobe) {
+        catch (NotFoundException nfe) {
             return false;
         }
     }
