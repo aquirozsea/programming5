@@ -21,20 +21,23 @@
 
 package programming5.net.sockets;
 
+import programming5.arrays.ArrayOperations;
+import programming5.collections.NotFoundException;
+import programming5.io.Debug;
+import programming5.net.AsynchMessageArrivedEvent;
+import programming5.net.MessageArrivedEvent;
+import programming5.net.Publisher;
+import programming5.net.ReceivingThread;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import programming5.arrays.ArrayOperations;
-import programming5.io.Debug;
-import programming5.net.AsynchMessageArrivedEvent;
-import programming5.net.MessageArrivedEvent;
-import programming5.net.Publisher;
-import programming5.net.ReceivingThread;
 
 /**
  *This class complements the UDPClient class as a constant listener to the socket
@@ -93,20 +96,14 @@ public class UDPReceiver extends ReceivingThread {
 
     /**
      * @return the last address from which a message was received
-     * @deprecated One of two methods to obtain a full address, in between which another message could be
-     * received and the address could change; use getReplyAddress instead, which returns a URL
      */
-    @Deprecated
     public InetAddress getLastAddress() {
         return lastAddress;
     }
 
     /**
      * @return the last port from which a message was received
-     * @deprecated One of two methods to obtain a full address, in between which another message could be
-     * received and the address could change; use getReplyAddress instead, which returns a URL string
      */
-    @Deprecated
     public int getLastPort() {
         return lastPort;
     }
@@ -119,13 +116,11 @@ public class UDPReceiver extends ReceivingThread {
         String ret = null;
         try {
             if (lastAddress != null) {
-                ret = new URI("//" + lastAddress.getHostAddress() + ":" + Integer.toString(lastPort)).toString();
+                ret = new URI("//" + lastAddress.getHostAddress() + ":" + lastPort).toString();
             }
         }
-        catch (URISyntaxException use) {}
-        finally {
-            return ret;
-        }
+        catch (URISyntaxException ignored) {}
+        return ret;
     }
     
     protected void end() {
@@ -140,7 +135,13 @@ public class UDPReceiver extends ReceivingThread {
             InetAddress host = packet.getAddress();
             bytesMessage = packet.getData();
             bytesMessage = ArrayOperations.prefix(bytesMessage, packetSize);
-            int separatorIndex = ArrayOperations.seqFind(UDPClient.SEPARATOR.getBytes()[0], bytesMessage);
+            int separatorIndex;
+            try {
+                separatorIndex = ArrayOperations.findInSequence(UDPClient.SEPARATOR.getBytes()[0], bytesMessage);
+            }
+            catch (NotFoundException nfe) {
+                separatorIndex = -1;
+            }
             if (separatorIndex > 0) {
                 String sequenceString = new String(ArrayOperations.subArray(bytesMessage, 0, separatorIndex));
                 String[] numbers = sequenceString.split("/");
@@ -151,7 +152,7 @@ public class UDPReceiver extends ReceivingThread {
                     parts = new byte[total][];
                     assembly.put(streamID, parts);
                     boolean[] counter = new boolean[total];
-                    ArrayOperations.initialize(counter, false);
+                    Arrays.fill(counter, false);
                     assemblyCounter.put(streamID, counter);
                 }
                 int index = Integer.parseInt(numbers[1]);

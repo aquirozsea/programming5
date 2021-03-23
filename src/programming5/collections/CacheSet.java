@@ -7,8 +7,6 @@ package programming5.collections;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Random;
-import programming5.arrays.RandomOrderGenerator;
 
 /**
  * Hash set that keeps the last inserted of equal versions. Useful when items have extra data not used

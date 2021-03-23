@@ -21,11 +21,12 @@
 
 package programming5.code;
 
-import java.util.HashSet;
-import java.util.Set;
 import programming5.collections.GraphNode;
 import programming5.collections.HashTable;
 import programming5.io.Debug;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *

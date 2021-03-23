@@ -23,7 +23,6 @@ package programming5.collections;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * A rotating list is one that has a fixed capacity, so that elements added beyond this capacity are cycled around to the start of the list,

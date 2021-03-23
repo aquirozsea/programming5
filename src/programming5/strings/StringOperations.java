@@ -176,10 +176,7 @@ public abstract class StringOperations {
      * @throws IllegalArgumentException if the string (i.e. the immutable portion outside the tags) does not match the 
      * given pattern (the pattern used for matching the string is equivalent to the pattern given, where the tags have 
      * been replaced by (.*)
-     * @deprecated the use of newDecodePattern is preferred. In a future release, the implementation of newDecodePattern will replace the current 
-     * implementation of decodePattern, and the return signature will change accordingly
      */
-    @Deprecated
     public static Map<String, String> decodePattern(String string, String regexPattern) {
         Map<String, String> decodeElements = new HashMap<String, String>();
         String[] fields = extractAndReplace(regexPattern, "<\\w+>", ".*");

@@ -21,9 +21,10 @@
 
 package programming5.collections;
 
+import programming5.arrays.RandomOrderGenerator;
+
 import java.util.Collection;
 import java.util.Iterator;
-import programming5.arrays.RandomOrderGenerator;
 
 /**
  * This class allows the traversal of a given collection in random order. Modifications to the collection will not be reflected in the objects returned

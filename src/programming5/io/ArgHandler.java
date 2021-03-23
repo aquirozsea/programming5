@@ -21,6 +21,10 @@
 
 package programming5.io;
 
+import programming5.arrays.ArrayOperations;
+import programming5.collections.NotFoundException;
+import programming5.math.NumberRange;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -28,9 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import programming5.math.NumberRange;
-import programming5.arrays.ArrayOperations;
-import programming5.collections.NotFoundException;
+import java.util.Objects;
 
 /**
  *This class is meant to receive the argument array of an application to provide methods to get arguments of different 
@@ -72,23 +74,11 @@ public class ArgHandler {
     }
 
     public int getArgIndex(String tag) throws NotFoundException {
-        int ret = ArrayOperations.seqFind(tag, args);
-        if (ret >= 0) {
-            return ret;
-        }
-        else {
-            throw new NotFoundException();
-        }
+        return ArrayOperations.findInSequence(tag, args);
     }
 
     public int getArgIndex(String tag, int from) throws NotFoundException {
-        int ret = ArrayOperations.seqFind(tag, args, from);
-        if (ret >= 0) {
-            return ret;
-        }
-        else {
-            throw new NotFoundException();
-        }
+        return ArrayOperations.findInSequence(tag, args, from);
     }
     
     /**
@@ -97,37 +87,30 @@ public class ArgHandler {
     public String getStringArg(String tag) {
         String ret = null;
         boolean notFound = false;
-        int index = ArrayOperations.seqFind(tag, args);
-        if (index != -1) {
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
             try {
-                ret = args[index+1];
-            } 
-            catch (ArrayIndexOutOfBoundsException e) {
+                ret = args[index + 1];
+            } catch (ArrayIndexOutOfBoundsException e) {
                 notFound = true;
             }
-        } 
-        else {
+        }
+        catch (NotFoundException nfe) {
             notFound = true;
         }
         while (notFound) {
             switch (strategy) {
-                case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected string: " + tag);
-                    }
-                    
-                case PROMPT:
+                case EXIT -> throw new IllegalArgumentException(
+                        Objects.requireNonNullElseGet(usage, () -> "ArgHandler: Expected string: " + tag));
+                case PROMPT -> {
                     System.out.print("ArgHandler: Enter string value for " + tag + ": ");
                     System.out.flush();
                     try {
                         ret = in.readLine();
                         notFound = false;
-                    } 
-                    catch (java.io.IOException ioe) {}
-                    break;
+                    } catch (java.io.IOException ignored) {
+                    }
+                }
             }
         }
         return ret;
@@ -141,18 +124,18 @@ public class ArgHandler {
     public String getStringArg(String tag, String defVal) {
         String ret = defVal;
         boolean usingDefault = true;
-        int index = ArrayOperations.seqFind(tag, args);
-        if (index != -1) {
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
             try {
-                ret = args[index+1];
+                ret = args[index + 1];
                 usingDefault = false;
-            } 
-            catch (ArrayIndexOutOfBoundsException e) {
+                if (usingDefault && warnDefault) {
+                    System.out.println("ArgHandler: Using default value of " + defVal + " for " + tag);
+                }
+            } catch (ArrayIndexOutOfBoundsException ignored) {
             }
         }
-        if (usingDefault && warnDefault) {
-            System.out.println("ArgHandler: Using default value of " + defVal + " for " + tag);
-        }
+        catch (NotFoundException ignored) {}
         return ret;
     }
     
@@ -167,12 +150,9 @@ public class ArgHandler {
         catch (ArrayIndexOutOfBoundsException e) {
             switch (strategy) {
                 case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected string argument " + index);
-                    }
+                    throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage,
+                                    () -> "ArgHandler: Expected string argument " + index));
                     
                 case PROMPT:
                     boolean notFound = true;
@@ -183,7 +163,7 @@ public class ArgHandler {
                             ret = in.readLine();
                             notFound = false;
                         } 
-                        catch (java.io.IOException ioe) {}
+                        catch (java.io.IOException ignored) {}
                     }
                     break;
             }
@@ -197,27 +177,22 @@ public class ArgHandler {
     public int getIntArg(String tag) {
         int ret = 0;
         boolean notFound = false;
-        int index = ArrayOperations.seqFind(tag, args);
-        if (index != -1) {
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
             try {
-                ret = Integer.parseInt(args[index+1]);
-            } 
-            catch (Exception e) {
+                ret = Integer.parseInt(args[index + 1]);
+            } catch (Exception e) {
                 notFound = true;
             }
-        } 
-        else {
+        }
+        catch (NotFoundException nfe) {
             notFound = true;
         }
         while (notFound) {
             switch (strategy) {
                 case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected int: " + tag);
-                    }
+                    throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage, () -> "ArgHandler: Expected int: " + tag));
                     
                 case PROMPT:
                     System.out.print("ArgHandler: Enter int value for " + tag + ": ");
@@ -226,7 +201,7 @@ public class ArgHandler {
                         ret = Integer.parseInt(in.readLine());
                         notFound = false;
                     } 
-                    catch (Exception e) {}
+                    catch (Exception ignored) {}
                     break;
             }
         }
@@ -254,7 +229,7 @@ public class ArgHandler {
                     try {
                         ret = Integer.parseInt(in.readLine());
                     } 
-                    catch (Exception e) {}
+                    catch (Exception ignored) {}
                     break;
             }
         }
@@ -269,15 +244,15 @@ public class ArgHandler {
     public int getIntArg(String tag, int defVal) {
         int ret = defVal;
         boolean usingDefault = true;
-        int index = ArrayOperations.seqFind(tag, args);
-        if (index != -1) {
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
             try {
-                ret = Integer.parseInt(args[index+1]);
+                ret = Integer.parseInt(args[index + 1]);
                 usingDefault = false;
-            } 
-            catch (Exception e) {
             }
+            catch (Exception ignored) {}
         }
+        catch (NotFoundException ignored) {}
         if (usingDefault && warnDefault) {
             System.out.println("ArgHandler: Using default value of " + defVal + " for " + tag);
         }
@@ -294,18 +269,18 @@ public class ArgHandler {
         int ret = defVal;
         if (range.contains(defVal)) {
             boolean usingDefault = true;
-            int index = ArrayOperations.seqFind(tag, args);
-            if (index != -1) {
+            try {
+                int index = ArrayOperations.findInSequence(tag, args);
                 try {
-                    int aux = Integer.parseInt(args[index+1]);
+                    int aux = Integer.parseInt(args[index + 1]);
                     if (range.contains(aux)) {
                         ret = aux;
                         usingDefault = false;
                     }
-                } 
-                catch (Exception e) {
                 }
+                catch (Exception ignored) {}
             }
+            catch (NotFoundException ignored) {}
             if (usingDefault && warnDefault) {
                 System.out.println("ArgHandler: Using default value of " + defVal + " for " + tag);
             }
@@ -324,12 +299,8 @@ public class ArgHandler {
         } catch (Exception e) {
             switch (strategy) {
                 case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected int argument " + index);
-                    }
+                    throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage, () -> "ArgHandler: Expected int argument " + index));
                     
                 case PROMPT:
                     boolean notFound = true;
@@ -340,7 +311,7 @@ public class ArgHandler {
                             ret = Integer.parseInt(in.readLine());
                             notFound = false;
                         } 
-                        catch (Exception e2) {}
+                        catch (Exception ignored) {}
                     }
                     break;
             }
@@ -356,19 +327,16 @@ public class ArgHandler {
         while (!range.contains(ret)) {
             switch (strategy) {
                 case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected int argument " + index + " in the range " + range.toString());
-                    }
+                    throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage,
+                                    () -> "ArgHandler: Expected int argument " + index + " in the range " + range.toString()));
                     
                 case PROMPT:
                     System.out.print("ArgHandler: Enter int value for argument " + index + " in the range " + range.toString() + ": ");
                     try {
                         ret = Integer.parseInt(in.readLine());
                     } 
-                    catch (Exception e2) {}
+                    catch (Exception ignored) {}
                     break;
             }
         }
@@ -381,25 +349,22 @@ public class ArgHandler {
     public float getFloatArg(String tag) {
         float ret = 0;
         boolean notFound = false;
-        int index = ArrayOperations.seqFind(tag, args);
-        if (index != -1) {
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
             try {
-                ret = Float.parseFloat(args[index+1]);
+                ret = Float.parseFloat(args[index + 1]);
             } catch (Exception e) {
                 notFound = true;
             }
-        } else {
+        }
+        catch (NotFoundException nfe) {
             notFound = true;
         }
         while (notFound) {
             switch (strategy) {
                 case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected float: " + tag);
-                    }
+                    throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage, () -> "ArgHandler: Expected float: " + tag));
                     
                 case PROMPT:
                     System.out.print("ArgHandler: Enter float value for " + tag + ": ");
@@ -408,7 +373,7 @@ public class ArgHandler {
                         ret = Float.parseFloat(in.readLine());
                         notFound = false;
                     } 
-                    catch (Exception e) {}
+                    catch (Exception ignored) {}
                     break;
             }
         }
@@ -423,12 +388,9 @@ public class ArgHandler {
         while (!range.contains(ret)) {
             switch (strategy) {
                 case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected float for " + tag + " in the range " + range.toString());
-                    }
+                    throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage,
+                                    () -> "ArgHandler: Expected float for " + tag + " in the range " + range.toString()));
                     
                 case PROMPT:
                     System.out.print("ArgHandler: Enter float value for " + tag + " in the range " + range.toString() + ": ");
@@ -436,7 +398,7 @@ public class ArgHandler {
                     try {
                         ret = Float.parseFloat(in.readLine());
                     } 
-                    catch (Exception e) {}
+                    catch (Exception ignored) {}
                     break;
             }
         }
@@ -451,15 +413,15 @@ public class ArgHandler {
     public float getFloatArg(String tag, float defVal) {
         float ret = defVal;
         boolean usingDefault = true;
-        int index = ArrayOperations.seqFind(tag, args);
-        if (index != -1) {
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
             try {
-                ret = Float.parseFloat(args[index+1]);
+                ret = Float.parseFloat(args[index + 1]);
                 usingDefault = false;
-            } 
-            catch (Exception e) {
             }
+            catch (Exception ignored) {}
         }
+        catch (NotFoundException ignored) {}
         if (usingDefault && warnDefault) {
             System.out.println("ArgHandler: Using default value of " + defVal + " for " + tag);
         }
@@ -476,18 +438,18 @@ public class ArgHandler {
         float ret = defVal;
         if (range.contains(defVal)) {
             boolean usingDefault = true;
-            int index = ArrayOperations.seqFind(tag, args);
-            if (index != -1) {
+            try {
+                int index = ArrayOperations.findInSequence(tag, args);
                 try {
-                    float aux = Float.parseFloat(args[index+1]);
+                    float aux = Float.parseFloat(args[index + 1]);
                     if (range.contains(aux)) {
                         ret = aux;
                         usingDefault = false;
                     }
-                } 
-                catch (Exception e) {
                 }
+                catch (Exception ignored) {}
             }
+            catch (NotFoundException ignored) {}
             if (usingDefault && warnDefault) {
                 System.out.println("ArgHandler: Using default value of " + defVal + " for " + tag);
             }
@@ -506,12 +468,8 @@ public class ArgHandler {
         } catch (Exception e) {
             switch (strategy) {
                 case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected float argument " + index);
-                    }
+                    throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage, () -> "ArgHandler: Expected float argument " + index));
                     
                 case PROMPT:
                     boolean notFound = true;
@@ -522,7 +480,7 @@ public class ArgHandler {
                             ret = Float.parseFloat(in.readLine());
                             notFound = false;
                         } 
-                        catch (Exception e2) {}
+                        catch (Exception ignored) {}
                     }
                     break;
             }
@@ -538,12 +496,9 @@ public class ArgHandler {
         while (!range.contains(ret)) {
             switch (strategy) {
                 case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected float argument " + index + " in the range " + range.toString());
-                    }
+                    throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage,
+                                    () -> "ArgHandler: Expected float argument " + index + " in the range " + range.toString()));
                     
                 case PROMPT:
                     System.out.print("ArgHandler: Enter float value for argument " + index + " in the range " + range.toString() + ": ");
@@ -551,7 +506,7 @@ public class ArgHandler {
                     try {
                         ret = Float.parseFloat(in.readLine());
                     } 
-                    catch (Exception e2) {}
+                    catch (Exception ignored) {}
                     break;
             }
         }
@@ -564,25 +519,22 @@ public class ArgHandler {
     public double getDoubleArg(String tag) {
         double ret = 0;
         boolean notFound = false;
-        int index = ArrayOperations.seqFind(tag, args);
-        if (index != -1) {
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
             try {
-                ret = Double.parseDouble(args[index+1]);
+                ret = Double.parseDouble(args[index + 1]);
             } catch (Exception e) {
                 notFound = true;
             }
-        } else {
+        }
+        catch (NotFoundException nfe) {
             notFound = true;
         }
         while (notFound) {
             switch (strategy) {
                 case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected double: " + tag);
-                    }
+                    throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage, () -> "ArgHandler: Expected double: " + tag));
                     
                 case PROMPT:
                     System.out.print("ArgHandler: Enter double value for " + tag + ": ");
@@ -591,7 +543,7 @@ public class ArgHandler {
                         ret = Double.parseDouble(in.readLine());
                         notFound = false;
                     } 
-                    catch (Exception e) {}
+                    catch (Exception ignored) {}
                     break;
             }
         }
@@ -605,22 +557,17 @@ public class ArgHandler {
         double ret = this.getDoubleArg(tag);
         while (!range.contains(ret)) {
             switch (strategy) {
-                case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected double for " + tag + " in the range " + range.toString());
-                    }
-                    
-                case PROMPT:
+                case EXIT -> throw new IllegalArgumentException(
+                        Objects.requireNonNullElseGet(usage,
+                                () -> "ArgHandler: Expected double for " + tag + " in the range " + range.toString()));
+                case PROMPT -> {
                     System.out.print("ArgHandler: Enter double value for " + tag + " in the range " + range.toString() + ": ");
                     System.out.flush();
                     try {
                         ret = Double.parseDouble(in.readLine());
-                    } 
-                    catch (Exception e) {}
-                    break;
+                    } catch (Exception ignored) {
+                    }
+                }
             }
         }
         return ret;
@@ -634,15 +581,14 @@ public class ArgHandler {
     public double getDoubleArg(String tag, double defVal) {
         double ret = defVal;
         boolean usingDefault = true;
-        int index = ArrayOperations.seqFind(tag, args);
-        if (index != -1) {
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
             try {
-                ret = Double.parseDouble(args[index+1]);
+                ret = Double.parseDouble(args[index + 1]);
                 usingDefault = false;
-            } 
-            catch (Exception e) {
-            }
+            } catch (Exception ignored) {}
         }
+        catch (NotFoundException ignored) {}
         if (usingDefault && warnDefault) {
             System.out.println("ArgHandler: Using default value of " + defVal + " for " + tag);
         }
@@ -659,18 +605,17 @@ public class ArgHandler {
         double ret = defVal;
         if (range.contains(defVal)) {
             boolean usingDefault = true;
-            int index = ArrayOperations.seqFind(tag, args);
-            if (index != -1) {
+            try {
+                int index = ArrayOperations.findInSequence(tag, args);
                 try {
-                    double aux = Double.parseDouble(args[index+1]);
+                    double aux = Double.parseDouble(args[index + 1]);
                     if (range.contains(aux)) {
                         ret = aux;
                         usingDefault = false;
                     }
-                } 
-                catch (Exception e) {
-                }
+                } catch (Exception ignored) {}
             }
+            catch (NotFoundException ignored) {}
             if (usingDefault && warnDefault) {
                 System.out.println("ArgHandler: Using default value of " + defVal + " for " + tag);
             }
@@ -688,15 +633,9 @@ public class ArgHandler {
             ret = Double.parseDouble(args[index]);
         } catch (Exception e) {
             switch (strategy) {
-                case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected double argument " + index);
-                    }
-                    
-                case PROMPT:
+                case EXIT -> throw new IllegalArgumentException(
+                        Objects.requireNonNullElseGet(usage, () -> "ArgHandler: Expected double argument " + index));
+                case PROMPT -> {
                     boolean notFound = true;
                     while (notFound) {
                         System.out.print("ArgHandler: Enter double value for argument " + index + ": ");
@@ -704,10 +643,10 @@ public class ArgHandler {
                         try {
                             ret = Double.parseDouble(in.readLine());
                             notFound = false;
-                        } 
-                        catch (Exception e2) {}
+                        } catch (Exception ignored) {
+                        }
                     }
-                    break;
+                }
             }
         }
         return ret;
@@ -720,22 +659,17 @@ public class ArgHandler {
         double ret = this.getDoubleArg(index);
         while (!range.contains(ret)) {
             switch (strategy) {
-                case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    } 
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected double argument " + index + " in the range " + range.toString());
-                    }
-                    
-                case PROMPT:
+                case EXIT -> throw new IllegalArgumentException(
+                        Objects.requireNonNullElseGet(usage,
+                                () -> "ArgHandler: Expected double argument " + index + " in the range " + range.toString()));
+                case PROMPT -> {
                     System.out.print("ArgHandler: Enter double value for argument " + index + " in the range " + range.toString() + ": ");
                     System.out.flush();
                     try {
                         ret = Double.parseDouble(in.readLine());
-                    } 
-                    catch (Exception e2) {}
-                    break;
+                    } catch (Exception ignored) {
+                    }
+                }
             }
         }
         return ret;
@@ -745,7 +679,13 @@ public class ArgHandler {
      *@return true if the tag is found and false otherwise
      */
     public boolean getSwitchArg(String tag) {
-        return (ArrayOperations.seqFind(tag, args) != -1);
+        try {
+            ArrayOperations.findInSequence(tag, args);
+            return true;
+        }
+        catch (NotFoundException nfe) {
+            return false;
+        }
     }
 
     /**
@@ -754,15 +694,16 @@ public class ArgHandler {
      */
     public List<String> getMultipleStringArg(String tag) {
         List<String> ret = new ArrayList<String>();
-        int index = ArrayOperations.seqFind(tag, args);
-        while (index >= 0) {
-            try {
-                ret.add(args[index+1]);
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
+            while (index >= 0) {
+                try {
+                    ret.add(args[index + 1]);
+                } catch (Exception ignored) {}
+                index = ArrayOperations.findInSequence(tag, args, index + 1);
             }
-            catch (Exception e) {
-            }
-            index = ArrayOperations.seqFind(tag, args, index+1);
         }
+        catch (NotFoundException ignored) {}
         return ret;
     }
 
@@ -774,33 +715,28 @@ public class ArgHandler {
      */
     public List<String> getMultipleStringArg(String tag, int minOccurrences) {
         List<String> ret = new ArrayList<String>();
-        int index = ArrayOperations.seqFind(tag, args);
-        while (index >= 0) {
-            try {
-                ret.add(args[index+1]);
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
+            while (index >= 0) {
+                try {
+                    ret.add(args[index + 1]);
+                } catch (Exception ignored) {}
+                index = ArrayOperations.findInSequence(tag, args, index + 1);
             }
-            catch (Exception e) {
-            }
-            index = ArrayOperations.seqFind(tag, args, index+1);
         }
+        catch (NotFoundException ignored) {}
         while (ret.size() < minOccurrences) {
             switch (strategy) {
-                case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    }
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected " + Integer.toString(minOccurrences) + " of : " + tag);
-                    }
-
-                case PROMPT:
-                    System.out.print("ArgHandler: Enter string value for " + tag + " (" + Integer.toString(minOccurrences-ret.size()) + " left): ");
+                case EXIT -> throw new IllegalArgumentException(
+                        Objects.requireNonNullElseGet(usage, () -> "ArgHandler: Expected " + Integer.toString(minOccurrences) + " of : " + tag));
+                case PROMPT -> {
+                    System.out.print("ArgHandler: Enter string value for " + tag + " (" + Integer.toString(minOccurrences - ret.size()) + " left): ");
                     System.out.flush();
                     try {
                         ret.add(in.readLine());
+                    } catch (Exception ignored) {
                     }
-                    catch (Exception e) {}
-                    break;
+                }
             }
         }
         return ret;
@@ -812,15 +748,16 @@ public class ArgHandler {
      */
     public List<Integer> getMultipleIntegerArg(String tag) {
         List<Integer> ret = new ArrayList<Integer>();
-        int index = ArrayOperations.seqFind(tag, args);
-        while (index >= 0) {
-            try {
-                ret.add(Integer.parseInt(args[index+1]));
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
+            while (index >= 0) {
+                try {
+                    ret.add(Integer.parseInt(args[index + 1]));
+                } catch (Exception ignored) {}
+                index = ArrayOperations.findInSequence(tag, args, index + 1);
             }
-            catch (Exception e) {
-            }
-            index = ArrayOperations.seqFind(tag, args, index+1);
         }
+        catch (NotFoundException ignored) {}
         return ret;
     }
 
@@ -832,33 +769,29 @@ public class ArgHandler {
      */
     public List<Integer> getMultipleIntegerArg(String tag, int minOccurrences) {
         List<Integer> ret = new ArrayList<Integer>();
-        int index = ArrayOperations.seqFind(tag, args);
-        while (index >= 0) {
-            try {
-                ret.add(Integer.parseInt(args[index+1]));
+        try {
+            int index = ArrayOperations.findInSequence(tag, args);
+            while (index >= 0) {
+                try {
+                    ret.add(Integer.parseInt(args[index + 1]));
+                } catch (Exception ignored) {}
+                index = ArrayOperations.findInSequence(tag, args, index + 1);
             }
-            catch (Exception e) {
-            }
-            index = ArrayOperations.seqFind(tag, args, index+1);
         }
+        catch (NotFoundException ignored) {}
         while (ret.size() < minOccurrences) {
             switch (strategy) {
-                case EXIT:
-                    if (usage != null) {
-                        throw new IllegalArgumentException(usage);
-                    }
-                    else {
-                        throw new IllegalArgumentException("ArgHandler: Expected " + Integer.toString(minOccurrences) + " of : " + tag);
-                    }
-
-                case PROMPT:
-                    System.out.print("ArgHandler: Enter string value for " + tag + " (" + Integer.toString(minOccurrences-ret.size()) + " left): ");
+                case EXIT -> throw new IllegalArgumentException(
+                        Objects.requireNonNullElseGet(usage,
+                                () -> "ArgHandler: Expected " + minOccurrences + " of : " + tag));
+                case PROMPT -> {
+                    System.out.print("ArgHandler: Enter string value for " + tag + " (" + (minOccurrences - ret.size()) + " left): ");
                     System.out.flush();
                     try {
                         ret.add(Integer.parseInt(in.readLine()));
+                    } catch (Exception ignored) {
                     }
-                    catch (Exception e) {}
-                    break;
+                }
             }
         }
         return ret;
@@ -875,7 +808,8 @@ public class ArgHandler {
             boolean error = false;
             String choice = null;
             for (String option : options) {
-                if (ArrayOperations.seqFind(option, args) >= 0) {
+                try {
+                    ArrayOperations.findInSequence(option, args);
                     if (choice == null) {
                         choice = option;
                     }
@@ -883,29 +817,29 @@ public class ArgHandler {
                         error = true;
                     }
                 }
+                catch (NotFoundException ignored) {}
             }
             if (choice == null || error) {
                 switch (strategy) {
-                    case EXIT:
-                        if (usage != null) {
-                            throw new IllegalArgumentException(usage);
-                        }
-                        else {
-                            throw new IllegalArgumentException("ArgHandler: Expected a single choice between " + Arrays.toString(options));
-                        }
-
-                    case PROMPT:
+                    case EXIT -> throw new IllegalArgumentException(
+                            Objects.requireNonNullElseGet(usage,
+                                    () -> "ArgHandler: Expected a single choice between " + Arrays.toString(options)));
+                    case PROMPT -> {
                         boolean invChoice = true;
                         while (invChoice) {
                             System.out.print("ArgHandler: Please choose one of " + Arrays.toString(options) + ": ");
                             System.out.flush();
                             try {
                                 choice = in.readLine();
-                                invChoice = (ArrayOperations.seqFind(choice, options) < 0);
+                                try {
+                                    ArrayOperations.findInSequence(choice, options);
+                                    invChoice = false;
+                                }
+                                catch (NotFoundException ignored) {}
+                            } catch (Exception ignored) {
                             }
-                            catch (Exception e) {}
                         }
-                        break;
+                    }
                 }
             }
             return choice;
@@ -927,7 +861,7 @@ public class ArgHandler {
         for (int i = 0; i < enumSet.length; i++) {
             options[i] = enumSet[i].toString();
         }
-        return enumSet[0].valueOf(enumType, getChoiceArg(options));
+        return Enum.valueOf(enumType, getChoiceArg(options));
     }
 
     /**
@@ -941,7 +875,7 @@ public class ArgHandler {
         E ret = null;
         String choice = getStringArg(tag);
         try {
-            ret = enumType.getEnumConstants()[0].valueOf(enumType, choice);
+            ret = Enum.valueOf(enumType, choice);
         }
         catch (IllegalArgumentException iae) {
             switch (strategy) {
@@ -959,10 +893,10 @@ public class ArgHandler {
                         System.out.print("ArgHandler: Please choose one of " + Arrays.toString(enumType.getEnumConstants()) + " for " + tag + ": ");
                         System.out.flush();
                         try {
-                            ret = enumType.getEnumConstants()[0].valueOf(enumType, in.readLine());
+                            ret = Enum.valueOf(enumType, in.readLine());
                             invChoice = false;
                         }
-                        catch (Exception e) {}
+                        catch (Exception ignored) {}
                     }
                     break;
             }
@@ -982,7 +916,7 @@ public class ArgHandler {
     public <E extends Enum<E>> E getEnumArg(String tag, E defaultValue) {
         E ret;
         try {
-            ret = defaultValue.valueOf(defaultValue.getDeclaringClass(), getStringArg(tag));
+            ret = Enum.valueOf(defaultValue.getDeclaringClass(), getStringArg(tag));
         }
         catch (IllegalArgumentException iae) {
             ret = defaultValue;
@@ -1019,18 +953,16 @@ public class ArgHandler {
      * Same as collect method, but adds arguments to the existing given map. The input map is modified by the method call and its reference is returned (a new map is not created)
      */
     public Map<String, String> collect(Map<String, String> mapIn) {
-        Map<String, String> retMap = mapIn;
         for (int i = 0; i < args.length-1; i += 2) {
-            retMap.put(args[i], args[i+1]);
+            mapIn.put(args[i], args[i+1]);
         }
-        return retMap;
+        return mapIn;
     }
 
     /**
      * Same as collectOptional method, but adds arguments to the existing given map. The input map is modified by the method call and its reference is returned (a new map is not created)
      */
     public Map<String, String> collectOptional(Map<String, String> mapIn, String... tags) {
-        Map<String, String> retMap = mapIn;
         for (String tag : tags) {
             String[] from;
             String to;
@@ -1043,14 +975,14 @@ public class ArgHandler {
                 from = tag.split(";");
                 to = from[0];
             }
-            for (int i = 0; i < from.length; i++) {
-                if (this.getSwitchArg(from[i])) {
-                    retMap.put(to, this.getStringArg(from[i]));
+            for (String s : from) {
+                if (this.getSwitchArg(s)) {
+                    mapIn.put(to, this.getStringArg(s));
                     break;
                 }
             }
         }
-        return retMap;
+        return mapIn;
     }
 
     /**
@@ -1062,14 +994,13 @@ public class ArgHandler {
      * @return a new map with the arguments that exist in the input
      */
     public Map<String, String> collectOptional(String... tags) {
-        return collectOptional(new HashMap<String, String>(), tags);
+        return collectOptional(new HashMap<>(), tags);
     }
 
     /**
      * Same as collectRequired method, but adds arguments to the existing given map. The input map is modified by the method call and its reference is returned (a new map is not created)
      */
     public Map<String, String> collectRequired(Map<String, String> mapIn, String... tags) {
-        Map<String, String> retMap = mapIn;
         for (String tag : tags) {
             String[] from;
             String to;
@@ -1085,16 +1016,16 @@ public class ArgHandler {
             boolean found = false;
             for (int i = 1; i < from.length; i++) {
                 if (this.getSwitchArg(from[i])) {
-                    retMap.put(to, this.getStringArg(from[i]));
+                    mapIn.put(to, this.getStringArg(from[i]));
                     found = true;
                     break;
                 }
             }
             if (!found) {
-                retMap.put(to, this.getStringArg(from[0]));
+                mapIn.put(to, this.getStringArg(from[0]));
             }
         }
-        return retMap;
+        return mapIn;
     }
 
     /**
@@ -1106,7 +1037,7 @@ public class ArgHandler {
      * @return a new map with the arguments that exist in the input
      */
     public Map<String, String> collectRequired(String... tags) {
-        return collectRequired(new HashMap<String, String>(), tags);
+        return collectRequired(new HashMap<>(), tags);
     }
 
     /**

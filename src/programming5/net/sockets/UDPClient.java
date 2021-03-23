@@ -21,6 +21,15 @@
 
 package programming5.net.sockets;
 
+import programming5.arrays.ArrayOperations;
+import programming5.io.Debug;
+import programming5.net.AsynchMessageArrivedEvent;
+import programming5.net.MessageArrivedEvent;
+import programming5.net.MessagingClient;
+import programming5.net.NetworkException;
+import programming5.net.Publisher;
+import programming5.net.ReceiveRequest;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -33,14 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import programming5.arrays.ArrayOperations;
-import programming5.io.Debug;
-import programming5.net.AsynchMessageArrivedEvent;
-import programming5.net.MessageArrivedEvent;
-import programming5.net.MessagingClient;
-import programming5.net.NetworkException;
-import programming5.net.Publisher;
-import programming5.net.ReceiveRequest;
 
 /**
  *This class is the UDP socket implementation of the MessagingClient. It can be instantiated as a 

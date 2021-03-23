@@ -21,13 +21,14 @@
 
 package programming5.io.keyboard;
 
-import java.awt.Component;
+import programming5.net.Publisher;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import programming5.net.Publisher;
 
 /**
  *This class generates KeyboardEvents to interested subscribers. It allows enabling and disabling keys so that it only 

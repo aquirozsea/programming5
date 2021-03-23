@@ -21,11 +21,13 @@
 
 package programming5.io;
 
-import java.io.NotSerializableException;
-import java.lang.reflect.Field;
 import programming5.arrays.ArrayOperations;
 import programming5.net.MalformedMessageException;
 import programming5.net.Message;
+
+import java.io.NotSerializableException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Provides a Message object for instances of a class composed only of primitive types (or of the primitive types of the class), 
@@ -87,7 +89,7 @@ public class SimpleSerializer<T> {
     public T deserialize(String objStr) {
         T ret = null;
         try {
-            ret = classRef.newInstance();
+            ret = classRef.getDeclaredConstructor().newInstance();
             Message aux = new Message(objStr);
             for (int i = 0; i < aux.getMessageSize(); i++) {
                 String fieldName = aux.getMessageItem(i);
@@ -95,7 +97,7 @@ public class SimpleSerializer<T> {
                 if (!field.getType().isArray()) {
                     if (field.getType().isPrimitive()) {
                         if (field.getType().getName().equals("int")) {
-                            field.set(ret, new Integer(aux.getMessageItem(++i)));
+                            field.set(ret, Integer.valueOf(aux.getMessageItem(++i)));
                         }
                     }
                     else if (field.getType().equals(String.class)) {
@@ -110,7 +112,7 @@ public class SimpleSerializer<T> {
                         if (field.getType().getComponentType().getName().equals("int")) {
                             int[] array = null;
                             do {
-                                array = ArrayOperations.addElement(new Integer(aux.getMessageItem(++i)), array);
+                                array = ArrayOperations.addElement(Integer.parseInt(aux.getMessageItem(++i)), array);
                             }
                             while (aux.getMessageItem(++i).equals(fieldName));
                             i--;
@@ -132,7 +134,7 @@ public class SimpleSerializer<T> {
                 }
             }
         }
-        catch (InstantiationException ie) {
+        catch (InstantiationException | NoSuchMethodException | InvocationTargetException ie) {
             throw new IllegalArgumentException("SimpleSerializer: Could not create object from string: Class cannot be instantiated: " + ie.getMessage());
         }
         catch (MalformedMessageException mme) {

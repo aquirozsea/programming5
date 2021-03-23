@@ -21,14 +21,15 @@
 
 package programming5.io;
 
+import programming5.concurrent.ConditionVariable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import programming5.concurrent.ConditionVariable;
 
 /**
  *This class allows executing OS commands from java applications. The command is passed as a string to the execute method 

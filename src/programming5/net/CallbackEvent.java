@@ -21,10 +21,11 @@
 
 package programming5.net;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
 import programming5.io.Debug;
 import programming5.io.Serializer;
+
+import java.io.IOException;
+import java.io.NotSerializableException;
 
 /**
  *Event that holds the result of an asynchronous operation. As of version 6.1, objects encapsulated into a
@@ -62,15 +63,6 @@ public class CallbackEvent extends programming5.net.Event {
             }
         }
     }
-    
-    /**
-     *@deprecated this constructor is no longer supported
-     *@throws UnsupportedOperationException
-     */
-    @Deprecated
-    public CallbackEvent(Message evtMsg) {
-        super(evtMsg);
-    }
 
     /**
      * Creates a callback event by decoding the given byte array
@@ -100,16 +92,6 @@ public class CallbackEvent extends programming5.net.Event {
             }
         }
         return ret;
-    }
-    
-    /**
-     *@return the result message associated with the event
-     *@deprecated different functionality from (deprecated) base class method; use getQualifier instead
-     */
-    @Override
-    @Deprecated
-    public String getMessage() {
-        return this.getMessageItem(0);
     }
 
     /**

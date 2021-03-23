@@ -21,10 +21,11 @@
 
 package programming5.code;
 
+import programming5.collections.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
-import programming5.collections.CollectionUtils;
 
 /**
  * This class keeps an ordered list of the min k elements of a given type found after evaluating an element stream (or, alternatively, an

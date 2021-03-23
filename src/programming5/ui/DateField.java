@@ -21,11 +21,11 @@
 
 package programming5.ui;
 
-import java.awt.TextField;
+import java.awt.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
 
 /**
  *This class is an awt text field which incorporates methods to parse and format date strings and return the associated 

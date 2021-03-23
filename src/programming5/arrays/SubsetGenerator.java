@@ -83,7 +83,7 @@ public class SubsetGenerator {
 	 	}
 	 	int[] ret = null;
 	 	if (set != null) {
-	 		ret = ArrayOperations.replicate(set);
+	 		ret = set.clone();
 	 	}
 	 	return ret;
 	 }

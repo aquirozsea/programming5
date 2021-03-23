@@ -47,7 +47,7 @@ public class TupleIndexGenerator {
 	 */
 	public TupleIndexGenerator(int[] setSizes) {
 		sets = setSizes.length;
-		limits = ArrayOperations.replicate(setSizes);
+		limits = setSizes.clone();
 		tuple = new int[sets];
 		tuple[0] = -1;
 		for (int i = 1; i < sets; i++)
@@ -106,7 +106,7 @@ public class TupleIndexGenerator {
 	  */
 	  public void restart(int[] setSizes) {
 	  	sets = setSizes.length;
-		limits = ArrayOperations.replicate(setSizes);
+		limits = setSizes.clone();
 		restart();
 	  }
 

@@ -21,9 +21,10 @@
 
 package programming5.collections;
 
+import programming5.concurrent.ConditionVariable;
+
 import java.util.HashMap;
 import java.util.Map;
-import programming5.concurrent.ConditionVariable;
 
 /**
  * <p>A ConfigurableHashMap is a HashMap that accepts lambda functions to call in place of its get, put, and getOrDefault

@@ -21,15 +21,16 @@
 
 package programming5.collections;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
 import programming5.arrays.RandomOrderGenerator;
 import programming5.arrays.SetOperations;
 import programming5.arrays.SubsetGenerator;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 /**
  *This generic class is an extension of the java.util.HashSet collection that provides useful set manipulation 

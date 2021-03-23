@@ -21,12 +21,13 @@
 
 package programming5.net.sockets;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import programming5.net.NetworkException;
 import programming5.net.ServerAcceptThread;
 import programming5.net.ServiceObject;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  *This class implements a ServerAcceptThread that accepts TCP connections. It listens to the subscription port and passes each 

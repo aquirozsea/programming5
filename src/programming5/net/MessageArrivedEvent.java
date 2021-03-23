@@ -50,15 +50,6 @@ public class MessageArrivedEvent extends programming5.net.Event {
     }
 
     /**
-     *@deprecated this constructor is no longer supported
-     *@throws UnsupportedOperationException
-     */
-    @Deprecated
-    public MessageArrivedEvent(Message evtMsg) {
-        super(evtMsg);
-    }
-
-    /**
      *Creates a new message arrived event with the given payload, trasforming the byte array to a String 
      *object.
      *WARNING: This differs from the semantics of the corresponding Event constructor, which takes the byte
@@ -95,30 +86,10 @@ public class MessageArrivedEvent extends programming5.net.Event {
     }
 
     /**
-     *@return the message associated with this event
-     *@deprecated different functionality from (deprecated) base class method; use getContent instead
-     */
-    @Override
-    @Deprecated
-    public String getMessage() {
-        return this.getMessageItem(0);
-    }
-
-    /**
      * @return the message payload associated with this event
      */
     public String getContent() {
         return this.getMessageItem(0);
-    }
-
-    /**
-     *@return the byte array representation of the message associated with this event
-     *@deprecated different functionality from base class method; use getContentBytes instead
-     */
-    @Override
-    @Deprecated
-    public byte[] getMessageBytes() {
-        return this.getItemAsByteArray(0);
     }
 
     /**

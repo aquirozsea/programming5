@@ -21,10 +21,11 @@
 
 package programming5.strings;
 
-import java.util.Random;
 import programming5.arrays.ArrayOperations;
 import programming5.code.RandomIndexGenerator;
 import programming5.io.ConfigHandler;
+
+import java.util.Random;
 
 /**
  * This class allows the generation of arbitrary strings of particular or random length. It provides different methods

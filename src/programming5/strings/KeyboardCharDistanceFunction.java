@@ -21,10 +21,11 @@
 
 package programming5.strings;
 
-import java.util.Map.Entry;
 import programming5.collections.EntryObject;
 import programming5.collections.HashTable;
 import programming5.math.DistanceFunction;
+
+import java.util.Map.Entry;
 
 /**
  * Implements a distance function for characters based on their approximate relative keyboard positions.

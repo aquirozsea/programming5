@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  *Provides utility methods to use with/for collections classes
@@ -44,50 +43,16 @@ import java.util.Vector;
 public abstract class CollectionUtils {
 
     /**
-     * To create a vector with the elements of a given array, for which there is surprisingly no constructor
-     * in the Vector class.
-     * @param array the input array; the elements of the array will be put into the vector by reference
-     * @return the filled vector of the type of the input array elements
-     * @deprecated use of Vector class is obsolete; use listFromArray instead
-     */
-    @Deprecated 
-    public static final <T> Vector<T> vectorFromArray(T[] array) {
-        Vector<T> ret = new Vector<T>();
-        for (T element : array) {
-            ret.add(element);
-        }
-        return ret;
-    }
-    
-    /**
      * To create a list with the elements of a given array
      * @param array the input array; the elements of the array will be put into the list by reference
      * @return the filled list of the type of the input array elements
      */
-    public static final <T> List<T> listFromArray(T[] array) {
+    public static <T> List<T> listFromArray(T[] array) {
         List<T> ret = new ArrayList<T>();
-        for (T element : array) {
-            ret.add(element);
-        }
+        Collections.addAll(ret, array);
         return ret;
     }
 
-    /**
-     * To create an integer vector with the elements of a given array, for which there is surprisingly no constructor
-     * in the Vector class.
-     * @param array the input array
-     * @return the filled integer vector
-     * @deprecated use of Vector class is obsolete; use listFromIntArray instead
-     */
-    @Deprecated 
-    public static Vector<Integer> vectorFromIntArray(int[] array) {
-        Vector<Integer> ret = new Vector<Integer>();
-        for (int element : array) {
-            ret.add(element);
-        }
-        return ret;
-    }
-    
     /**
      * To create an integer list with the elements of a given array
      * @param array the input array
@@ -102,34 +67,6 @@ public abstract class CollectionUtils {
     }
 
     /**
-     * To create a vector initialized to contain the given element, for which there is surprisingly no constructor
-     * in the Vector class.
-     * @param element the input element, which will be put into the vector by reference
-     * @return the typed vector containing the given element
-     * @deprecated use of vector is obsolete; use Collections.singletonList instead
-     */
-    @Deprecated
-    public static final <T> Vector<T> vectorFromElement(T element) {
-        Vector<T> ret = new Vector<T>(); 
-        ret.add(element);
-        return ret;
-    }
-
-    /**
-     * To create a vector initialized to contain the given element of a subclass of the vector type.
-     * @param element the input element, which will be put into the vector by reference
-     * @param type the vector type, which is a superclass of the element type.
-     * @return the typed vector containing the given element
-     * @deprecated use of Vector class is obsolete; use listFromElement method instead
-     */
-    @Deprecated
-    public static final <T, U extends T> Vector<T> vectorFromElement(U element, Class<T> type) {
-        Vector<T> ret = new Vector<T>();
-        ret.add(element);
-        return ret;
-    }
-
-    /**
      * To create a list initialized to contain the given element of a subclass of the list type. Note that this method is
      * different from {@link Arrays#asList(Object[])} in that the list returned is typed as a superclass of the given
      * object and in that it can be modified (the Arrays asList method returns an unmodifiable list instance).
@@ -137,7 +74,7 @@ public abstract class CollectionUtils {
      * @param type the list type, which is a superclass of the element type.
      * @return the typed and modifiable list containing the given element
      */
-    public static final <T, U extends T> List<T> listFromElement(U element, Class<T> type) {
+    public static <T, U extends T> List<T> listFromElement(U element, Class<T> type) {
         List<T> ret = new ArrayList<T>();
         ret.add(element);
         return ret;
@@ -766,19 +703,8 @@ public abstract class CollectionUtils {
         }
     }
 
-    @Deprecated
-    public static <T, U> List<T> findMatch(List<T> list, U feature, Comparator comp) {
-        List<T> matches = new ArrayList<T>();
-        for (T element : list) {
-            if (comp.compare(element, feature) == 0) {
-                matches.add(element);
-            }
-        }
-        return matches;
-    }
-
     public static <T, U> Set<T> findMatches(Collection<T> collection, U feature, Comparator comp) {
-        Set<T> matches = new HashSet<T>();
+        Set<T> matches = new HashSet<>();
         for (T element : collection) {
             if (comp.compare(element, feature) == 0) {
                 matches.add(element);

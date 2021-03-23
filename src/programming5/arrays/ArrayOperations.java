@@ -22,7 +22,6 @@
 package programming5.arrays;
 
 import programming5.code.ObjectMatcher;
-import programming5.code.Replicable;
 import programming5.collections.NotFoundException;
 import programming5.math.DistanceFunction;
 import programming5.strings.LexicographicDistanceFunction;
@@ -33,6 +32,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.function.Function;
 import java.util.function.IntToDoubleFunction;
 
 /**
@@ -47,103 +47,16 @@ public abstract class ArrayOperations {
     public static Comparator<String> DEFAULT_STRING_COMPARATOR = new LexicographicStringComparator();
     
     /**
-     *@return a new copy of the input array
-     */
-    public static byte[] replicate(byte[] array) {
-        if (array == null) {return null;}
-        byte[] ret = new byte[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static int[] replicate(int[] array) {
-        if (array == null) {return null;}
-        int[] ret = new int[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static float[] replicate(float[] array) {
-        if (array == null) {return null;}
-        float[] ret = new float[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static double[] replicate(double[] array) {
-        if (array == null) {return null;}
-        double[] ret = new double[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static char[] replicate(char[] array) {
-        if (array == null) {return null;}
-        char[] ret = new char[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
-     *@return a new copy of the input array
-     */
-    public static String[] replicate(String[] array) {
-        if (array == null) {return null;}
-        String[] ret = new String[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-
-    /**
-     *@return a new copy of the input array
-     */
-    public static long[] replicate(long[] array) {
-        if (array == null) {return null;}
-        long[] ret = new long[array.length];
-        System.arraycopy(array, 0, ret, 0, array.length);
-        return ret;
-    }
-    
-    /**
      *@param source the array to be replicated
-     *@param destination the pre-allocated destination array, of equal size as the source array, which will be filled with values from the source
+     *@param cloneFn The function that clones objects in the array
      *@throws java.lang.IllegalArgumentException if the arrays are of different sizes
      */
-    public static <T> void replicate(T[] source, T[] destination) {
-        if (source.length == destination.length) {
-            System.arraycopy(source, 0, destination, 0, source.length);
-        } 
-        else {
-            throw new IllegalArgumentException("ArrayOperations: Could not replicate source array: Arrays of different dimensions");
+    public static <T> T[] replicate(T[] source, Function<T, T> cloneFn) {
+        T[] destination = source.clone();
+        for (int i = 0; i < source.length; i++) {
+            destination[i] = cloneFn.apply(source[i]);
         }
-    }
-    
-    /**
-     *@param source the array to be replicated
-     *@param destination the pre-allocated destination array, of equal size as the source array, which will be filled with values from the source
-     *@throws java.lang.IllegalArgumentException if the arrays are of different sizes
-     */
-    public static <T extends Replicable> void replicate(T[] source, T[] destination) {
-        if (source.length == destination.length) {
-            for (int i = 0; i < source.length; i++) {
-                destination[i] = (T) source[i].replicate();
-            }
-        }
-        else {
-            throw new IllegalArgumentException("ArrayOperations: Could not replicate source array: Arrays of different dimensions");
-        }
+        return destination;
     }
     
     /**
@@ -1088,22 +1001,6 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(byte b, byte[] array) {
-        int ret = -1;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
-    }
 
     /**
      * @return the index of the first b in the array
@@ -1116,22 +1013,6 @@ public abstract class ArrayOperations {
             }
         }
         throw new NotFoundException();
-    }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(int b, int[] array) {
-        int ret = -1;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
     }
 
     /**
@@ -1146,22 +1027,6 @@ public abstract class ArrayOperations {
         }
         throw new NotFoundException();
     }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(float b, float[] array) {
-        int ret = -1;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
-    }
 
     /**
      * @return the index of the first b in the array
@@ -1174,22 +1039,6 @@ public abstract class ArrayOperations {
             }
         }
         throw new NotFoundException();
-    }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(double b, double[] array) {
-        int ret = -1;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
     }
 
     /**
@@ -1204,22 +1053,6 @@ public abstract class ArrayOperations {
         }
         throw new NotFoundException();
     }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(char b, char[] array) {
-        int ret = -1;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
-    }
 
     /**
      * @return the index of the first b in the array
@@ -1232,22 +1065,6 @@ public abstract class ArrayOperations {
             }
         }
         throw new NotFoundException();
-    }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(Object b, Object[] array) {
-        int ret = -1;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].equals(b)) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
     }
 
     /**
@@ -1264,22 +1081,6 @@ public abstract class ArrayOperations {
     }
 
     /**
-     *@return the index of the first b in the array using the given matcher, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(Object b, Object[] array, ObjectMatcher matcher) {
-        int ret = -1;
-        for (int i = 0; i < array.length; i++) {
-            if (matcher.matches(array[i], b)) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
-    }
-
-    /**
      * @return the index of the first b in the array using the given matcher
      * @throws NotFoundException if b is not found in the array
      */
@@ -1290,22 +1091,6 @@ public abstract class ArrayOperations {
             }
         }
         throw new NotFoundException();
-    }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(byte b, byte[] array, int from) {
-        int ret = -1;
-        for (int i = from; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
     }
 
     /**
@@ -1320,22 +1105,6 @@ public abstract class ArrayOperations {
         }
         throw new NotFoundException();
     }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(int b, int[] array, int from) {
-        int ret = -1;
-        for (int i = from; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
-    }
 
     /**
      * @return the index of the first b in the array after and including the given starting index
@@ -1348,22 +1117,6 @@ public abstract class ArrayOperations {
             }
         }
         throw new NotFoundException();
-    }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(float b, float[] array, int from) {
-        int ret = -1;
-        for (int i = from; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
     }
 
     /**
@@ -1378,22 +1131,6 @@ public abstract class ArrayOperations {
         }
         throw new NotFoundException();
     }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(double b, double[] array, int from) {
-        int ret = -1;
-        for (int i = from; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
-    }
 
     /**
      * @return the index of the first b in the array after and including the given starting index
@@ -1406,22 +1143,6 @@ public abstract class ArrayOperations {
             }
         }
         throw new NotFoundException();
-    }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(char b, char[] array, int from) {
-        int ret = -1;
-        for (int i = from; i < array.length; i++) {
-            if (array[i] == b) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
     }
 
     /**
@@ -1436,22 +1157,6 @@ public abstract class ArrayOperations {
         }
         throw new NotFoundException();
     }
-    
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(Object b, Object[] array, int from) {
-        int ret = -1;
-        for (int i = from; i < array.length; i++) {
-            if (array[i].equals(b)) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
-    }
 
     /**
      * @return the index of the first b in the array after and including the given starting index
@@ -1464,22 +1169,6 @@ public abstract class ArrayOperations {
             }
         }
         throw new NotFoundException();
-    }
-
-    /**
-     *@return the index of the first b in the array, or -1 if not found
-     *@deprecated the behavior of returning -1 when not found is considered clumsy and has been replaced with method findInSequence that throws a NotFoundException instead
-     */
-    @Deprecated
-    public static int seqFind(Object b, Object[] array, int from, ObjectMatcher matcher) {
-        int ret = -1;
-        for (int i = 0; i < array.length; i++) {
-            if (matcher.matches(array[i], b)) {
-                ret = i;
-                break;
-            }
-        }
-        return ret;
     }
 
     /**
@@ -1550,35 +1239,7 @@ public abstract class ArrayOperations {
         }
         return array[retIndex];
     }
-    
-    /**
-     * Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
-     * @return the index of the element of array that is closest to value
-     * @deprecated Known cases where overflow can cause the wrong result (good precision to about 15 significant digits)
-     */
-    @Deprecated
-    public static int findClosestIndex(double[] array, double value) {
-        int ret = 0;
-        double minDiff = Math.abs(value - array[0]);
-        double diff;
-        for (int i = 1; i < array.length; i++) {
-            if ((diff = Math.abs(value - array[i])) < minDiff) {
-                ret = i;
-                minDiff = diff;
-            }
-            else if (diff == minDiff && array[i] != array[ret]) {  // This is for rare occasions where the differences are so large that the precision isn't enough to differentiate them
-                if (((array[i] > array[ret]) && (array[i] < value && array[ret] < value))
-                 || ((array[i] < array[ret]) && (array[i] > value && array[ret] > value))
-                 || (array[i] < 0 && value < 0 && array[ret] > 0)
-                 || (array[i] > 0 && value > 0 && array[ret] < 0))
-                {
-                    ret = i;
-                }
-            }
-        }
-        return ret;
-    }
-    
+
     /**
      * Works with current tests, but be wary of precision issues (good precision to about eight significant digits). Uses the difference between values, and, if the difference is the same because of precision, direct comparisons for certain known cases.
      * @return the element of array that is closest to value
@@ -2851,18 +2512,6 @@ public abstract class ArrayOperations {
         }
         return ret;
     }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static int[] initialize(int[] array, int initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
 
     /**
      * Creates a new array initialized with the given value
@@ -2874,18 +2523,6 @@ public abstract class ArrayOperations {
         int[] ret = new int[size];
         Arrays.fill(ret, initValue);
         return ret;
-    }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static float[] initialize(float[] array, float initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
     }
 
     /**
@@ -2901,18 +2538,6 @@ public abstract class ArrayOperations {
     }
 
     /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static double[] initialize(double[] array, double initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-
-    /**
      * Creates a new array initialized with the given value
      * @param size the size of the array
      * @param initValue the value to fill the array with
@@ -2922,30 +2547,6 @@ public abstract class ArrayOperations {
         double[] ret = new double[size];
         Arrays.fill(ret, initValue);
         return ret;
-    }
-
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static char[] initialize(char[] array, char initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-    
-    /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static boolean[] initialize(boolean[] array, boolean initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
     }
 
     /**
@@ -2961,23 +2562,11 @@ public abstract class ArrayOperations {
     }
 
     /**
-     *@return the given array with all values set to the given initValue
-     *@deprecated same functionality as fill method in java.util.Arrays class
-     */
-    @Deprecated
-    public static String[] initialize(String[] array, String initValue) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = initValue;
-        }
-        return array;
-    }
-
-    /**
      * @return the given matrix with the values set to the given initValue
      */
     public static int[][] initialize(int[][] matrix, int initValue) {
-        for (int i = 0; i < matrix.length; i++) {
-            Arrays.fill(matrix[i], initValue);
+        for (int[] ints : matrix) {
+            Arrays.fill(ints, initValue);
         }
         return matrix;
     }
@@ -3610,134 +3199,6 @@ public abstract class ArrayOperations {
             pos = 0;
         }
         return pos;
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
-     * it requires making a replica of the original array.
-     */
-    @Deprecated
-    public static int[] sort(int[] array) {
-        int[] so = sortedOrder(array);
-        Integer[] uo = box(createEnumeration(array.length));
-        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        int[] arrayCopy = replicate(array);
-        for (int i = 0; i < array.length; i++) {
-            array[i] = arrayCopy[so[i]];
-        }
-        return unbox(uo);
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
-     * it requires making a replica of the original array.
-     */
-    @Deprecated
-    public static int[] sort(float[] array) {
-        int[] so = sortedOrder(array);
-        Integer[] uo = box(createEnumeration(array.length));
-        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        float[] arrayCopy = replicate(array);
-        for (int i = 0; i < array.length; i++) {
-            array[i] = arrayCopy[so[i]];
-        }
-        return unbox(uo);
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
-     * it requires making a replica of the original array.
-     */
-    @Deprecated
-    public static int[] sort(long[] array) {
-        int[] so = sortedOrder(array);
-        Integer[] uo = box(createEnumeration(array.length));
-        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        long[] arrayCopy = replicate(array);
-        for (int i = 0; i < array.length; i++) {
-            array[i] = arrayCopy[so[i]];
-        }
-        return unbox(uo);
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient method of obtaining the unsorted order, as
-     * it requires making a replica of the original array.
-     */
-    @Deprecated
-    public static int[] sort(double[] array) {
-        int[] so = sortedOrder(array);
-        Integer[] uo = box(createEnumeration(array.length));
-        Arrays.sort(uo, Comparator.comparing(a -> so[a]));
-        double[] arrayCopy = replicate(array);
-        for (int i = 0; i < array.length; i++) {
-            array[i] = arrayCopy[so[i]];
-        }
-        return unbox(uo);
-    }
-
-    /**
-     * Sorts the array with {@link Arrays#sort}, but also returns the unsorted order of the array elements in order to
-     * be able to reconstruct the original array. This method is deprecated, since the same value can be obtained
-     * more efficiently using the order array obtained from {@link #sortedOrder(int[])} and referencing the original array.
-     * @param array the array to be sorted
-     * @return the unsorted order of the original array elements, so that for int[] order = sort(array), array[order[i]]
-     * returns the original element in position i of the array before sorting; for example, the unsorted order of
-     * [3, 1, 2] is [2, 0, 1].
-     * @deprecated the semantics of the return array of this method have changed, as it used to return the sorted order
-     * of the original array instead of the unsorted order of the sorted array (the equivalent return value is now
-     * given by {@link #sortedOrder(int[])}). This is also a less efficient O(N^2) method of obtaining the unsorted order
-     * that also requires making a replica of the original array.
-     */
-    @Deprecated
-    public static int[] sort(Comparable[] array) {
-        int[] unsortedOrder = new int[array.length];
-        Comparable[] original = new Comparable[array.length];
-        ArrayOperations.replicate(array, original);
-        int[] repetitions = newIntArray(array.length, 0);
-        Arrays.sort(array);
-        for (int i = 0; i < original.length; i++) {
-            int firstIndex = ArrayOperations.findFirstIndexInOrder(array, original[i]);
-            unsortedOrder[i] = repetitions[firstIndex] + firstIndex;
-            repetitions[firstIndex]++;
-        }
-        return unsortedOrder;
     }
 
     /**

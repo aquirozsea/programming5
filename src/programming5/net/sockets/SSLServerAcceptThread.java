@@ -5,13 +5,14 @@
 
 package programming5.net.sockets;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import javax.net.ssl.SSLServerSocketFactory;
 import programming5.net.NetworkException;
 import programming5.net.ServerAcceptThread;
 import programming5.net.ServiceObject;
+
+import javax.net.ssl.SSLServerSocketFactory;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  *

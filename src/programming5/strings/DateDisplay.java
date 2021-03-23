@@ -5,8 +5,9 @@
 
 package programming5.strings;
 
-import java.util.Calendar;
 import programming5.strings.DateDecoder.PatternCode;
+
+import java.util.Calendar;
 
 /**
  *

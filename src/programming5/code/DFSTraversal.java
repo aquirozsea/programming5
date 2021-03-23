@@ -21,11 +21,12 @@
 
 package programming5.code;
 
+import programming5.collections.GraphNode;
+import programming5.collections.HashTable;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
-import programming5.collections.GraphNode;
-import programming5.collections.HashTable;
 
 /**
  * Implements a depth-first search traversal of a graph structure consisting of nodes of a given type. The graph structure must be composed

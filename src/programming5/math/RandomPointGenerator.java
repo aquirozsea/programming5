@@ -21,11 +21,12 @@
 
 package programming5.math;
 
+import programming5.arrays.ArrayOperations;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import programming5.arrays.ArrayOperations;
 
 /**
  * Generates real-valued points (coordinates) in a multidimensional space around fixed geometries with random noise.

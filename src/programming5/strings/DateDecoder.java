@@ -21,10 +21,11 @@
 
 package programming5.strings;
 
+import programming5.math.NumberRange;
+
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Map.Entry;
-import programming5.math.NumberRange;
 
 /**
  * Class to create date (Calendar) objects from date strings, given a date pattern string with a specific format
