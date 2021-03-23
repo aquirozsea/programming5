@@ -22,8 +22,8 @@
 package programming5.net;
 
 import java.net.DatagramSocket;
-import java.net.NetworkInterface;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.Enumeration;
 
 /**

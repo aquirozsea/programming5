@@ -21,9 +21,8 @@
 
 package programming5.ui;
 
-import javax.swing.JPanel;
-import java.awt.Panel;
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *Utility class for UI component manipulation

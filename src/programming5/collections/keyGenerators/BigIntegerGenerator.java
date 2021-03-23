@@ -21,9 +21,10 @@
 
 package programming5.collections.keyGenerators;
 
+import programming5.collections.MapKeyGenerator;
+
 import java.math.BigInteger;
 import java.util.Random;
-import programming5.collections.MapKeyGenerator;
 
 /**
  * Implementation of the MapKeyGenerator interface, meant to be used with Map objects to generate the keys

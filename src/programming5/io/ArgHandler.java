@@ -27,7 +27,12 @@ import programming5.math.NumberRange;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  *This class is meant to receive the argument array of an application to provide methods to get arguments of different 

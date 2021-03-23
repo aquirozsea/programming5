@@ -21,12 +21,13 @@
 
 package programming5.code;
 
+import programming5.arrays.ArrayOperations;
+import programming5.strings.StringOperations;
+
 import java.util.Arrays;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import programming5.arrays.ArrayOperations;
-import programming5.strings.StringOperations;
 
 /**
  * This class uses a java Random object to generate integers included in one or more given ranges. If the ranges are

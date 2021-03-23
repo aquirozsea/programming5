@@ -21,8 +21,9 @@
 
 package programming5.ui;
 
-import javax.swing.JTextField;
 import programming5.math.NumberRangeException;
+
+import javax.swing.*;
 
 /**
  *This class is a swing text field which incorporates methods to parse, limit, and return its numeric content. There is

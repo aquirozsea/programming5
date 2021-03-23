@@ -21,9 +21,10 @@
 
 package programming5.io;
 
-import java.util.List;
 import programming5.arrays.ArrayOperations;
 import programming5.collections.CollectionUtils;
+
+import java.util.List;
 
 /**
  * General ad-hoc progress calculator that does not depend on knowing the number of stages of a process in advance. It relies on

@@ -1,6 +1,10 @@
 package programming5.collections;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  * O(logN) changeKey, amortized O(1) peek (O(ilogN) worst case, with i = number of changed keys), amortized O(logN) poll (O(ilogN) worst case)

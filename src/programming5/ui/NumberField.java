@@ -21,8 +21,9 @@
 
 package programming5.ui;
 
-import java.awt.TextField;
 import programming5.math.NumberRangeException;
+
+import java.awt.*;
 
 /**
  *This class is an awt text field which incorporates methods to parse, limit, and return its numeric content. There is 

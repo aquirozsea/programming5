@@ -5,8 +5,9 @@
 
 package programming5.collections.keyGenerators;
 
-import java.util.Random;
 import programming5.collections.MapKeyGenerator;
+
+import java.util.Random;
 
 /**
  *

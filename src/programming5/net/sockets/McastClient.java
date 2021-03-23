@@ -21,9 +21,10 @@
 
 package programming5.net.sockets;
 
+import programming5.net.NetworkException;
+
 import java.io.IOException;
 import java.net.MulticastSocket;
-import programming5.net.NetworkException;
 
 /**
  *This class is the multicast socket implementation of a MessagingClient

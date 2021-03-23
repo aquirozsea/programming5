@@ -21,11 +21,11 @@
 
 package programming5.ui;
 
-import javax.swing.JTextField;
+import javax.swing.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
 
 /**
  *This class is a swing text field which incorporates methods to parse and format date strings and return the associated 

@@ -5,10 +5,11 @@
 
 package programming5.net.sockets;
 
+import programming5.net.NetworkException;
+
+import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.InetAddress;
-import javax.net.ssl.SSLSocketFactory;
-import programming5.net.NetworkException;
 
 /**
  *

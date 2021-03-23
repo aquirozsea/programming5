@@ -21,8 +21,8 @@
 
 package programming5.ui;
 
-import java.io.File;
 import javax.swing.filechooser.FileFilter;
+import java.io.File;
 
 /**
  *This class implements a FileFilter that accepts the file extensions given to it in the constructor.

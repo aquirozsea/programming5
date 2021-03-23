@@ -27,7 +27,13 @@ import programming5.collections.NotFoundException;
 import programming5.io.Debug;
 import programming5.strings.KeyValuePairMatcher;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Savepoint;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;

@@ -5,11 +5,12 @@
 
 package programming5.concurrent;
 
-import java.util.concurrent.TimeUnit;
 import programming5.io.Debug;
 import programming5.io.DebugExceptionHandler;
 import programming5.io.ExceptionHandler;
 import programming5.io.RobustThread;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * TODO: Avoid thrashing between backoff and recover on regress (when period should be stable)

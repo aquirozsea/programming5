@@ -21,9 +21,10 @@
 
 package programming5.ui.stringmath;
 
+import programming5.math.MathOperations;
+
 import java.util.ArrayList;
 import java.util.List;
-import programming5.math.MathOperations;
 
 /**
  *The classes in the stringmath package allow defining and operating on mathematical expressions according to operator rules and precedence, 
