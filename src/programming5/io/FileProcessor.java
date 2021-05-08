@@ -35,18 +35,18 @@ public interface FileProcessor {
      * processed
      * @param directory the directory to process
      */
-    public void directoryPreProcess(File directory);
+    default void directoryPreProcess(File directory) {}
 
     /**
      * Called when the directory is encountered after its contents are processed in a depth-first traversal
      * @param directory the directory to process
      */
-    public void directoryPostProcess(File directory);
+    default void directoryPostProcess(File directory) {}
 
     /**
      * Called when a file is encountered
      * @param file the file to process
      */
-    public void fileProcess(File file);
+    default void fileProcess(File file) {}
 
 }
